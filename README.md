@@ -1,159 +1,142 @@
-# Turborepo starter
+# Solvuri Frontend
 
-This Turborepo starter is maintained by the Turborepo core team.
+This repository contains the frontend implementation for Solvuri, a modular, white-label business software platform. Solvuri is designed for brands that want to sell commerce, travel, reservation, and operational services under their own name without rebuilding everything from scratch.
 
-## Using this example
+Rather than shipping one monolithic product, Solvuri is organized as a set of independent modules that can be adopted one at a time or combined under a single Super License. The frontend in this repository powers the public-facing experience, the customer storefront experience, and the administrative portal experience that support those products.
 
-Run the following command:
+## What Solvuri is
 
-```sh
-npx create-turbo@latest
+Solvuri exists to help businesses operate digital products under their own brand through a modular infrastructure layer. In practice, this means:
+
+- brands can launch white-label products without building the full stack themselves
+- different business units can start with a single module and expand later
+- the platform is structured around reusable modules rather than a single rigid application
+- the experience is designed to feel polished, productized, and ready to sell under a partner or reseller brand
+
+The current product story presented by the UI centers around four core modules:
+
+- ClearRack for commerce experiences
+- Safyri for travel booking experiences
+- Reservr for reservation-based flows
+- Master as part of the broader operating platform
+
+## Repository purpose
+
+This monorepo is the frontend layer for the Solvuri ecosystem. Its purpose is to deliver the user interfaces and shared UI primitives that make the platform usable, consistent, and scalable.
+
+The codebase is organized as a Turborepo monorepo with three primary applications and a shared package layer.
+
+## Project structure
+
+The repository is organized as a Turborepo monorepo with a clear separation between product experiences and shared infrastructure.
+
+```text
+solvuri-frontend/
+├── apps/
+│   ├── web/                # Public marketing website and product storytelling
+│   ├── store-front/        # Customer-facing storefront experience
+│   └── admin-portal/       # Internal/admin experience for operators
+├── packages/
+│   ├── ui/                 # Shared UI component library
+│   ├── types/              # Shared TypeScript types
+│   ├── eslint-config/     # Shared linting configuration
+│   └── typescript-config/  # Shared TypeScript configuration
+├── package.json            # Root scripts and workspace configuration
+├── pnpm-workspace.yaml     # pnpm workspace definition
+└── turbo.json              # Turborepo pipeline configuration
 ```
 
-## What's inside?
+### What lives in each area
 
-This Turborepo includes the following packages/apps:
+- apps/web: the public-facing Solvuri website, including the homepage, product messaging, and module showcase
+- apps/store-front: the storefront experience for customers interacting with Solvuri-powered products
+- apps/admin-portal: the admin and operational surface for managing the platform experience
+- packages/ui: reusable design-system components used across the applications
+- packages/types: shared contracts for data structures and domain models
+- packages/\*-config: shared tooling so the apps remain consistent and maintainable
 
-### Apps and Packages
+## Tech stack
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+The frontend is built with modern tooling and a component-driven architecture:
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+- Next.js for application rendering and routing
+- React and TypeScript for UI development
+- Tailwind CSS for styling
+- Turborepo for monorepo orchestration
+- pnpm for package management
+- Framer Motion for interface motion and transitions
 
-### Utilities
+## Getting started
 
-This Turborepo has some additional tools already setup for you:
+### Prerequisites
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+- Node.js 18 or newer
+- pnpm 9 or newer
 
-### Build
+### Install dependencies
 
-To build all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo build
+```bash
+pnpm install
 ```
 
-Without global `turbo`, use your package manager:
+### Run the full monorepo
 
-```sh
-cd my-turborepo
-npx turbo build
-pnpm dlx turbo build
-pnpm exec turbo build
+```bash
+pnpm dev
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+### Run an individual app
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo build --filter=docs
+```bash
+pnpm --filter @repo/web dev
+pnpm --filter @repo/store-front dev
+pnpm --filter @repo/admin-portal dev
 ```
 
-Without global `turbo`:
+### Available app ports
 
-```sh
-npx turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
+- Web marketing site: http://localhost:3000
+- Store front: http://localhost:3001
+- Admin portal: http://localhost:3002
+
+## Development workflow
+
+From the repository root, you can run:
+
+```bash
+pnpm build
+pnpm lint
+pnpm check-types
+pnpm format
 ```
 
-### Develop
+These commands are wired through Turborepo so the shared packages and apps can be built or validated consistently.
 
-To develop all apps and packages, run the following command:
+## Design philosophy
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+The frontend is intentionally built around a few core ideas:
 
-```sh
-cd my-turborepo
-turbo dev
-```
+1. Modular product architecture
+   The user experience should reflect a platform made of independent products rather than one fixed application.
 
-Without global `turbo`, use your package manager:
+2. White-label readiness
+   The UI is designed so brands can present the product as their own, with a polished experience and room for customization.
 
-```sh
-cd my-turborepo
-npx turbo dev
-pnpm exec turbo dev
-pnpm exec turbo dev
-```
+3. Reusability
+   Shared UI and shared types are used to keep the experience consistent across the web, storefront, and admin layers.
 
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+4. Product-first experience
+   The presentation is focused on explaining what Solvuri offers and how the modules fit together.
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+## Notes for contributors
 
-```sh
-turbo dev --filter=web
-```
+When working in this repository:
 
-Without global `turbo`:
+- Keep changes aligned with the Solvuri product story and brand direction.
+- Prefer shared components and shared types when adding new UI.
+- Make sure updates are consistent across the web, storefront, and admin experiences where applicable.
+- Treat this as the frontend foundation of a broader platform rather than a standalone marketing site.
 
-```sh
-npx turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
+## Summary
 
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo login
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo login
-pnpm exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo link
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo link
-pnpm exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+Solvuri Frontend is the user interface layer for a modular white-label operating system for digital commerce and booking products. The repository brings together the marketing experience, customer-facing storefronts, and administrative tools in one coordinated monorepo so the whole product experience can evolve together.

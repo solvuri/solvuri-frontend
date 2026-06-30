@@ -22,10 +22,16 @@ export const Hero = () => {
 
           {/* Responsive Buttons: Stack on mobile, side-by-side on desktop */}
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-            <Button className="text-[#0F0E2A] bg-[#C8D400] font-bold px-8 py-3 rounded-full w-full sm:w-auto">
+            <Button
+              variant="accent"
+              className="text-[#0F0E2A]  bg-[#C8D400] font-bold px-8 py-3 rounded-full w-full sm:w-auto"
+            >
               Explore modules
             </Button>
-            <Button className="border border-[#7C6EFF26] text-[#E2E0FF] px-8 py-3 rounded-full w-full sm:w-auto">
+            <Button
+              variant="accent"
+              className="border border-[#7C6EFF26] text-[#E2E0FF] px-8 py-3 rounded-full w-full sm:w-auto"
+            >
               Get a Super License →
             </Button>
           </div>

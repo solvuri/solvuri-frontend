@@ -18,7 +18,10 @@ export default function NotFound() {
         </p>
 
         <Link href="/">
-          <Button className="bg-[#C8D400] text-[#0F0E2A] px-10 py-3 rounded-full text-lg font-bold hover:bg-[#AAB800] transition-colors">
+          <Button
+            variant="accent"
+            className="bg-[#C8D400] text-[#0F0E2A] px-10 py-3 rounded-full text-lg font-bold hover:bg-[#AAB800] transition-colors"
+          >
             Return Home
           </Button>
         </Link>

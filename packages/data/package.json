@@ -1,0 +1,10 @@
+{
+  "name": "@repo/data",
+  "version": "0.1.0",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "dependencies": {
+    "@tanstack/react-query": "^5.101.0",
+    "@repo/utils": "workspace:*"
+  }
+}

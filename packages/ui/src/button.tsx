@@ -14,7 +14,7 @@ export const Button = ({
   const variants = {
     primary: "bg-primary text-white hover:bg-primaryHover",
     secondary: "bg-inputBg text-text hover:bg-surface",
-    accent: "bg-accent text-background hover:bg-accentMuted",
+    accent: "bg-accent  text-background hover:bg-accentMuted",
   };
 
   return (

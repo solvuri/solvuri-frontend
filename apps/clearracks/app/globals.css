@@ -1,26 +1,43 @@
 @import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* @import "tw-animate-css"; */
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* 1. Fonts */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* 2. Brand Palette (mapped to both your brand-* AND shadcn standards) */
+  --color-background: #ffffff;
+  --color-foreground: #1c1917;
+
+  /* Brand mappings */
+  --color-brand-surface: #fbfbfb;
+  --color-brand-primary: #f97316;
+  --color-brand-secondary: #facc15;
+  --color-brand-muted: #6b7280;
+  --color-brand-border: #e5e7eb;
+
+  /* Standard shadcn mappings (These allow shadcn components to work) */
+  --color-primary: #f97316;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #facc15;
+  --color-secondary-foreground: #1c1917;
+  --color-muted: #6b7280;
+  --color-border: #e5e7eb;
+  --color-input: #e5e7eb;
+  --color-ring: #f97316;
+
+  /* Radius */
+  --radius-lg: 0.625rem;
+  --radius: 0.625rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* 3. Global Defaults */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
   }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
 }

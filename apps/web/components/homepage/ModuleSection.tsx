@@ -45,30 +45,33 @@ export const ModulesSection = () => {
   ];
 
   return (
-    <section className="bg-[#0F0E2A] py-24 px-10">
-      <div className="max-w-300 mx-auto">
-        <div className="mb-16">
-          {/* The "02 — THE MODULES" Label */}
-          <div className="flex items-center gap-3 mb-8 text-[#C8D400] font-medium text-xs tracking-widest uppercase">
+    <section className="bg-[#0F0E2A] py-16 md:py-24 px-6 md:px-10">
+      <div className="max-w-7xl mx-auto">
+        <div className="mb-12 md:mb-16">
+          {/* Label */}
+          <div className="flex items-center justify-center md:justify-start gap-3 mb-6 md:mb-8 text-[#C8D400] font-medium text-xs tracking-widest uppercase">
             <span>02</span>
             <div className="h-px w-8 bg-[#C8D400]"></div>
             <span className="text-[#9896B8]">The Modules</span>
           </div>
 
-          {/* The Main Heading and Description Grid */}
-          <div className="flex justify-between items-end">
-            <h2 className="font-bebas text-[72px] text-[#E2E0FF] leading-none">
-              FOUR PRODUCTS.
-              <br />
-              <span className="text-[#C8D400]">ONE PLATFORM.</span>
+          {/* Heading and Description: Switch from flex to grid on mobile */}
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-12">
+            <h2 className="font-bebas text-[48px] md:text-[72px] text-[#E2E0FF] leading-[0.9] text-center md:text-left w-full md:w-auto">
+              FOUR PRODUCTS.{" "}
+              <span className="text-[#C8D400] block md:inline">
+                ONE PLATFORM.
+              </span>
             </h2>
-            <p className="text-[#9896B8] max-w-sm text-right leading-relaxed">
+            <p className="text-[#9896B8] max-w-sm text-center md:text-right leading-relaxed text-sm md:text-base mx-auto md:mx-0">
               Each module ships as a complete, white-label product ready to sell
               under your name. Deploy one or run them all.
             </p>
           </div>
         </div>
-        <div className="grid md:grid-cols-2 gap-8">
+
+        {/* Module Grid: Remains grid md:grid-cols-2 */}
+        <div className="grid md:grid-cols-2 gap-6 md:gap-8">
           {modules.map((m) => (
             <ModuleCard key={m.title} {...m} />
           ))}

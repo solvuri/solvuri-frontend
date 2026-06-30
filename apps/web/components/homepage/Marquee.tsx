@@ -1,4 +1,3 @@
-// apps/web/components/Marquee.tsx
 "use client";
 import { motion } from "framer-motion";
 
@@ -15,18 +14,23 @@ export const Marquee = () => {
   ];
 
   return (
-    <div className="bg-[#0F0E2A] py-6  overflow-hidden">
+    <div className="w-full bg-[#0F0E2A] py-6 overflow-hidden border-y border-[#7C6EFF]/15">
       <motion.div
-        className="flex items-center gap-12 whitespace-nowrap"
+        className="flex items-center gap-12"
         animate={{ x: ["0%", "-50%"] }}
-        transition={{ duration: 20, ease: "linear", repeat: Infinity }}
+        transition={{
+          duration: 30, // Increased for a smoother, slower flow
+          ease: "linear",
+          repeat: Infinity,
+        }}
       >
+        {/* We double the array to ensure continuous flow */}
         {[...items, ...items].map((item, index) => (
-          <div key={index} className="flex items-center gap-12">
-            <span className="text-[#9896B8] font-medium text-xs tracking-widest uppercase">
+          <div key={index} className="flex items-center gap-12 shrink-0">
+            <span className="text-[#5C5A8A] font-medium text-xs tracking-[0.2em] uppercase">
               {item}
             </span>
-            <span className="w-1 h-1 rounded-full bg-[#7C6EFF]"></span>
+            <span className="w-1.5 h-1.5 rounded-full bg-[#7C6EFF]"></span>
           </div>
         ))}
       </motion.div>

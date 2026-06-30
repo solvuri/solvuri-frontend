@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Button } from "@repo/ui";
 import { BackgroundGrid } from "../shared/BackGroundGrid";
-import { Menu, X } from "lucide-react"; // Make sure to install lucide-react
+import { Menu, X } from "lucide-react";
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -33,7 +33,10 @@ export const Navbar = () => {
 
           {/* Desktop CTA */}
           <div className="hidden md:block">
-            <Button className="text-[#0F0E2A] bg-[#C8D400] font-bold px-5 py-2 rounded-full">
+            <Button
+              variant="accent"
+              className="text-[#0F0E2A] bg-[#C8D400] font-bold px-5 py-2 rounded-full"
+            >
               Get started
             </Button>
           </div>
@@ -61,7 +64,10 @@ export const Navbar = () => {
               {link}
             </a>
           ))}
-          <Button className="w-full bg-[#C8D400] text-[#0F0E2A] font-bold py-3 rounded-full mt-2">
+          <Button
+            variant="accent"
+            className="w-full bg-[#C8D400] text-[#0F0E2A] font-bold py-3 rounded-full mt-2"
+          >
             Get started
           </Button>
         </div>

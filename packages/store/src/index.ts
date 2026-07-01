@@ -1,12 +1,18 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { createCartSlice, CartSlice } from "./cartSlice";
+import { createUISlice, UISlice } from "./uiSlice";
 
-// Shared State Example
-interface AuthState {
-  user: any | null;
-  setUser: (user: any) => void;
-}
+type StoreState = CartSlice & UISlice;
 
-export const useAuthStore = create<AuthState>((set) => ({
-  user: null,
-  setUser: (user) => set({ user }),
-}));
+export const useStore = create<StoreState>()(
+  persist(
+    (...a) => ({
+      ...createCartSlice(...a),
+      ...createUISlice(...a),
+    }),
+    {
+      name: "clearracks-storage",
+    },
+  ),
+);

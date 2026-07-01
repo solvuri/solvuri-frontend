@@ -1,58 +1,63 @@
-# Solvuri Frontend
+﻿# Solvuri Frontend
 
-This repository contains the frontend implementation for Solvuri, a modular, white-label business software platform. Solvuri is designed for brands that want to sell commerce, travel, reservation, and operational services under their own name without rebuilding everything from scratch.
+This repository contains the frontend implementation for Solvuri, a modular, white-label business software platform designed for brands that want to offer commerce, travel, reservation, and operational experiences under their own name without rebuilding everything from scratch.
 
-Rather than shipping one monolithic product, Solvuri is organized as a set of independent modules that can be adopted one at a time or combined under a single Super License. The frontend in this repository powers the public-facing experience, the customer storefront experience, and the administrative portal experience that support those products.
+Rather than shipping one monolithic product, Solvuri is organized as a set of independent modules that can be adopted one at a time or combined under a broader product experience. The frontend in this repository powers the public-facing website, the customer-facing storefront experience, and the administrative portal experience that support those products.
 
 ## What Solvuri is
 
-Solvuri exists to help businesses operate digital products under their own brand through a modular infrastructure layer. In practice, this means:
+Solvuri exists to help businesses launch digital products under their own brand through a modular infrastructure layer. In practice, this means:
 
-- brands can launch white-label products without building the full stack themselves
+- brands can introduce white-label experiences without building the full stack themselves
 - different business units can start with a single module and expand later
-- the platform is structured around reusable modules rather than a single rigid application
+- the platform is structured around reusable product modules rather than a single rigid application
 - the experience is designed to feel polished, productized, and ready to sell under a partner or reseller brand
 
-The current product story presented by the UI centers around four core modules:
+The product story presented in the UI currently centers on a combination of commerce and operations-focused experiences, including:
 
-- ClearRack for commerce experiences
-- Safyri for travel booking experiences
-- Reservr for reservation-based flows
-- Master as part of the broader operating platform
+- ClearRacks for commerce-oriented experiences
+- a public marketing and product storytelling experience in the web app
+- an admin surface for operating and managing the platform experience
 
 ## Repository purpose
 
-This monorepo is the frontend layer for the Solvuri ecosystem. Its purpose is to deliver the user interfaces and shared UI primitives that make the platform usable, consistent, and scalable.
+This monorepo is the frontend layer for the Solvuri ecosystem. Its purpose is to deliver the user interfaces, shared UI primitives, and cross-app state and utility logic that make the platform usable, consistent, and scalable.
 
 The codebase is organized as a Turborepo monorepo with three primary applications and a shared package layer.
 
 ## Project structure
 
-The repository is organized as a Turborepo monorepo with a clear separation between product experiences and shared infrastructure.
+The repository is organized around a clear separation between product experiences and shared infrastructure.
 
 ```text
 solvuri-frontend/
 ├── apps/
 │   ├── web/                # Public marketing website and product storytelling
-│   ├── store-front/        # Customer-facing storefront experience
-│   └── admin-portal/       # Internal/admin experience for operators
+│   ├── clearracks/        # ClearRacks-focused experience with storefront and marketing routes
+│   └── admin-portal/      # Internal/admin experience for operators
 ├── packages/
-│   ├── ui/                 # Shared UI component library
-│   ├── types/              # Shared TypeScript types
-│   ├── eslint-config/     # Shared linting configuration
-│   └── typescript-config/  # Shared TypeScript configuration
-├── package.json            # Root scripts and workspace configuration
-├── pnpm-workspace.yaml     # pnpm workspace definition
-└── turbo.json              # Turborepo pipeline configuration
+│   ├── ui/                # Shared UI component library
+│   ├── store/             # Shared Zustand-based state package
+│   ├── types/             # Shared TypeScript types
+│   ├── utils/             # Shared utility helpers
+│   ├── data/              # Shared data-layer package
+│   ├── eslint-config/    # Shared ESLint configuration
+│   └── typescript-config/# Shared TypeScript configuration
+├── package.json           # Root scripts and workspace configuration
+├── pnpm-workspace.yaml    # pnpm workspace definition
+└── turbo.json             # Turborepo pipeline configuration
 ```
 
 ### What lives in each area
 
 - apps/web: the public-facing Solvuri website, including the homepage, product messaging, and module showcase
-- apps/store-front: the storefront experience for customers interacting with Solvuri-powered products
+- apps/clearracks: the ClearRacks experience, including marketing pages and storefront-oriented routes
 - apps/admin-portal: the admin and operational surface for managing the platform experience
 - packages/ui: reusable design-system components used across the applications
+- packages/store: shared state logic for cart, UI, and related flows
 - packages/types: shared contracts for data structures and domain models
+- packages/utils: shared helpers for common application concerns
+- packages/data: shared data abstractions and related hooks
 - packages/\*-config: shared tooling so the apps remain consistent and maintainable
 
 ## Tech stack
@@ -62,18 +67,23 @@ The frontend is built with modern tooling and a component-driven architecture:
 - Next.js for application rendering and routing
 - React and TypeScript for UI development
 - Tailwind CSS for styling
+- pnpm for package management and workspaces
 - Turborepo for monorepo orchestration
-- pnpm for package management
-- Framer Motion for interface motion and transitions
+- Zustand for shared state management
+- Framer Motion and TanStack React Query for UI motion and data-driven interactions
 
-## Getting started
+## Prerequisites
 
-### Prerequisites
+Before working in this repository, make sure you have:
 
 - Node.js 18 or newer
 - pnpm 9 or newer
 
+## Getting started
+
 ### Install dependencies
+
+From the repository root, install the workspace dependencies:
 
 ```bash
 pnpm install
@@ -81,22 +91,28 @@ pnpm install
 
 ### Run the full monorepo
 
+Start all development apps together:
+
 ```bash
 pnpm dev
 ```
 
 ### Run an individual app
 
+You can also start one application at a time:
+
 ```bash
 pnpm --filter @repo/web dev
-pnpm --filter @repo/store-front dev
+pnpm --filter @repo/clearracks dev
 pnpm --filter @repo/admin-portal dev
 ```
 
 ### Available app ports
 
+The current development ports are:
+
 - Web marketing site: http://localhost:3000
-- Store front: http://localhost:3001
+- ClearRacks experience: http://localhost:3001
 - Admin portal: http://localhost:3002
 
 ## Development workflow
@@ -123,7 +139,7 @@ The frontend is intentionally built around a few core ideas:
    The UI is designed so brands can present the product as their own, with a polished experience and room for customization.
 
 3. Reusability
-   Shared UI and shared types are used to keep the experience consistent across the web, storefront, and admin layers.
+   Shared UI, state, types, and utilities are used to keep the experience consistent across the web, storefront, and admin layers.
 
 4. Product-first experience
    The presentation is focused on explaining what Solvuri offers and how the modules fit together.
@@ -132,10 +148,10 @@ The frontend is intentionally built around a few core ideas:
 
 When working in this repository:
 
-- Keep changes aligned with the Solvuri product story and brand direction.
-- Prefer shared components and shared types when adding new UI.
-- Make sure updates are consistent across the web, storefront, and admin experiences where applicable.
-- Treat this as the frontend foundation of a broader platform rather than a standalone marketing site.
+- keep changes aligned with the Solvuri product story and brand direction
+- prefer shared components and shared packages when adding new UI or logic that may be reused
+- make sure updates are consistent across the web, storefront, and admin experiences where applicable
+- treat this as the frontend foundation of a broader platform rather than a standalone marketing site
 
 ## Summary
 

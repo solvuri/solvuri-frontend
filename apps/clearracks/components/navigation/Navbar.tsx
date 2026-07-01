@@ -54,7 +54,7 @@ export default function Navbar() {
             href="/dashboard"
             className="text-xs font-bold tracking-wider text-brand-primary border-2 border-brand-primary hover:bg-brand-primary hover:text-white uppercase px-4 py-2 rounded-lg transition-all duration-200"
           >
-            Merchant Console
+            Merchant Consoles
           </Link>
         </div>
       </div>

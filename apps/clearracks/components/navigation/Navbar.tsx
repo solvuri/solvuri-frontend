@@ -51,10 +51,12 @@ export default function Navbar() {
         {/* Right Side: Primary CTA Action */}
         <div className="flex items-center gap-4">
           <Link
-            href="/dashboard"
+            href="https://test-store.clearrack.xyz"
+            target="_blank"
+            rel="noopener noreferrer"
             className="text-xs font-bold tracking-wider text-brand-primary border-2 border-brand-primary hover:bg-brand-primary hover:text-white uppercase px-4 py-2 rounded-lg transition-all duration-200"
           >
-            Merchant Consoles
+            Merchant Console
           </Link>
         </div>
       </div>

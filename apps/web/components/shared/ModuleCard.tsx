@@ -1,4 +1,5 @@
 import { Button } from "@repo/ui";
+import Link from "next/link";
 
 interface ModuleCardProps {
   title: string;
@@ -9,16 +10,17 @@ interface ModuleCardProps {
   categoryTextColor: string;
   categoryBgColor: string;
   image: string;
+  href: string;
 }
 
-export const ModuleCard = ({ ...props }: ModuleCardProps) => (
+export const ModuleCard = ({ href, ...props }: ModuleCardProps) => (
   <div className="bg-[#16153D] rounded-2xl flex flex-col md:flex-row overflow-hidden border border-[#7C6EFF]/10 transition-all hover:border-[#7C6EFF]/30">
     {/* Image container: Full width on mobile, 35% on desktop */}
     <div className="w-full md:w-[35%] bg-[#1E1D4A] p-6 flex items-center justify-center">
       <img
         src={props.image}
         alt={props.title}
-        className="w-full max-w-[150px] md:max-w-full h-auto object-contain"
+        className="w-full max-w-37.5 md:max-w-full h-auto object-contain"
       />
     </div>
 
@@ -48,12 +50,15 @@ export const ModuleCard = ({ ...props }: ModuleCardProps) => (
       </ul>
 
       <div className="mt-auto">
-        <Button
-          variant="accent"
-          className={`text-[#0F0E2A] cursor-pointer ${props.buttonColor} w-full py-2.5 rounded-full font-bold transition-transform hover:scale-[1.02]`}
-        >
-          Explore {props.title}
-        </Button>
+        <Link href={href} target="_blank" rel="noopener noreferrer">
+          {" "}
+          <Button
+            variant="accent"
+            className={`text-[#0F0E2A] cursor-pointer ${props.buttonColor} w-full py-2.5 rounded-full font-bold transition-transform hover:scale-[1.02]`}
+          >
+            Explore {props.title}
+          </Button>
+        </Link>
       </div>
     </div>
   </div>

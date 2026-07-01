@@ -3,7 +3,8 @@
 import React, { useState } from "react";
 import { Button } from "@repo/ui";
 import { BackgroundGrid } from "../shared/BackGroundGrid";
-import { Menu, X } from "lucide-react";
+import { Lucide } from "@repo/ui";
+const { Menu, X } = Lucide;
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);

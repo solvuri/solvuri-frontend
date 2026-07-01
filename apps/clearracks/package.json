@@ -1,5 +1,5 @@
 {
-  "name": "@repo/store-front",
+  "name": "@repo/clearracks",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -13,7 +13,10 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "@repo/ui": "workspace:*",
-    "@repo/types": "workspace:*"
+    "@repo/types": "workspace:*",
+    "@repo/store": "workspace:*",
+    "@repo/utils": "workspace:*",
+    "@repo/data": "workspace:*"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

@@ -14,7 +14,8 @@
     "react-dom": "19.2.4",
     "@repo/ui": "workspace:*",
     "@repo/types": "workspace:*",
-    "@repo/store": "workspace:*"
+    "@repo/store": "workspace:*",
+    "@repo/data": "workspace:*"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

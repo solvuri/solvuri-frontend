@@ -1,5 +1,4 @@
 import "./globals.css";
-// Import the wrapper you created
 import Providers from "./Providers";
 
 export default function RootLayout({

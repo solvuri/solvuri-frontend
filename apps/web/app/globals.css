@@ -40,3 +40,7 @@
     @apply font-bebas;
   }
 }
+
+html {
+  scroll-behavior: smooth;
+}

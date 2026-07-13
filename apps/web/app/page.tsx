@@ -13,8 +13,16 @@ export default function Home() {
       <Marquee />
       <TrustedBy />
       <WhatIsSolvuri />
-      <ModulesSection />
-      <SuperLicense />
+
+      {/* Add the ID here */}
+      <section id="modules">
+        <ModulesSection />
+      </section>
+
+      {/* Add the ID here */}
+      <section id="superlicense">
+        <SuperLicense />
+      </section>
     </main>
   );
 }

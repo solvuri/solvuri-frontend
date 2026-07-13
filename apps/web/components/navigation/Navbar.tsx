@@ -34,12 +34,14 @@ export const Navbar = () => {
 
           {/* Desktop CTA */}
           <div className="hidden md:block">
-            <Button
-              variant="accent"
-              className="text-[#0F0E2A] bg-[#C8D400] font-bold px-5 py-2 rounded-full"
-            >
-              Get started
-            </Button>
+            <a href="/#modules">
+              <Button
+                variant="accent"
+                className="text-[#0F0E2A] bg-[#C8D400] font-bold px-5 py-2 rounded-full"
+              >
+                Get started
+              </Button>{" "}
+            </a>
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -65,12 +67,14 @@ export const Navbar = () => {
               {link}
             </a>
           ))}
-          <Button
-            variant="accent"
-            className="w-full bg-[#C8D400] text-[#0F0E2A] font-bold py-3 rounded-full mt-2"
-          >
-            Get started
-          </Button>
+          <a href="/#modules">
+            <Button
+              variant="accent"
+              className="w-full bg-[#C8D400] text-[#0F0E2A] font-bold py-3 rounded-full mt-2"
+            >
+              Get started
+            </Button>{" "}
+          </a>
         </div>
       )}
     </>

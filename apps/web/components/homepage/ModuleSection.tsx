@@ -22,7 +22,7 @@ export const ModulesSection = () => {
       categoryTextColor: "text-[#60A5FA]",
       categoryBgColor: "bg-[#1F2755]",
       image: "/images/safyri.png",
-      href: "https://clearrack.xyz",
+      href: "/modules",
     },
     {
       title: "RESERVR",
@@ -33,7 +33,7 @@ export const ModulesSection = () => {
       categoryTextColor: "text-[#00D4AA]",
       categoryBgColor: "bg-[#132D4B]",
       image: "/images/reservr.png",
-      href: "https://clearrack.xyz",
+      href: "/modules",
     },
     {
       title: "MASTER",
@@ -44,7 +44,7 @@ export const ModulesSection = () => {
       categoryTextColor: "text-[#C8D400]",
       categoryBgColor: "bg-[#252525]",
       image: "/images/master.png",
-      href: "https://clearrack.xyz",
+      href: "/modules",
     },
   ];
 

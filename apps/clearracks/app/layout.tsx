@@ -1,6 +1,6 @@
 import "./globals.css";
 // Import the wrapper you created
-import Providers from "./providers";
+import Providers from "./Providers";
 
 export default function RootLayout({
   children,

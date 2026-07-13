@@ -20,6 +20,9 @@ importers:
 
   apps/admin-portal:
     dependencies:
+      '@repo/data':
+        specifier: workspace:*
+        version: link:../../packages/data
       '@repo/store':
         specifier: workspace:*
         version: link:../../packages/store

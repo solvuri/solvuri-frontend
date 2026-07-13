@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-// import Providers from "./Providers";
+import Providers from "./Providers";
 
 const bebasNeue = localFont({
   src: "../../../apps/web/app/fonts/bebas-neue-v16-latin-regular.woff2",
@@ -21,9 +21,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${bebasNeue.variable} ${montserrat.variable}`}>
       <body className="antialiased">
-        {/* <Providers> */}
-        <main>{children}</main>
-        {/* </Providers> */}
+        <Providers>
+          <main>{children}</main>
+        </Providers>
       </body>
     </html>
   );

@@ -20,6 +20,9 @@ importers:
 
   apps/admin-portal:
     dependencies:
+      '@repo/api-client':
+        specifier: workspace:*
+        version: link:../../packages/api-client
       '@repo/data':
         specifier: workspace:*
         version: link:../../packages/data
@@ -69,6 +72,9 @@ importers:
 
   apps/clearracks:
     dependencies:
+      '@repo/api-client':
+        specifier: workspace:*
+        version: link:../../packages/api-client
       '@repo/data':
         specifier: workspace:*
         version: link:../../packages/data
@@ -121,6 +127,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@repo/api-client':
+        specifier: workspace:*
+        version: link:../../packages/api-client
       '@repo/store':
         specifier: workspace:*
         version: link:../../packages/store
@@ -135,7 +144,7 @@ importers:
         version: 12.42.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       next:
         specifier: 16.2.0
-        version: 16.2.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        version: 16.2.0(@babel/core@7.29.7)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       react:
         specifier: ^19.2.0
         version: 19.2.4
@@ -173,6 +182,16 @@ importers:
       typescript:
         specifier: 5.9.2
         version: 5.9.2
+
+  packages/api-client:
+    dependencies:
+      axios:
+        specifier: ^1.18.1
+        version: 1.18.1
+    devDependencies:
+      '@types/node':
+        specifier: ^26.1.1
+        version: 26.1.1
 
   packages/data:
     dependencies:
@@ -4265,7 +4284,7 @@ snapshots:
 
   natural-compare@1.4.0: {}
 
-  next@16.2.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
+  next@16.2.0(@babel/core@7.29.7)(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
     dependencies:
       '@next/env': 16.2.0
       '@swc/helpers': 0.5.15

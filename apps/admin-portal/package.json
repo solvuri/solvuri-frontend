@@ -15,7 +15,8 @@
     "@repo/ui": "workspace:*",
     "@repo/types": "workspace:*",
     "@repo/store": "workspace:*",
-    "@repo/data": "workspace:*"
+    "@repo/data": "workspace:*",
+    "@repo/api-client": "workspace:*"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

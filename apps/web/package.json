@@ -14,6 +14,7 @@
     "@repo/types": "workspace:*",
     "@repo/ui": "workspace:*",
     "@repo/store": "workspace:*",
+    "@repo/api-client": "workspace:*",
     "framer-motion": "^12.42.0",
     "next": "16.2.0",
     "react": "^19.2.0",

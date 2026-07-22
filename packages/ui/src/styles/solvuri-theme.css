@@ -1,0 +1,25 @@
+@theme {
+  --font-bebas: var(--font-bebas-neue);
+  --font-montserrat: var(--font-montserrat);
+
+  /* Core Brand */
+  --color-background: #0f0e2a;
+  --color-surface: #16153d;
+  --color-primary: #7c6eff;
+  --color-secondary: #c8d400ef;
+  --color-primary-hover: #5b4fd6;
+  --color-primary-light: #e2e0ff;
+
+  /* Accents */
+  --color-accent: #c8d400;
+  --color-accent-muted: #bcc803;
+  --color-ecommerce: #ff8c69;
+  --color-travel: #60a5fa;
+  --color-reservations: #00d4aa;
+
+  /* Text & UI */
+  --color-text: #ffffff;
+  --color-muted: #9896b8;
+  --color-input-bg: #252525;
+  --color-highlight: #7c6eff26;
+}

@@ -12,6 +12,18 @@ export const MOCK_PRODUCTS: Product[] = [
     images: ["https://images.unsplash.com/photo-1596755094514-f87e34085b2c"],
     isSold: false,
     category: { name: "Nairobi Style" },
+    rating: 4.7,
+    reviews: 38,
+    description:
+      "Lightweight linen shirt cut for warm-weather travel. Breathable weave, relaxed fit, and a soft hand-feel that holds up to repeated washing.",
+    highlights: [
+      "100% Breathable Linen",
+      "Relaxed, Roomy Fit",
+      "Colorfast Dye",
+      "Machine Washable",
+    ],
+    colors: ["#e3c8a0", "#1c1917"],
+    sizes: ["S", "M", "L", "XL"],
   },
   {
     id: "prod-2",
@@ -21,6 +33,18 @@ export const MOCK_PRODUCTS: Product[] = [
     images: ["https://images.unsplash.com/photo-1548036328-c9fa89d128fa"],
     isSold: false,
     category: { name: "Kenya Craft" },
+    rating: 4.8,
+    reviews: 21,
+    description:
+      "Full-grain leather duffel handmade by Kenyan craftspeople. Reinforced stitching and brass hardware built for daily carry.",
+    highlights: [
+      "Full-Grain Leather",
+      "Hand-Stitched Seams",
+      "Brass Hardware",
+      "Adjustable Shoulder Strap",
+    ],
+    colors: ["#5d4037", "#3e2723"],
+    sizes: ["One Size"],
   },
   {
     id: "prod-3",
@@ -32,5 +56,17 @@ export const MOCK_PRODUCTS: Product[] = [
     ],
     isSold: false,
     category: { name: "Sport Shoes" },
+    rating: 4.7,
+    reviews: 38,
+    description:
+      "Durable suede sneaker with a rubber sole. Cushioned insole for all-day comfort, water-resistant treatment for outdoor wear.",
+    highlights: [
+      "Premium Suede Upper",
+      "Water-Resistant Treatment",
+      "Cushioned Insole",
+      "Anti-Slip Rubber Sole",
+    ],
+    colors: ["#e3c8a0", "#5d4037"],
+    sizes: ["UK 6", "UK 7", "UK 8", "UK 9", "UK 10", "UK 11", "UK 12"],
   },
 ];

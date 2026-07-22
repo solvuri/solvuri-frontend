@@ -1,6 +1,6 @@
 # ClearRacks
 
-The ClearRacks product: a marketing shell plus a multi-tenant storefront under `storefront/[subdomain]/...`, resolved via subdomain-rewriting middleware. This is the only app in the monorepo with real product/cart/checkout UI.
+The ClearRacks product: a marketing shell plus a multi-tenant storefront under `storefront/[subdomain]/...`, resolved via a subdomain-rewriting `proxy.ts`. This is the only app in the monorepo with real product/cart/checkout UI.
 
 ## Running locally
 
@@ -27,7 +27,7 @@ Cart state is a Zustand store local to this app (`lib/store.ts`), persisted to `
 
 ## Data
 
-The storefront listing page uses `@repo/data`'s `useProducts()` hook, which is currently backed by mock data (`packages/data/src/mock/products.ts`) rather than a real API. Swapping in a real endpoint only requires changing `fetchProducts()` in `packages/data/src/products.ts` — no consumer-side changes needed.
+The storefront listing page uses `@repo/data`'s `useProducts()` hook and the product detail page uses `useProduct(id)`, both currently backed by the same mock data (`packages/data/src/mock/products.ts`) rather than a real API. Swapping in a real endpoint only requires changing `fetchProducts`/`fetchProduct` in `packages/data/src/products.ts` — no consumer-side changes needed.
 
 ## Notes
 

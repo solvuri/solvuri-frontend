@@ -1,5 +1,4 @@
 // apps/admin-portal/app/dashboard/layout.tsx
-import { LocalSidebar } from "@/components/LocalSidebar";
 import { Sidebar } from "@repo/ui";
 import { Lucide } from "@repo/ui";
 const { LayoutDashboard, Store, ShoppingBag, Settings } = Lucide;
@@ -20,12 +19,8 @@ export default function DashboardLayout({
 }) {
   return (
     <div className="flex h-screen bg-background">
-      {/* <aside className="w-64 border-r border-input-bg hidden md:flex flex-col">
-        <Sidebar title="SOLVURI" items={navItems} footerItems={footerItems} />
-      </aside> */}
-
       <aside className="w-64 border-r border-input-bg hidden md:flex flex-col">
-        <LocalSidebar items={navItems} />
+        <Sidebar title="SOLVURI" items={navItems} footerItems={footerItems} />
       </aside>
 
       <main className="flex-1 flex flex-col overflow-hidden">

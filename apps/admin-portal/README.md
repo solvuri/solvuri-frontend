@@ -1,36 +1,25 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Solvuri Admin Portal
 
-## Getting Started
+An internal operator console: a login screen and a dashboard shell (Global Stats, Clearrack Stores, Safyri Bookings, Platform Settings) with static placeholder numbers. No real backend integration yet.
 
-First, run the development server:
+## Running locally
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm --filter @repo/admin-portal dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Runs on [http://localhost:3002](http://localhost:3002).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variable | Purpose |
+| --- | --- |
+| `NEXT_PUBLIC_API_URL` | Base URL passed to `@repo/api-client`'s `createApiClient` (not yet used by any page in this app) |
 
-## Learn More
+Set these in `.env.local` (gitignored, not committed).
 
-To learn more about Next.js, take a look at the following resources:
+## Notes
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Uses `@repo/eslint-config/next-js` with `--max-warnings 0`, same as `apps/web`.
+- Shared design tokens live in `packages/ui/src/styles/solvuri-theme.css`, imported by this app's `globals.css` (same SOLVURI brand palette as `apps/web`).
+- Auth is scaffolded but not real: `proxy.ts` gates `/dashboard` behind a placeholder session cookie that the login form sets on submit without verifying credentials. See `AGENTS.md` for what to change when a real auth provider is wired in.

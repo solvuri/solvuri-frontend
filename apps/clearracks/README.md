@@ -10,15 +10,16 @@ pnpm --filter @repo/clearracks dev
 
 Runs on [http://localhost:3001](http://localhost:3001).
 
-Storefront routes are resolved by subdomain (e.g. `<store>.clearrack.xyz` in production). Locally, the middleware's root-domain check doesn't currently recognize this app's own dev port — see the middleware bug flagged in the architecture review before relying on subdomain routing against `localhost:3001` directly.
+Storefront routes are resolved by subdomain (e.g. `<store>.clearrack.xyz` in production). Locally, `proxy.ts` treats any `localhost:<port>` as the root domain, so subdomain routing (e.g. `demo.localhost:3001`) works whether this app runs on its own dev port or alongside the others.
 
 ## Environment variables
+
+See `.env.example` for the full list with placeholder values. Copy it to `.env.local` (gitignored, not committed) and fill in real values.
 
 | Variable | Purpose |
 | --- | --- |
 | `NEXT_PUBLIC_API_URL` | Base URL passed to `@repo/api-client`'s `createApiClient` (used by `lib/api.ts`'s `clearracksApi`) |
-
-Set these in `.env.local` (gitignored, not committed).
+| `ROOT_DOMAIN` | Production root domain for subdomain routing in `proxy.ts`; falls back to `clearrack.xyz` if unset |
 
 ## State
 

@@ -1,12 +1,13 @@
 "use client";
 
-import { useStore } from "@repo/store";
+import { useStore } from "@/lib/store";
 
 import { Lucide } from "@repo/ui";
+import type { Product } from "@repo/types";
 const { Star, ShoppingCart } = Lucide;
 
 interface Props {
-  product: any;
+  product: Product;
 }
 
 export default function ProductDetail({ product }: Props) {
@@ -20,7 +21,7 @@ export default function ProductDetail({ product }: Props) {
         id: product.id,
         name: product.name,
         price: product.price,
-        image: product.images[0],
+        image: product.images[0] ?? "",
       });
     }
   };
@@ -62,7 +63,7 @@ export default function ProductDetail({ product }: Props) {
         <section className="bg-white p-4 rounded-lg border">
           <h3 className="font-bold mb-2">Highlights</h3>
           <ul className="space-y-1">
-            {product.highlights.map((h: string) => (
+            {(product.highlights ?? []).map((h) => (
               <li
                 key={h}
                 className="text-sm text-zinc-600 flex items-center gap-3"
@@ -80,7 +81,7 @@ export default function ProductDetail({ product }: Props) {
         <section className="bg-white p-4 rounded-lg border">
           <h3 className="font-bold mb-2">Color</h3>
           <div className="flex gap-3">
-            {product.colors.map((c: string) => (
+            {(product.colors ?? []).map((c) => (
               <div
                 key={c}
                 className="w-10 h-10 rounded-lg border"
@@ -94,7 +95,7 @@ export default function ProductDetail({ product }: Props) {
         <section className="bg-white p-4 rounded-lg border">
           <h3 className="font-bold mb-2">Size</h3>
           <div className="grid grid-cols-4 gap-2">
-            {product.sizes.map((s: string) => (
+            {(product.sizes ?? []).map((s) => (
               <button
                 key={s}
                 className="p-2 border rounded-md text-sm hover:border-blue-600"

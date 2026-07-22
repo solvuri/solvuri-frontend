@@ -12,3 +12,6 @@ export const queryClient = new QueryClient({
 
 // Re-export QueryClientProvider so apps can just import it from here
 export { QueryClientProvider } from "@tanstack/react-query";
+
+export { useProducts } from "./products";
+export type { Product } from "@repo/types";

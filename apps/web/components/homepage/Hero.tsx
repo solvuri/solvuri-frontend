@@ -1,4 +1,5 @@
 // apps/web/components/Hero.tsx
+import Image from "next/image";
 import { Button } from "@repo/ui";
 import { BackgroundGrid } from "../shared/BackGroundGrid";
 
@@ -46,10 +47,12 @@ export const Hero = () => {
 
         {/* DevOps Illustration */}
         <div className="flex justify-center md:justify-end order-first md:order-last">
-          <img
+          <Image
             src="/images/devops-illustration.png"
             alt="DevOps Infrastructure"
-            className="w-full max-w-75 md:max-w-150 object-contain"
+            width={616}
+            height={344}
+            className="w-full max-w-75 md:max-w-150 h-auto object-contain"
           />
         </div>
       </section>

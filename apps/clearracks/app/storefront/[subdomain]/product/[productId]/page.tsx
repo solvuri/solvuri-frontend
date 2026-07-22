@@ -2,12 +2,14 @@
 "use client";
 
 import ProductDetail from "@/components/stores/ProductDetail";
+import Image from "next/image";
 import Link from "next/link";
 
 import { Lucide } from "@repo/ui";
+import type { Product } from "@repo/types";
 const { ChevronLeft, Heart, Share2 } = Lucide;
 
-const MOCK_PRODUCT = {
+const MOCK_PRODUCT: Product = {
   id: "prod-10",
   name: "Safari Boots — Suede",
   price: 6500,
@@ -34,10 +36,13 @@ export default function ProductDetailPage() {
     <main className="min-h-screen bg-zinc-50 pb-24">
       {/* 1. Hero Image - Kept here for clean page structure */}
       <div className="relative h-87.5 w-full bg-zinc-200">
-        <img
-          src={MOCK_PRODUCT.images[0]}
+        <Image
+          src={MOCK_PRODUCT.images[0] ?? ""}
           alt={MOCK_PRODUCT.name}
-          className="w-full h-full object-cover"
+          fill
+          sizes="100vw"
+          priority
+          className="object-cover"
         />
         <div className="absolute top-0 w-full flex items-center justify-between p-4">
           <Link

@@ -1,16 +1,23 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@repo/ui";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // Integrate your authentication logic (e.g., NextAuth, Supabase, Clerk)
+    // Stand-in for real credential verification (e.g. NextAuth, Supabase,
+    // Clerk) — sets the same placeholder cookie proxy.ts checks, so the
+    // submit -> verify -> cookie -> redirect -> gated-route shape is
+    // already correct and only the verification step needs replacing.
     console.log("Login attempt:", { email, password });
+    document.cookie = "solvuri_admin_session=placeholder; path=/";
+    router.push("/dashboard");
   };
 
   return (

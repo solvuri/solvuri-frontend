@@ -12,11 +12,11 @@ Runs on [http://localhost:3002](http://localhost:3002).
 
 ## Environment variables
 
+See `.env.example` for the full list with placeholder values. Copy it to `.env.local` (gitignored, not committed) and fill in real values.
+
 | Variable | Purpose |
 | --- | --- |
 | `NEXT_PUBLIC_API_URL` | Base URL passed to `@repo/api-client`'s `createApiClient` (not yet used by any page in this app) |
-
-Set these in `.env.local` (gitignored, not committed).
 
 ## Notes
 

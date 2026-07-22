@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { ROOT_DOMAIN } from "@repo/utils";
+
+// The production root domain differs per environment, so it's an env var
+// rather than a compile-time constant (falls back to the current default).
+const ROOT_DOMAIN = process.env.ROOT_DOMAIN || "clearrack.xyz";
 
 export function proxy(request: NextRequest) {
   const url = request.nextUrl.clone();

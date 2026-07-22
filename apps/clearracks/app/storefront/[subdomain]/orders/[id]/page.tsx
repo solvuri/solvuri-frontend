@@ -1,5 +1,6 @@
 "use client";
 
+import { use } from "react";
 import Link from "next/link";
 import { Lucide } from "@repo/ui";
 const { ChevronLeft, Package, MapPin } = Lucide;
@@ -21,8 +22,10 @@ const ORDER_DETAIL = {
 export default function OrderDetailsPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = use(params);
+
   return (
     <main className="min-h-screen bg-zinc-50 p-4 pb-24">
       {/* Header */}
@@ -30,7 +33,7 @@ export default function OrderDetailsPage({
         <Link href="/orders" className="p-2 bg-white border rounded-lg">
           <ChevronLeft size={20} />
         </Link>
-        <h1 className="text-xl font-black">Order #{params.id}</h1>
+        <h1 className="text-xl font-black">Order #{id}</h1>
       </div>
 
       {/* Status Card */}

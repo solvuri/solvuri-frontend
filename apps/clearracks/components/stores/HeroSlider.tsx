@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 
 // You can extend this with your actual image data later
 const SLIDES = [
@@ -27,10 +28,13 @@ export default function HeroSlider() {
       <div className="flex h-full transition-transform duration-500">
         {SLIDES.map((slide) => (
           <div key={slide.id} className="relative min-w-full h-full">
-            <img
+            <Image
               src={slide.image}
               alt={slide.title}
-              className="w-full h-full object-cover"
+              fill
+              sizes="100vw"
+              priority={slide.id === 1}
+              className="object-cover"
             />
 
             {/* Gradient Overlay for text readability */}

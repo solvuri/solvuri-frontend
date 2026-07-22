@@ -16,3 +16,17 @@ export function useProducts() {
     queryFn: fetchProducts,
   });
 }
+
+// Stand-in for a real `GET /products/:id` call — same swap-out story as
+// fetchProducts above.
+function fetchProduct(id: string): Promise<Product | undefined> {
+  return Promise.resolve(MOCK_PRODUCTS.find((p) => p.id === id));
+}
+
+export function useProduct(id: string) {
+  return useQuery({
+    queryKey: ["products", id],
+    queryFn: () => fetchProduct(id),
+    enabled: Boolean(id),
+  });
+}

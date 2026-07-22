@@ -31,7 +31,7 @@ export default function OrderConfirmationPage() {
 
       {/* What's Next Section */}
       <div className="bg-blue-50/50 border border-blue-100 rounded-2xl p-6 w-full max-w-sm mb-8">
-        <h3 className="text-blue-900 font-bold mb-4">WHAT'S NEXT?</h3>
+        <h3 className="text-blue-900 font-bold mb-4">WHAT&apos;S NEXT?</h3>
         <div className="space-y-4">
           <div className="flex gap-3">
             <Mail size={20} className="text-blue-700 mt-1" />

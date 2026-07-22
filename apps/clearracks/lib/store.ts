@@ -1,3 +1,5 @@
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import { StateCreator } from "zustand";
 
 export interface CartItem {
@@ -16,7 +18,7 @@ export interface CartSlice {
   decrement: (id: string) => void;
 }
 
-export const createCartSlice: StateCreator<CartSlice> = (set) => ({
+const createCartSlice: StateCreator<CartSlice> = (set) => ({
   cart: [],
   addToCart: (item) =>
     set((state) => {
@@ -45,3 +47,9 @@ export const createCartSlice: StateCreator<CartSlice> = (set) => ({
       ),
     })),
 });
+
+export const useStore = create<CartSlice>()(
+  persist(createCartSlice, {
+    name: "clearracks-storage",
+  }),
+);

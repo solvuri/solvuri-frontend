@@ -1,21 +1,20 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { useStore } from "@repo/store";
+import { useStore } from "@/lib/store";
 import { Lucide } from "@repo/ui";
+import type { Product } from "@repo/types";
 const { ShoppingCart, Heart, Star } = Lucide;
 
-interface ProductCardProps {
-  id: string;
-  name: string;
-  price: number;
+type ProductCardProps = Pick<
+  Product,
+  "id" | "name" | "price" | "rating" | "reviews" | "isSold"
+> & {
   categoryName: string;
   image: string;
-  rating?: number;
-  reviews?: number;
-  isSold?: boolean;
-}
+};
 
 export default function ProductCard({
   id,
@@ -48,10 +47,12 @@ export default function ProductCard({
         href={`/product/${id}`}
         className="relative aspect-square overflow-hidden rounded-t-lg bg-brand-surface block"
       >
-        <img
+        <Image
           src={image || "/placeholder.png"}
           alt={name}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          fill
+          sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
 
         <div className="absolute top-2 left-2 pointer-events-none">

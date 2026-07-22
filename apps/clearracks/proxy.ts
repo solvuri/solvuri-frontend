@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { ROOT_DOMAIN } from "@repo/utils";
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const url = request.nextUrl.clone();
   const hostname = request.headers.get("host") || "";
 
@@ -16,11 +16,14 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 2. Identify root domain (clearrack.xyz, www.clearrack.xyz, or local)
+  // 2. Identify root domain (clearrack.xyz, www.clearrack.xyz, or local —
+  // matches any localhost port so this still works when the app isn't
+  // running on its default port, e.g. via `pnpm --filter clearracks dev`)
   const isRootDomain =
     hostname === ROOT_DOMAIN ||
     hostname === `www.${ROOT_DOMAIN}` ||
-    hostname === "localhost:3000";
+    hostname === "localhost" ||
+    /^localhost:\d+$/.test(hostname);
 
   if (!isRootDomain) {
     // 3. Extract subdomain from hostname (e.g., test-store.clearrack.xyz -> test-store)

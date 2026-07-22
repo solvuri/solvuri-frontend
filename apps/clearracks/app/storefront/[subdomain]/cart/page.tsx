@@ -1,7 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { useStore } from "@repo/store";
+import { useStore } from "@/lib/store";
 
 import { Lucide } from "@repo/ui";
 const { ChevronLeft, Trash2, Plus, Minus, Tag } = Lucide;
@@ -36,11 +37,15 @@ export default function CartPage() {
             key={item.id}
             className="bg-white p-4 rounded-xl border flex gap-4"
           >
-            <img
-              src={item.image}
-              alt={item.name}
-              className="w-20 h-20 object-cover rounded-lg"
-            />
+            <div className="relative w-20 h-20 shrink-0">
+              <Image
+                src={item.image}
+                alt={item.name}
+                fill
+                sizes="80px"
+                className="object-cover rounded-lg"
+              />
+            </div>
             <div className="flex-1">
               {/* Product Badge */}
               <span className="text-[10px] font-bold uppercase text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded">

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useStore } from "@repo/store";
+import { useStore } from "@/lib/store";
 
 import { Lucide } from "@repo/ui";
 const { ShoppingCart, Search, Menu } = Lucide;

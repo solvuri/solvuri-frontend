@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Lucide } from "@repo/ui";
-const { ChevronLeft, Package, Truck, Calendar, MapPin } = Lucide;
+const { ChevronLeft, Package, MapPin } = Lucide;
 
 // Mock data - in a real app, you would fetch this by the ID from your database
 const ORDER_DETAIL = {

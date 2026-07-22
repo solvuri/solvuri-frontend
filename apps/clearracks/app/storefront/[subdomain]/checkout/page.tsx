@@ -1,6 +1,7 @@
 "use client";
 
-import { useStore } from "@repo/store";
+import Image from "next/image";
+import { useStore } from "@/lib/store";
 import { Lucide } from "@repo/ui";
 import { useState } from "react";
 const { ChevronLeft, Lock, Truck, CreditCard, CheckCircle2 } = Lucide;
@@ -166,11 +167,15 @@ export default function CheckoutPage() {
                 key={item.id}
                 className="flex gap-4 py-2 border-b last:border-0"
               >
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="w-16 h-16 object-cover rounded-lg border"
-                />
+                <div className="relative w-16 h-16 shrink-0">
+                  <Image
+                    src={item.image}
+                    alt={item.name}
+                    fill
+                    sizes="64px"
+                    className="object-cover rounded-lg border"
+                  />
+                </div>
                 <div className="flex-1 flex justify-between items-center">
                   <div className="flex flex-col">
                     <span className="font-bold text-sm">{item.name}</span>

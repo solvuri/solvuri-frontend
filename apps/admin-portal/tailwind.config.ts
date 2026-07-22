@@ -1,4 +1,4 @@
-// apps/web/tailwind.config.ts
+// apps/admin-portal/tailwind.config.ts
 import sharedConfig from "../../packages/ui/tailwind.config";
 import type { Config } from "tailwindcss";
 

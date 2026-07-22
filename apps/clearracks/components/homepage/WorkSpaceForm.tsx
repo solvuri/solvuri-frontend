@@ -65,7 +65,7 @@ export default function WorkspaceForm() {
           errorMsg: data.error || "Workspace instantiation anomaly.",
         });
       }
-    } catch (err) {
+    } catch {
       setStatus({
         loading: false,
         success: false,

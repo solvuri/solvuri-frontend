@@ -13,8 +13,8 @@ export default function NotFound() {
         </h1>
         <h2 className="text-3xl font-bold text-white mb-6">Page Not Found</h2>
         <p className="text-[#9896B8] mb-10 leading-relaxed">
-          The module or page you are looking for doesn't exist or has been
-          moved. Let's get you back to the platform.
+          The module or page you are looking for doesn&apos;t exist or has been
+          moved. Let&apos;s get you back to the platform.
         </p>
 
         <Link href="/">

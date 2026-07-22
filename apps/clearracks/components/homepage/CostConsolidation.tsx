@@ -93,8 +93,8 @@ export default function CostConsolidation() {
           <div className="space-y-4 pt-2">
             <div className="flex items-center justify-between text-xs sm:text-sm font-bold text-stone-400">
               <div className="flex items-center gap-2">
-                <span className="text-red-500 font-black">✕</span> What You'd
-                Spend Otherwise
+                <span className="text-red-500 font-black">✕</span> What
+                You&apos;d Spend Otherwise
               </div>
               <span className="line-through text-red-400">KES 13,400/mo</span>
             </div>

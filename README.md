@@ -37,10 +37,10 @@ solvuri-frontend/
 │   └── admin-portal/      # Internal/admin experience for operators
 ├── packages/
 │   ├── ui/                # Shared UI component library
-│   ├── store/             # Shared Zustand-based state package
 │   ├── types/             # Shared TypeScript types
 │   ├── utils/             # Shared utility helpers
-│   ├── data/              # Shared data-layer package
+│   ├── api-client/        # Shared HTTP client factory
+│   ├── data/              # Shared React Query client + domain hooks (e.g. `useProducts`)
 │   ├── eslint-config/    # Shared ESLint configuration
 │   └── typescript-config/# Shared TypeScript configuration
 ├── package.json           # Root scripts and workspace configuration
@@ -53,12 +53,14 @@ solvuri-frontend/
 - apps/web: the public-facing Solvuri website, including the homepage, product messaging, and module showcase
 - apps/clearracks: the ClearRacks experience, including marketing pages and storefront-oriented routes
 - apps/admin-portal: the admin and operational surface for managing the platform experience
-- packages/ui: reusable design-system components used across the applications
-- packages/store: shared state logic for cart, UI, and related flows
+- packages/ui: reusable design-system components (buttons, cards, inputs, sidebar); adoption is still growing across the three apps
 - packages/types: shared contracts for data structures and domain models
-- packages/utils: shared helpers for common application concerns
-- packages/data: shared data abstractions and related hooks
+- packages/utils: shared helpers for common application concerns (class-name merging, shared constants)
+- packages/api-client: a factory for creating per-app HTTP clients against `NEXT_PUBLIC_API_URL`
+- packages/data: a shared React Query client plus domain hooks (e.g. `useProducts`, currently backed by mock data — see `packages/data/src/products.ts`) that consumers call the same way a real API-backed hook would be called
 - packages/\*-config: shared tooling so the apps remain consistent and maintainable
+
+Cart/UI state currently lives in `apps/clearracks` directly (Zustand), since it's ClearRacks-specific business logic rather than a cross-app concern — it'll move back into a shared package if a second app needs the same kind of state.
 
 ## Tech stack
 
@@ -69,7 +71,7 @@ The frontend is built with modern tooling and a component-driven architecture:
 - Tailwind CSS for styling
 - pnpm for package management and workspaces
 - Turborepo for monorepo orchestration
-- Zustand for shared state management
+- Zustand for local state management (currently used in the ClearRacks storefront's cart)
 - Framer Motion and TanStack React Query for UI motion and data-driven interactions
 
 ## Prerequisites
@@ -77,7 +79,7 @@ The frontend is built with modern tooling and a component-driven architecture:
 Before working in this repository, make sure you have:
 
 - Node.js 18 or newer
-- pnpm 9 or newer
+- pnpm 11.12.0 (pinned via the `packageManager` field in the root `package.json`)
 
 ## Getting started
 

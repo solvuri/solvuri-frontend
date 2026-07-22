@@ -78,7 +78,7 @@ The frontend is built with modern tooling and a component-driven architecture:
 
 Before working in this repository, make sure you have:
 
-- Node.js 18 or newer
+- Node.js 22.13 or newer (pnpm@11.12.0 requires it — an older Node will fail `pnpm install`)
 - pnpm 11.12.0 (pinned via the `packageManager` field in the root `package.json`)
 
 ## Getting started

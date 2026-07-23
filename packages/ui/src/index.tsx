@@ -3,6 +3,8 @@ export * from "./button";
 export * from "./card";
 export * from "./input";
 export * from "./sidebar";
+export * from "./navbar";
+export * from "./footer";
 
 // Re-export icon libraries
 export * as Lucide from "lucide-react";

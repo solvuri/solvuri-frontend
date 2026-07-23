@@ -57,7 +57,7 @@ solvuri-frontend/
 - packages/types: shared contracts for data structures and domain models
 - packages/utils: shared helpers for common application concerns (class-name merging, shared constants)
 - packages/api-client: a factory for creating per-app HTTP clients against `NEXT_PUBLIC_API_URL`
-- packages/data: a shared React Query client plus domain hooks (e.g. `useProducts`, currently backed by mock data — see `packages/data/src/products.ts`) that consumers call the same way a real API-backed hook would be called
+- packages/data: a shared React Query client plus domain hooks (`useProducts`, `useProduct`, `useOrder`, currently backed by mock data — see `packages/data/src/*.ts`) that consumers call the same way a real API-backed hook would be called
 - packages/\*-config: shared tooling so the apps remain consistent and maintainable
 
 Cart/UI state currently lives in `apps/clearracks` directly (Zustand), since it's ClearRacks-specific business logic rather than a cross-app concern — it'll move back into a shared package if a second app needs the same kind of state.
@@ -125,10 +125,20 @@ From the repository root, you can run:
 pnpm build
 pnpm lint
 pnpm check-types
+pnpm test
 pnpm format
 ```
 
-These commands are wired through Turborepo so the shared packages and apps can be built or validated consistently.
+These commands are wired through Turborepo so the shared packages and apps can be built or validated consistently. `pnpm test` currently covers `packages/data` (the `useProducts`/`useProduct`/`useOrder` hooks) and `apps/clearracks` (the cart store, plus regression tests for both dynamic-route pages) — see each's `vitest.config.ts`.
+
+## Deployment
+
+**This section documents the current inferred model, not a verified decision someone on the team made** — it's written down here so it's an explicit assumption to confirm or correct, rather than something the next person has to reverse-engineer from `.gitignore`.
+
+- Each app (`web`, `clearracks`, `admin-portal`) appears to deploy independently: `.gitignore` excludes `.vercel`, each app's boilerplate README pointed at Vercel before being rewritten, and each runs on its own port locally (3000/3001/3002) with no reverse proxy or edge config checked into this repo.
+- No `vercel.json` or other deployment config exists anywhere in the repo.
+- The only per-app environment difference today is `NEXT_PUBLIC_API_URL` (see each app's `.env.example`); `apps/clearracks` additionally reads `ROOT_DOMAIN` for its subdomain-routing proxy.
+- If "independent per-app Vercel deploys" isn't actually the plan, the CI setup (one workflow building all three apps) and the lack of any shared routing/proxy config would both need revisiting.
 
 ## Design philosophy
 

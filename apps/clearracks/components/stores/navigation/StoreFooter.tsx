@@ -67,13 +67,13 @@ export default function StoreFooter() {
         <div className="space-y-4">
           <h4 className="text-white font-bold">Follow Us</h4>
           <div className="flex gap-4">
-            <a href="#" className="hover:text-blue-400">
+            <a href="#" aria-label="Facebook" className="hover:text-blue-400">
               <FaFacebook size={20} />
             </a>
-            <a href="#" className="hover:text-pink-400">
+            <a href="#" aria-label="Instagram" className="hover:text-pink-400">
               <FaInstagram size={20} />
             </a>
-            <a href="#" className="hover:text-sky-400">
+            <a href="#" aria-label="Twitter" className="hover:text-sky-400">
               <FaTwitter size={20} />
             </a>
           </div>

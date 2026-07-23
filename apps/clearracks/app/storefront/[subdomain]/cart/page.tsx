@@ -21,7 +21,7 @@ export default function CartPage() {
     <main className="min-h-screen bg-zinc-50 p-4 pb-24">
       {/* Header */}
       <div className="flex items-center gap-4 mb-6">
-        <Link href=".." className="p-2 bg-white border rounded-lg">
+        <Link href=".." aria-label="Back" className="p-2 bg-white border rounded-lg">
           <ChevronLeft size={20} />
         </Link>
         <div>
@@ -56,6 +56,7 @@ export default function CartPage() {
                 <h3 className="font-bold text-sm">{item.name}</h3>
                 <button
                   onClick={() => removeFromCart(item.id)}
+                  aria-label={`Remove ${item.name} from cart`}
                   className="text-zinc-400 hover:text-red-600"
                 >
                   <Trash2 size={16} />
@@ -74,13 +75,21 @@ export default function CartPage() {
 
                 {/* Quantity Controls */}
                 <div className="flex items-center gap-3 border rounded-lg w-max p-1">
-                  <button onClick={() => decrement(item.id)} className="p-1">
+                  <button
+                    onClick={() => decrement(item.id)}
+                    aria-label="Decrease quantity"
+                    className="p-1"
+                  >
                     <Minus size={14} />
                   </button>
                   <span className="font-bold text-sm px-2">
                     {item.quantity}
                   </span>
-                  <button onClick={() => increment(item.id)} className="p-1">
+                  <button
+                    onClick={() => increment(item.id)}
+                    aria-label="Increase quantity"
+                    className="p-1"
+                  >
                     <Plus size={14} />
                   </button>
                 </div>

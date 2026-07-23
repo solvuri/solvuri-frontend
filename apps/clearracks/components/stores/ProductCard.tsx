@@ -63,7 +63,10 @@ export default function ProductCard({
       </Link>
 
       {/* Favorite Button */}
-      <button className="absolute top-2 right-2 p-1.5 bg-white/90 backdrop-blur-sm rounded border border-brand-border hover:bg-zinc-50 z-10">
+      <button
+        aria-label="Add to favorites"
+        className="absolute top-2 right-2 p-1.5 bg-white/90 backdrop-blur-sm rounded border border-brand-border hover:bg-zinc-50 z-10"
+      >
         <Heart size={14} className="text-brand-muted" />
       </button>
 
@@ -98,6 +101,7 @@ export default function ProductCard({
             KES {price.toLocaleString()}
           </span>
           <button
+            aria-label={isInCart ? "Added to cart" : "Add to cart"}
             disabled={isSold || isInCart}
             onClick={handleAddToCart}
             className={`p-2 rounded-lg transition-colors cursor-pointer disabled:opacity-50 ${

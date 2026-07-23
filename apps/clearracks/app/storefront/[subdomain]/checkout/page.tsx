@@ -32,6 +32,7 @@ export default function CheckoutPage() {
               ? setCurrentStep((prev) => prev - 1)
               : window.history.back()
           }
+          aria-label="Go back"
           className="p-2 bg-white border rounded-lg"
         >
           <ChevronLeft size={20} />

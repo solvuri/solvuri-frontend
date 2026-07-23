@@ -110,9 +110,13 @@ export default function ProductDetail({ product }: Props) {
         <section className="bg-white p-4 rounded-lg border">
           <h3 className="font-bold mb-2">Quantity</h3>
           <div className="flex items-center gap-4 border rounded-lg w-max p-2">
-            <button className="px-3">-</button>
+            <button aria-label="Decrease quantity" className="px-3">
+              -
+            </button>
             <span className="font-bold">1</span>
-            <button className="px-3">+</button>
+            <button aria-label="Increase quantity" className="px-3">
+              +
+            </button>
           </div>
         </section>
 

@@ -3,21 +3,8 @@
 import { use } from "react";
 import Link from "next/link";
 import { Lucide } from "@repo/ui";
+import { useOrder } from "@repo/data";
 const { ChevronLeft, Package, MapPin } = Lucide;
-
-// Mock data - in a real app, you would fetch this by the ID from your database
-const ORDER_DETAIL = {
-  id: "ORD-8700",
-  status: "Confirmed",
-  date: "June 22, 2026",
-  items: [
-    { name: "Leather Safari Bag", quantity: 2, price: 17000, image: "..." },
-  ],
-  shipping: 200,
-  tax: 2752,
-  total: 19952,
-  address: "Waiyaki Way, Suite 12, Westlands, Nairobi",
-};
 
 export default function OrderDetailsPage({
   params,
@@ -25,26 +12,47 @@ export default function OrderDetailsPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
+  const { data: order, isLoading, error } = useOrder(id);
+
+  if (isLoading) {
+    return (
+      <main className="min-h-screen bg-zinc-50 p-4 pb-24">
+        <p className="text-sm text-zinc-500">Loading order…</p>
+      </main>
+    );
+  }
+
+  if (error || !order) {
+    return (
+      <main className="min-h-screen bg-zinc-50 p-4 pb-24">
+        <p className="text-sm text-red-600">Couldn&apos;t find this order.</p>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-zinc-50 p-4 pb-24">
       {/* Header */}
       <div className="flex items-center gap-4 mb-6">
-        <Link href="/orders" className="p-2 bg-white border rounded-lg">
+        <Link
+          href="/orders"
+          aria-label="Back to orders"
+          className="p-2 bg-white border rounded-lg"
+        >
           <ChevronLeft size={20} />
         </Link>
-        <h1 className="text-xl font-black">Order #{id}</h1>
+        <h1 className="text-xl font-black">Order #{order.id}</h1>
       </div>
 
       {/* Status Card */}
       <div className="bg-white p-6 rounded-xl border mb-4 flex justify-between items-center">
         <div>
           <p className="text-xs text-zinc-500 font-bold uppercase">Status</p>
-          <p className="font-black text-emerald-600">{ORDER_DETAIL.status}</p>
+          <p className="font-black text-emerald-600">{order.status}</p>
         </div>
         <div className="text-right">
           <p className="text-xs text-zinc-500 font-bold uppercase">Date</p>
-          <p className="font-bold text-zinc-900">{ORDER_DETAIL.date}</p>
+          <p className="font-bold text-zinc-900">{order.date}</p>
         </div>
       </div>
 
@@ -53,7 +61,7 @@ export default function OrderDetailsPage({
         <h3 className="font-bold mb-4 flex items-center gap-2">
           <Package size={18} /> Items
         </h3>
-        {ORDER_DETAIL.items.map((item, i) => (
+        {order.items.map((item, i) => (
           <div key={i} className="flex justify-between text-sm py-2">
             <span>
               {item.name}{" "}
@@ -69,22 +77,22 @@ export default function OrderDetailsPage({
             <span>Subtotal</span>
             <span>
               KES{" "}
-              {ORDER_DETAIL.items
+              {order.items
                 .reduce((acc, i) => acc + i.price * i.quantity, 0)
                 .toLocaleString()}
             </span>
           </div>
           <div className="flex justify-between">
             <span>Shipping</span>
-            <span>KES {ORDER_DETAIL.shipping.toLocaleString()}</span>
+            <span>KES {order.shipping.toLocaleString()}</span>
           </div>
           <div className="flex justify-between">
             <span>Tax</span>
-            <span>KES {ORDER_DETAIL.tax.toLocaleString()}</span>
+            <span>KES {order.tax.toLocaleString()}</span>
           </div>
           <div className="flex justify-between font-black text-lg text-blue-900 pt-2 border-t">
             <span>Total</span>
-            <span>KES {ORDER_DETAIL.total.toLocaleString()}</span>
+            <span>KES {order.total.toLocaleString()}</span>
           </div>
         </div>
       </section>
@@ -94,7 +102,7 @@ export default function OrderDetailsPage({
         <h3 className="font-bold mb-4 flex items-center gap-2">
           <MapPin size={18} /> Shipping Address
         </h3>
-        <p className="text-sm text-zinc-600">{ORDER_DETAIL.address}</p>
+        <p className="text-sm text-zinc-600">{order.address}</p>
       </section>
 
       {/* Action Footer */}

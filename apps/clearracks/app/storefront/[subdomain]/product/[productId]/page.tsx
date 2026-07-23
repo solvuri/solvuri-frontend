@@ -51,15 +51,22 @@ export default function ProductDetailPage({
         <div className="absolute top-0 w-full flex items-center justify-between p-4">
           <Link
             href=".."
+            aria-label="Back"
             className="p-2 bg-white/80 backdrop-blur-sm rounded-lg"
           >
             <ChevronLeft size={20} />
           </Link>
           <div className="flex gap-2">
-            <button className="p-2 bg-white/80 backdrop-blur-sm rounded-lg">
+            <button
+              aria-label="Add to favorites"
+              className="p-2 bg-white/80 backdrop-blur-sm rounded-lg"
+            >
               <Heart size={20} />
             </button>
-            <button className="p-2 bg-white/80 backdrop-blur-sm rounded-lg">
+            <button
+              aria-label="Share"
+              className="p-2 bg-white/80 backdrop-blur-sm rounded-lg"
+            >
               <Share2 size={20} />
             </button>
           </div>

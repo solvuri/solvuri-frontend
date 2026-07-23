@@ -37,12 +37,16 @@ export default function StoreNavbar() {
 
         {/* Right Actions */}
         <div className="flex items-center gap-4">
-          <button className="p-2 text-zinc-600 hover:bg-zinc-100 rounded-full">
+          <button
+            aria-label="Search"
+            className="p-2 text-zinc-600 hover:bg-zinc-100 rounded-full"
+          >
             <Search size={20} />
           </button>
 
           <Link
             href="/cart"
+            aria-label={`Cart, ${cartCount} item${cartCount === 1 ? "" : "s"}`}
             className="relative p-2 text-zinc-600 hover:bg-zinc-100 rounded-full"
           >
             <ShoppingCart size={20} />
@@ -53,7 +57,10 @@ export default function StoreNavbar() {
             )}
           </Link>
 
-          <button className="md:hidden p-2 text-zinc-600 hover:bg-zinc-100 rounded-full">
+          <button
+            aria-label="Open menu"
+            className="md:hidden p-2 text-zinc-600 hover:bg-zinc-100 rounded-full"
+          >
             <Menu size={20} />
           </button>
         </div>

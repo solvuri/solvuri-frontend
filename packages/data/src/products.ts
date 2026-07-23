@@ -18,9 +18,11 @@ export function useProducts() {
 }
 
 // Stand-in for a real `GET /products/:id` call — same swap-out story as
-// fetchProducts above.
-function fetchProduct(id: string): Promise<Product | undefined> {
-  return Promise.resolve(MOCK_PRODUCTS.find((p) => p.id === id));
+// fetchProducts above. Resolves to `null` (not `undefined`) when not found —
+// React Query treats an `undefined` queryFn result as invalid and never
+// transitions the query to "success".
+function fetchProduct(id: string): Promise<Product | null> {
+  return Promise.resolve(MOCK_PRODUCTS.find((p) => p.id === id) ?? null);
 }
 
 export function useProduct(id: string) {

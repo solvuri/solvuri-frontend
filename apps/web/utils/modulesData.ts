@@ -5,11 +5,20 @@ import { ModuleInfo } from "@repo/types"; // Import from your shared package
 export const MODULES_DATA: ModuleInfo[] = [
   {
     title: "CLEARRACK",
+    slug: "clearrack",
+    category: "Ecommerce",
     description:
       "High-velocity white-label e-commerce storefront for stock drops.",
     longDescription:
       "ClearRack is an infrastructure engine purpose-built for high-traffic stock drops and limited-edition product releases. It features advanced queue management to prevent server overload, instant checkout capabilities, and real-time transaction monitoring to ensure a seamless experience for your customers during peak spikes.",
+    features: [
+      "Storefront + headless API",
+      "Queue management for stock drops",
+      "Real-time transaction monitoring",
+    ],
+    accentColor: "#FF8C69",
     image: "/images/clearrack.png",
+    href: "https://clearrack.xyz",
     faqs: [
       {
         q: "Is it fully white-label?",
@@ -23,10 +32,19 @@ export const MODULES_DATA: ModuleInfo[] = [
   },
   {
     title: "SAFYRI",
+    slug: "safyri",
+    category: "Travel Booking",
     description: "End-to-end white-label travel booking and management engine.",
     longDescription:
       "Safyri empowers travel agencies and tour operators with a robust booking infrastructure. It supports real-time inventory synchronization across multiple providers, automated itinerary generation, and comprehensive booking lifecycle management from search to confirmation.",
+    features: [
+      "Multi-provider inventory sync",
+      "Automated itinerary generation",
+      "Multi-currency payment support",
+    ],
+    accentColor: "#60A5FA",
     image: "/images/safyri.png",
+    href: "/modules#safyri",
     faqs: [
       {
         q: "Does it support international payments?",
@@ -40,11 +58,20 @@ export const MODULES_DATA: ModuleInfo[] = [
   },
   {
     title: "RESERVR",
+    slug: "reservr",
+    category: "Reservations",
     description:
       "Comprehensive reservation management for services and venues.",
     longDescription:
       "Reservr is a powerful booking solution designed for businesses requiring scheduled time-slot management, such as venue rentals, service appointments, or hospitality bookings. It features smart conflict detection, automated reminder triggers, and seamless calendar integration.",
+    features: [
+      "Smart conflict detection",
+      "Automated reminder triggers",
+      "Calendar integration",
+    ],
+    accentColor: "#00D4AA",
     image: "/images/reservr.png",
+    href: "/modules#reservr",
     faqs: [
       {
         q: "Is there an automated reminder system?",
@@ -58,11 +85,20 @@ export const MODULES_DATA: ModuleInfo[] = [
   },
   {
     title: "MASTER",
+    slug: "master",
+    category: "Platform",
     description:
       "Advanced centralized platform for multi-module orchestration.",
     longDescription:
       "Master serves as the operational hub, allowing you to manage and orchestrate the entire Solvuri module ecosystem from a single interface. It provides unified data analytics, global user management, and centralized financial reporting across all your white-label business entities.",
+    features: [
+      "Unified analytics dashboard",
+      "Cross-module reporting",
+      "Global user management",
+    ],
+    accentColor: "#C8D400",
     image: "/images/master.png",
+    href: "/modules#master",
     faqs: [
       {
         q: "Can I use Master to run only one module?",

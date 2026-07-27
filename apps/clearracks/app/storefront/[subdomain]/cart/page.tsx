@@ -21,7 +21,11 @@ export default function CartPage() {
     <main className="min-h-screen bg-zinc-50 p-4 pb-24">
       {/* Header */}
       <div className="flex items-center gap-4 mb-6">
-        <Link href=".." aria-label="Back" className="p-2 bg-white border rounded-lg">
+        <Link
+          href=".."
+          aria-label="Back"
+          className="p-2 bg-white border rounded-lg"
+        >
           <ChevronLeft size={20} />
         </Link>
         <div>

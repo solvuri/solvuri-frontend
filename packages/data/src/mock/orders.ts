@@ -15,8 +15,7 @@ export const MOCK_ORDERS: Order[] = [
         name: "Leather Safari Bag",
         quantity: 2,
         price: 17000,
-        image:
-          "https://images.unsplash.com/photo-1548036328-c9fa89d128fa",
+        image: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa",
       },
     ],
     shipping: 200,
@@ -33,8 +32,7 @@ export const MOCK_ORDERS: Order[] = [
         name: "Safari Linen Shirt",
         quantity: 2,
         price: 2850,
-        image:
-          "https://images.unsplash.com/photo-1596755094514-f87e34085b2c",
+        image: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c",
       },
     ],
     shipping: 200,

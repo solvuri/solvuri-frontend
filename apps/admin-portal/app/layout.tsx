@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import Providers from "./Providers";
+
+export const metadata: Metadata = {
+  title: "Solvuri Admin",
+  description: "Internal operator console for managing the Solvuri platform.",
+};
 
 const bebasNeue = localFont({
   src: "../../../apps/web/app/fonts/bebas-neue-v16-latin-regular.woff2",

@@ -1,6 +1,6 @@
 # Solvuri Admin Portal
 
-An internal operator console: a login screen and a dashboard shell (Global Stats, Clearrack Stores, Safyri Bookings, Platform Settings) with static placeholder numbers. No real backend integration yet.
+An internal operator console: a login screen and a dashboard (Global Stats, Clearrack Stores, Safyri Bookings, Platform Settings) backed by `@repo/data`'s mock tenant/order/reservation hooks — real page logic, no real backend yet.
 
 ## Running locally
 

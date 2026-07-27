@@ -16,10 +16,10 @@ Storefront routes are resolved by subdomain (e.g. `<store>.clearrack.xyz` in pro
 
 See `.env.example` for the full list with placeholder values. Copy it to `.env.local` (gitignored, not committed) and fill in real values.
 
-| Variable | Purpose |
-| --- | --- |
+| Variable              | Purpose                                                                                            |
+| --------------------- | -------------------------------------------------------------------------------------------------- |
 | `NEXT_PUBLIC_API_URL` | Base URL passed to `@repo/api-client`'s `createApiClient` (used by `lib/api.ts`'s `clearracksApi`) |
-| `ROOT_DOMAIN` | Production root domain for subdomain routing in `proxy.ts`; falls back to `clearrack.xyz` if unset |
+| `ROOT_DOMAIN`         | Production root domain for subdomain routing in `proxy.ts`; falls back to `clearrack.xyz` if unset |
 
 ## State
 

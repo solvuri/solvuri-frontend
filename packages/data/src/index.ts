@@ -14,5 +14,7 @@ export const queryClient = new QueryClient({
 export { QueryClientProvider } from "@tanstack/react-query";
 
 export { useProducts, useProduct } from "./products";
-export { useOrder } from "./orders";
-export type { Product, Order } from "@repo/types";
+export { useOrders, useOrder } from "./orders";
+export { useTenants, useTenant } from "./tenants";
+export { useReservations, useReservation } from "./reservations";
+export type { Product, Order, Tenant, Reservation } from "@repo/types";

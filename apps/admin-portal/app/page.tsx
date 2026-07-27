@@ -8,9 +8,19 @@ export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!email || !password) {
+      setError("Enter both your email and password.");
+      return;
+    }
+    setError("");
+    setIsSubmitting(true);
+
     // Stand-in for real credential verification (e.g. NextAuth, Supabase,
     // Clerk) — sets the same placeholder cookie proxy.ts checks, so the
     // submit -> verify -> cookie -> redirect -> gated-route shape is
@@ -21,11 +31,11 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#0F0E2A] flex items-center justify-center p-6">
-      <div className="w-full max-w-md bg-[#16153D] border border-[#7C6EFF]/15 p-10 rounded-3xl backdrop-blur-sm">
+    <main className="min-h-screen bg-background flex items-center justify-center p-6">
+      <div className="w-full max-w-md bg-surface border border-primary/15 p-10 rounded-3xl backdrop-blur-sm">
         <div className="text-center mb-10">
-          <h1 className="text-3xl font-bebas text-white">SOLVURI ADMIN</h1>
-          <p className="text-[#9896B8] mt-2">
+          <h1 className="text-3xl font-bebas text-text">SOLVURI ADMIN</h1>
+          <p className="text-muted mt-2">
             Sign in to manage your infrastructure
           </p>
         </div>
@@ -34,28 +44,33 @@ export default function LoginPage() {
           <input
             type="email"
             placeholder="Work Email"
-            className="w-full bg-[#0F0E2A] border border-[#7C6EFF]/20 p-4 rounded-xl text-white outline-none focus:border-[#C8D400]"
+            className="w-full bg-background border border-primary/20 p-4 rounded-xl text-text outline-none focus:border-accent"
+            value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
           <input
             type="password"
             placeholder="Password"
-            className="w-full bg-[#0F0E2A] border border-[#7C6EFF]/20 p-4 rounded-xl text-white outline-none focus:border-[#C8D400]"
+            className="w-full bg-background border border-primary/20 p-4 rounded-xl text-text outline-none focus:border-accent"
+            value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+
+          {error && <p className="text-sm text-rose-400">{error}</p>}
 
           <Button
             type="submit"
             variant="accent"
-            className="w-full bg-[#C8D400] text-[#0F0E2A] font-bold py-4 rounded-xl"
+            disabled={isSubmitting}
+            className="w-full font-bold py-4 rounded-xl disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            Sign In
+            {isSubmitting ? "Signing in..." : "Sign In"}
           </Button>
         </form>
 
-        <p className="text-center text-[#9896B8] text-sm mt-8">
+        <p className="text-center text-muted text-sm mt-8">
           Forgot your credentials?{" "}
-          <span className="text-[#C8D400] cursor-pointer">Contact Support</span>
+          <span className="text-accent cursor-pointer">Contact Support</span>
         </p>
       </div>
     </main>

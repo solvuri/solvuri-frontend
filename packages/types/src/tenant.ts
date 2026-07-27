@@ -4,6 +4,11 @@ export interface Tenant {
   id: string;
   name: string;
   domain: string;
+  module: "clearrack" | "safyri" | "reservr" | "master";
+  plan: "starter" | "growth" | "enterprise";
+  status: "active" | "trial" | "suspended";
+  monthlyRevenue: number;
+  createdAt: string;
   settings: TenantSettings;
 }
 

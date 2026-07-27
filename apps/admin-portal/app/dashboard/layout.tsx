@@ -1,4 +1,6 @@
 // apps/admin-portal/app/dashboard/layout.tsx
+"use client";
+
 import { Sidebar } from "@repo/ui";
 import { Lucide } from "@repo/ui";
 const { LayoutDashboard, Store, ShoppingBag, Settings } = Lucide;
@@ -10,7 +12,7 @@ const navItems = [
 ];
 
 const footerItems = [
-  { icon: Settings, label: "Platform Settings", href: "/settings" },
+  { icon: Settings, label: "Platform Settings", href: "/dashboard/settings" },
 ];
 export default function DashboardLayout({
   children,

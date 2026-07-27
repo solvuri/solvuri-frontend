@@ -109,10 +109,7 @@ export default function OrdersPage() {
                   <button className="text-orange-600">Write a Review</button>
                 )}
                 {order.type === "Products" ? (
-                  <Link
-                    href={`/orders/${order.id}`}
-                    className="text-zinc-500"
-                  >
+                  <Link href={`/orders/${order.id}`} className="text-zinc-500">
                     Details &gt;
                   </Link>
                 ) : (

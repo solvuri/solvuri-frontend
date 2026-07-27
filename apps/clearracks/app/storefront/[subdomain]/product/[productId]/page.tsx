@@ -29,9 +29,7 @@ export default function ProductDetailPage({
   if (error || !product) {
     return (
       <main className="min-h-screen bg-zinc-50 pb-24 p-4">
-        <p className="text-sm text-red-600">
-          Couldn&apos;t find this product.
-        </p>
+        <p className="text-sm text-red-600">Couldn&apos;t find this product.</p>
       </main>
     );
   }

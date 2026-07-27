@@ -1,8 +1,18 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { useStore } from "./store";
 
-const item = { id: "prod-1", name: "Safari Linen Shirt", price: 2850, image: "img.jpg" };
-const item2 = { id: "prod-2", name: "Leather Safari Bag", price: 8500, image: "img2.jpg" };
+const item = {
+  id: "prod-1",
+  name: "Safari Linen Shirt",
+  price: 2850,
+  image: "img.jpg",
+};
+const item2 = {
+  id: "prod-2",
+  name: "Leather Safari Bag",
+  price: 8500,
+  image: "img2.jpg",
+};
 
 beforeEach(() => {
   localStorage.clear();

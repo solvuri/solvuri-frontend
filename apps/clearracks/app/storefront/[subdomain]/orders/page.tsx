@@ -108,9 +108,25 @@ export default function OrdersPage() {
                 {order.status === "Delivered" && (
                   <button className="text-orange-600">Write a Review</button>
                 )}
-                <Link href={`/orders/${order.id}`} className="text-zinc-500">
-                  Details &gt;
-                </Link>
+                {order.type === "Products" ? (
+                  <Link
+                    href={`/orders/${order.id}`}
+                    className="text-zinc-500"
+                  >
+                    Details &gt;
+                  </Link>
+                ) : (
+                  // Experience/Service bookings don't have a detail page yet
+                  // (the Order shape is shipping-order-specific: items,
+                  // shipping, tax, address) — show as non-interactive rather
+                  // than link to a page that'll just say "not found".
+                  <span
+                    className="text-zinc-300 cursor-not-allowed"
+                    title="Details for this order type aren't available yet"
+                  >
+                    Details &gt;
+                  </span>
+                )}
               </div>
             </div>
           </div>

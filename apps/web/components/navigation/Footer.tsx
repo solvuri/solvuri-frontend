@@ -1,17 +1,42 @@
 import { Footer as SharedFooter } from "@repo/ui";
+import { MODULES_DATA } from "../../utils/modulesData";
 
 const columns = [
-  { title: "MODULES", links: ["ClearRack", "Safyri", "Bookr", "Flyr"] },
-  { title: "COMPANY", links: ["About", "Careers", "Blog", "Press"] },
-  { title: "LEGAL", links: ["Privacy", "Terms", "Security", "Cookies"] },
+  {
+    title: "MODULES",
+    links: MODULES_DATA.map((m) => ({
+      label: m.title,
+      href: m.href,
+    })),
+  },
+  {
+    title: "COMPANY",
+    links: [
+      { label: "About", href: "/about" },
+      { label: "Careers", href: "/careers" },
+      { label: "Blog", href: "/blog" },
+      { label: "Press", href: "/press" },
+    ],
+  },
+  {
+    title: "LEGAL",
+    links: [
+      { label: "Privacy", href: "/privacy" },
+      { label: "Terms", href: "/terms" },
+      { label: "Security", href: "/security" },
+      { label: "Cookies", href: "/cookies" },
+    ],
+  },
   {
     title: "CONTACT",
-    links: ["Sales", "Support", "Partnerships", "hello@solvuri.com"],
+    links: [
+      { label: "Sales", href: "mailto:sales@solvuri.com" },
+      { label: "Support", href: "mailto:support@solvuri.com" },
+      { label: "Partnerships", href: "mailto:partnerships@solvuri.com" },
+      { label: "hello@solvuri.com", href: "mailto:hello@solvuri.com" },
+    ],
   },
-].map((section) => ({
-  title: section.title,
-  links: section.links.map((label) => ({ label, href: "#" })),
-}));
+];
 
 export const Footer = () => (
   <SharedFooter

@@ -23,11 +23,22 @@ export interface FooterProps {
   variant?: "floating" | "sticky";
 }
 
-export function Footer({ brand, columns, accent, legal, variant = "sticky" }: FooterProps) {
+export function Footer({
+  brand,
+  columns,
+  accent,
+  legal,
+  variant = "sticky",
+}: FooterProps) {
   return variant === "floating" ? (
     <FloatingFooter brand={brand} columns={columns} />
   ) : (
-    <StickyFooter brand={brand} columns={columns} accent={accent} legal={legal} />
+    <StickyFooter
+      brand={brand}
+      columns={columns}
+      accent={accent}
+      legal={legal}
+    />
   );
 }
 
@@ -92,7 +103,10 @@ function StickyFooter({
     <footer className="w-full bg-brand-bg text-brand-muted font-sans antialiased text-xs border-t border-stone-200 mt-24">
       <div className="max-w-7xl mx-auto px-6 py-16 grid grid-cols-2 md:grid-cols-12 gap-y-10 gap-x-6 items-start">
         {columns.map((section) => (
-          <div key={section.title} className="col-span-1 md:col-span-3 space-y-4">
+          <div
+            key={section.title}
+            className="col-span-1 md:col-span-3 space-y-4"
+          >
             <h4 className="font-bold text-stone-900 tracking-wide text-[13px] uppercase">
               {section.title}
             </h4>

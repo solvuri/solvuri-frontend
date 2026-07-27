@@ -42,7 +42,10 @@ function FloatingNavbar({
   return (
     <>
       <nav className="flex items-center justify-between mt-4 mx-auto max-w-300 py-2 px-4 rounded-full border border-primary/15 bg-background/55 backdrop-blur-sm relative z-50">
-        <Link href="/" className="text-lg font-bold tracking-tighter text-text ml-2">
+        <Link
+          href="/"
+          className="text-lg font-bold tracking-tighter text-text ml-2"
+        >
           {logo}
         </Link>
 

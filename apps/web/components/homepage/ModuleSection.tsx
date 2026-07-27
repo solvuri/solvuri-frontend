@@ -1,53 +1,7 @@
 import { ModuleCard } from "../shared/ModuleCard";
+import { MODULES_DATA } from "../../utils/modulesData";
 
 export const ModulesSection = () => {
-  const modules = [
-    {
-      title: "CLEARRACK",
-      category: "Ecommerce",
-      description: "White-label e-commerce storefront...",
-      features: ["Storefront + headless API", "Inventory, orders & fulfilment"],
-      buttonColor: "bg-[#FF8C69]",
-      categoryTextColor: "text-[#FF8C69]",
-      categoryBgColor: "bg-[#332443]",
-      image: "/images/clearrack.png",
-      href: "https://clearrack.xyz",
-    },
-    {
-      title: "SAFYRI",
-      category: "Travel Booking",
-      description: "White-label ecommerce...",
-      features: ["Storefront + headless API", "Inventory, orders & fulfilment"],
-      buttonColor: "bg-[#60A5FA]",
-      categoryTextColor: "text-[#60A5FA]",
-      categoryBgColor: "bg-[#1F2755]",
-      image: "/images/safyri.png",
-      href: "/modules",
-    },
-    {
-      title: "RESERVR",
-      category: "Ecommerce",
-      description: "White-label e-commerce...",
-      features: ["Storefront + headless API", "Inventory, orders & fulfilment"],
-      buttonColor: "bg-[#00D4AA]",
-      categoryTextColor: "text-[#00D4AA]",
-      categoryBgColor: "bg-[#132D4B]",
-      image: "/images/reservr.png",
-      href: "/modules",
-    },
-    {
-      title: "MASTER",
-      category: "Travel Booking",
-      description: "White-label ecommerce...",
-      features: ["Storefront + headless API", "Inventory, orders & fulfilment"],
-      buttonColor: "bg-[#C8D400]",
-      categoryTextColor: "text-[#C8D400]",
-      categoryBgColor: "bg-[#252525]",
-      image: "/images/master.png",
-      href: "/modules",
-    },
-  ];
-
   return (
     <section className="bg-[#0F0E2A] py-16 md:py-24 px-6 md:px-10">
       <div className="max-w-7xl mx-auto">
@@ -76,7 +30,7 @@ export const ModulesSection = () => {
 
         {/* Module Grid: Remains grid md:grid-cols-2 */}
         <div className="grid md:grid-cols-2 gap-6 md:gap-8">
-          {modules.map((m) => (
+          {MODULES_DATA.map((m) => (
             <ModuleCard key={m.title} {...m} />
           ))}
         </div>

@@ -1,7 +1,14 @@
 // apps/web/app/superlicense/page.tsx
+import type { Metadata } from "next";
 import { BackgroundGrid } from "../../components/shared/BackGroundGrid";
 import { Button } from "@repo/ui";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Super License | Solvuri",
+  description:
+    "One license, every module — ClearRack, Safyri, Reservr, and Master under a single contract with a unified admin hub.",
+};
 
 export default function SuperLicensePage() {
   return (
@@ -55,7 +62,7 @@ export default function SuperLicensePage() {
               Request a demo or speak with our solutions team to tailor your
               license.
             </p>
-            <Link href="/contact">
+            <Link href="/contact?reason=super-license">
               <Button className="bg-[#0F0E2A] text-white px-8 py-4 rounded-full font-bold">
                 Talk to Sales
               </Button>

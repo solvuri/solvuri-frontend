@@ -4,8 +4,8 @@ import { motion } from "framer-motion";
 export const Marquee = () => {
   const items = [
     "SAFYRI",
-    "BOOKR",
-    "FLYR",
+    "RESERVR",
+    "MASTER",
     "WHITE-LABEL",
     "MODULAR",
     "SCALABLE",

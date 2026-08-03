@@ -17,4 +17,5 @@ export { useProducts, useProduct } from "./products";
 export { useOrders, useOrder } from "./orders";
 export { useTenants, useTenant } from "./tenants";
 export { useReservations, useReservation } from "./reservations";
-export type { Product, Order, Tenant, Reservation } from "@repo/types";
+export { useSales, useSale } from "./sales";
+export type { Product, Order, Tenant, Reservation, Sale } from "@repo/types";

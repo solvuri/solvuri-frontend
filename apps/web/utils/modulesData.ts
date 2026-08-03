@@ -110,4 +110,32 @@ export const MODULES_DATA: ModuleInfo[] = [
       },
     ],
   },
+  {
+    title: "POS",
+    slug: "pos",
+    category: "Point of Sale",
+    description:
+      "In-person register for walk-in sales, synced with the rest of your Solvuri modules.",
+    longDescription:
+      "POS brings the same white-label infrastructure to in-person retail. Ring up sales from a shared product catalog, take cash, card, or M-Pesa payments, and keep a running sales history — all on the same platform as your online storefront.",
+    features: [
+      "Fast checkout for walk-in customers",
+      "Cash, card & M-Pesa tender",
+      "Shared product catalog with ClearRack",
+      "Works on any tablet or laptop",
+    ],
+    accentColor: "#F59E0B",
+    image: "/images/pos.png",
+    href: "https://solvuripos.xyz",
+    faqs: [
+      {
+        q: "Does it share products with ClearRack?",
+        a: "Yes, POS reads from the same product catalog, so in-person and online inventory stay in sync.",
+      },
+      {
+        q: "What payment methods are supported?",
+        a: "Cash, card, and M-Pesa out of the box.",
+      },
+    ],
+  },
 ];

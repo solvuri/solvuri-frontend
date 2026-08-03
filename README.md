@@ -2,7 +2,7 @@
 
 This repository contains the frontend implementation for Solvuri, a modular, white-label business software platform designed for brands that want to offer commerce, travel, reservation, and operational experiences under their own name without rebuilding everything from scratch.
 
-Rather than shipping one monolithic product, Solvuri is organized as a set of independent modules that can be adopted one at a time or combined under a broader product experience. The frontend in this repository powers the public-facing website, the customer-facing storefront experience, and the administrative portal experience that support those products.
+Rather than shipping one monolithic product, Solvuri is organized as a set of independent modules that can be adopted one at a time or combined under a broader product experience. The frontend in this repository powers the public-facing website, the customer-facing storefront experience, the in-person POS register experience, and the administrative portal experience that support those products.
 
 ## What Solvuri is
 
@@ -16,6 +16,7 @@ Solvuri exists to help businesses launch digital products under their own brand 
 The product story presented in the UI currently centers on a combination of commerce and operations-focused experiences, including:
 
 - ClearRacks for commerce-oriented experiences
+- POS for in-person, register-based sales
 - a public marketing and product storytelling experience in the web app
 - an admin surface for operating and managing the platform experience
 
@@ -23,7 +24,7 @@ The product story presented in the UI currently centers on a combination of comm
 
 This monorepo is the frontend layer for the Solvuri ecosystem. Its purpose is to deliver the user interfaces, shared UI primitives, and cross-app state and utility logic that make the platform usable, consistent, and scalable.
 
-The codebase is organized as a Turborepo monorepo with three primary applications and a shared package layer.
+The codebase is organized as a Turborepo monorepo with four primary applications and a shared package layer.
 
 ## Project structure
 
@@ -34,7 +35,8 @@ solvuri-frontend/
 ├── apps/
 │   ├── web/                # Public marketing website and product storytelling
 │   ├── clearracks/        # ClearRacks-focused experience with storefront and marketing routes
-│   └── admin-portal/      # Internal/admin experience for operators
+│   ├── admin-portal/      # Internal/admin experience for operators
+│   └── pos/                # In-person register app for the POS module
 ├── packages/
 │   ├── ui/                # Shared UI component library
 │   ├── types/             # Shared TypeScript types
@@ -53,11 +55,12 @@ solvuri-frontend/
 - apps/web: the public-facing Solvuri website, including the homepage, product messaging, and module showcase
 - apps/clearracks: the ClearRacks experience, including marketing pages and storefront-oriented routes
 - apps/admin-portal: the admin and operational surface for managing the platform experience
-- packages/ui: reusable design-system components (buttons, cards, inputs, sidebar); adoption is still growing across the three apps
+- apps/pos: the in-person register experience for the POS module — product catalog, running sale, cash/card/M-Pesa tender, receipts, and sales history
+- packages/ui: reusable design-system components (buttons, cards, inputs, sidebar); adoption is still growing across the four apps
 - packages/types: shared contracts for data structures and domain models
 - packages/utils: shared helpers for common application concerns (class-name merging, shared constants)
 - packages/api-client: a factory for creating per-app HTTP clients against `NEXT_PUBLIC_API_URL`
-- packages/data: a shared React Query client plus domain hooks (`useProducts`, `useProduct`, `useOrder`, currently backed by mock data — see `packages/data/src/*.ts`) that consumers call the same way a real API-backed hook would be called
+- packages/data: a shared React Query client plus domain hooks (`useProducts`, `useProduct`, `useOrders`, `useOrder`, `useTenants`, `useTenant`, `useReservations`, `useReservation`, `useSales`, `useSale`, currently backed by mock data — see `packages/data/src/*.ts`) that consumers call the same way a real API-backed hook would be called
 - packages/\*-config: shared tooling so the apps remain consistent and maintainable
 
 Cart/UI state currently lives in `apps/clearracks` directly (Zustand), since it's ClearRacks-specific business logic rather than a cross-app concern — it'll move back into a shared package if a second app needs the same kind of state.
@@ -107,6 +110,7 @@ You can also start one application at a time:
 pnpm --filter @repo/web dev
 pnpm --filter @repo/clearracks dev
 pnpm --filter @repo/admin-portal dev
+pnpm --filter @repo/pos dev
 ```
 
 ### Available app ports
@@ -116,6 +120,7 @@ The current development ports are:
 - Web marketing site: http://localhost:3000
 - ClearRacks experience: http://localhost:3001
 - Admin portal: http://localhost:3002
+- POS register: http://localhost:3003
 
 ## Development workflow
 
@@ -129,16 +134,16 @@ pnpm test
 pnpm format
 ```
 
-These commands are wired through Turborepo so the shared packages and apps can be built or validated consistently. `pnpm test` currently covers `packages/data` (the `useProducts`/`useProduct`/`useOrder` hooks) and `apps/clearracks` (the cart store, plus regression tests for both dynamic-route pages) — see each's `vitest.config.ts`.
+These commands are wired through Turborepo so the shared packages and apps can be built or validated consistently. `pnpm test` currently covers `packages/data` (the products/orders/tenants/reservations/sales hooks), `apps/clearracks` (the cart store, plus regression tests for both dynamic-route pages), and `apps/pos` (the register store, plus a regression test for the sale-detail page) — see each's `vitest.config.ts`.
 
 ## Deployment
 
 **This section documents the current inferred model, not a verified decision someone on the team made** — it's written down here so it's an explicit assumption to confirm or correct, rather than something the next person has to reverse-engineer from `.gitignore`.
 
-- Each app (`web`, `clearracks`, `admin-portal`) appears to deploy independently: `.gitignore` excludes `.vercel`, each app's boilerplate README pointed at Vercel before being rewritten, and each runs on its own port locally (3000/3001/3002) with no reverse proxy or edge config checked into this repo.
+- Each app (`web`, `clearracks`, `admin-portal`, `pos`) appears to deploy independently: `.gitignore` excludes `.vercel`, each app's boilerplate README pointed at Vercel before being rewritten, and each runs on its own port locally (3000/3001/3002/3003) with no reverse proxy or edge config checked into this repo.
 - No `vercel.json` or other deployment config exists anywhere in the repo.
-- The only per-app environment difference today is `NEXT_PUBLIC_API_URL` (see each app's `.env.example`); `apps/clearracks` additionally reads `ROOT_DOMAIN` for its subdomain-routing proxy.
-- If "independent per-app Vercel deploys" isn't actually the plan, the CI setup (one workflow building all three apps) and the lack of any shared routing/proxy config would both need revisiting.
+- The only per-app environment difference today is `NEXT_PUBLIC_API_URL` (see each app's `.env.example`); `apps/clearracks` additionally reads `ROOT_DOMAIN` and `apps/pos` reads `POS_ROOT_DOMAIN`, both for their respective subdomain-routing proxies.
+- If "independent per-app Vercel deploys" isn't actually the plan, the CI setup (one workflow building all four apps) and the lack of any shared routing/proxy config would both need revisiting.
 
 ## Design philosophy
 
@@ -151,7 +156,7 @@ The frontend is intentionally built around a few core ideas:
    The UI is designed so brands can present the product as their own, with a polished experience and room for customization.
 
 3. Reusability
-   Shared UI, state, types, and utilities are used to keep the experience consistent across the web, storefront, and admin layers.
+   Shared UI, state, types, and utilities are used to keep the experience consistent across the web, storefront, POS, and admin layers.
 
 4. Product-first experience
    The presentation is focused on explaining what Solvuri offers and how the modules fit together.
@@ -162,7 +167,7 @@ When working in this repository:
 
 - keep changes aligned with the Solvuri product story and brand direction
 - prefer shared components and shared packages when adding new UI or logic that may be reused
-- make sure updates are consistent across the web, storefront, and admin experiences where applicable
+- make sure updates are consistent across the web, storefront, POS, and admin experiences where applicable
 - treat this as the frontend foundation of a broader platform rather than a standalone marketing site
 
 ## Summary

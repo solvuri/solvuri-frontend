@@ -1,0 +1,21 @@
+/* apps/pos/app/globals.css */
+@import "tailwindcss";
+@import "../../../packages/ui/src/styles/solvuri-theme.css";
+
+@source "../../../packages/ui/src/**/*.{js,ts,jsx,tsx}";
+@source "../app/**/*.{js,ts,jsx,tsx,mdx}";
+
+@layer base {
+  body {
+    @apply bg-background text-text min-h-screen;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-bebas;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}

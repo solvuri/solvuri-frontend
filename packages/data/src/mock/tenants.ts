@@ -1,7 +1,7 @@
 import type { Tenant } from "@repo/types";
 
 // Stand-in tenant data until a real tenant/subscription API exists. Spans
-// all 4 modules with varied plan/status/revenue so admin views have
+// all 5 modules with varied plan/status/revenue so admin views have
 // something realistic to filter and sum over. monthlyRevenue is in KES,
 // matching apps/clearracks's existing currency convention.
 export const MOCK_TENANTS: Tenant[] = [
@@ -92,5 +92,27 @@ export const MOCK_TENANTS: Tenant[] = [
     monthlyRevenue: 300000,
     createdAt: "2025-05-01",
     settings: { whatsappNumber: "+254712345008", themeColor: "#C8D400" },
+  },
+  {
+    id: "tnt-009",
+    name: "Westlands Express Mart",
+    domain: "demo.solvuripos.xyz",
+    module: "pos",
+    plan: "growth",
+    status: "active",
+    monthlyRevenue: 540000,
+    createdAt: "2026-02-18",
+    settings: { whatsappNumber: "+254712345009", themeColor: "#F59E0B" },
+  },
+  {
+    id: "tnt-010",
+    name: "Nakuru Corner Shop",
+    domain: "nakurucorner.solvuripos.xyz",
+    module: "pos",
+    plan: "starter",
+    status: "active",
+    monthlyRevenue: 95000,
+    createdAt: "2026-05-22",
+    settings: { whatsappNumber: "+254712345010", themeColor: "#F59E0B" },
   },
 ];

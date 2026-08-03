@@ -11,6 +11,7 @@ export const Marquee = () => {
     "SCALABLE",
     "YOUR BRAND",
     "CLEARRACK",
+    "POS",
   ];
 
   return (

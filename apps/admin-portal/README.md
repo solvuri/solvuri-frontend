@@ -16,10 +16,10 @@ See `.env.example` for the full list with placeholder values. Copy it to `.env.l
 
 | Variable              | Purpose                                                                                          |
 | --------------------- | ------------------------------------------------------------------------------------------------ |
-| `NEXT_PUBLIC_API_URL` | Base URL passed to `@repo/api-client`'s `createApiClient` (not yet used by any page in this app) |
+| `NEXT_PUBLIC_API_URL` | Base URL passed to `@repo/api-client`'s `createApiClient` (`adminApi` in `lib/api.ts`) — the real `backend-api-test.solvuri.com` environment for now |
 
 ## Notes
 
 - Uses `@repo/eslint-config/next-js` with `--max-warnings 0`, same as `apps/web`.
 - Shared design tokens live in `packages/ui/src/styles/solvuri-theme.css`, imported by this app's `globals.css` (same SOLVURI brand palette as `apps/web`).
-- Auth is scaffolded but not real: `proxy.ts` gates `/dashboard` behind a placeholder session cookie that the login form sets on submit without verifying credentials. See `AGENTS.md` for what to change when a real auth provider is wired in.
+- Auth is real: login goes through the backend's JWT flow (Admin/SuperAdmin accounts require an OTP step), and `proxy.ts` gates `/dashboard` on the resulting token's `AppRole` claim. See `AGENTS.md` for the exact flow and what's still mock-data-only.

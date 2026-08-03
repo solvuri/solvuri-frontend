@@ -6,6 +6,9 @@ const STATUS_STYLES: Record<string, string> = {
   pending: "bg-amber-500/15 text-amber-400",
   suspended: "bg-rose-500/15 text-rose-400",
   cancelled: "bg-rose-500/15 text-rose-400",
+  cash: "bg-emerald-500/15 text-emerald-400",
+  card: "bg-sky-500/15 text-sky-400",
+  mpesa: "bg-amber-500/15 text-amber-400",
 };
 
 const DEFAULT_STYLE = "bg-muted/15 text-muted";

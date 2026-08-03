@@ -5,11 +5,19 @@ import { useRouter } from "next/navigation";
 import { Sidebar } from "@repo/ui";
 import { Lucide } from "@repo/ui";
 import { clearAuthToken } from "@repo/api-client";
-const { LayoutDashboard, Store, ShoppingBag, CreditCard, Settings, LogOut } =
-  Lucide;
+const {
+  LayoutDashboard,
+  Building2,
+  Store,
+  ShoppingBag,
+  CreditCard,
+  Settings,
+  LogOut,
+} = Lucide;
 
 const navItems = [
   { icon: LayoutDashboard, label: "Global Stats", href: "/dashboard" },
+  { icon: Building2, label: "Merchants", href: "/dashboard/merchants" },
   { icon: Store, label: "Clearrack Stores", href: "/dashboard/clearrack" },
   { icon: ShoppingBag, label: "Safyri Bookings", href: "/dashboard/safyri" },
   { icon: CreditCard, label: "POS Locations", href: "/dashboard/pos" },

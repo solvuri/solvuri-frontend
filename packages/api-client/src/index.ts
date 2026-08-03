@@ -48,3 +48,4 @@ export const createApiClient = (baseURL: string) => {
 export * from "./types";
 export * from "./token";
 export * from "./auth";
+export * from "./registration";

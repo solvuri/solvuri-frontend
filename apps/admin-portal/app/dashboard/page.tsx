@@ -1,31 +1,69 @@
 "use client";
 
-import Link from "next/link";
-import { useOrders, useReservations, useTenants } from "@repo/data";
-import { Button, Card, Lucide } from "@repo/ui";
+import { useEffect, useState } from "react";
+import {
+  getRevenueReport,
+  listPayments,
+  type Payment,
+  type RevenueReport,
+} from "@repo/api-client";
+import { Card, Lucide } from "@repo/ui";
+import { adminApi } from "../../lib/api";
 import { StatusBadge } from "../../components/StatusBadge";
 
-const { DollarSign, Store, Package, CalendarClock } = Lucide;
+const { DollarSign, Receipt, Store, TrendingUp } = Lucide;
+
+const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
 
 export default function AdminDashboard() {
-  const { data: tenants, isLoading: tenantsLoading } = useTenants();
-  const { data: orders, isLoading: ordersLoading } = useOrders();
-  const { data: reservations, isLoading: reservationsLoading } =
-    useReservations();
+  const [revenue, setRevenue] = useState<RevenueReport | null>(null);
+  const [payments, setPayments] = useState<Payment[] | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const isLoading = tenantsLoading || ordersLoading || reservationsLoading;
+  useEffect(() => {
+    const to = new Date().toISOString();
+    const from = new Date(Date.now() - THIRTY_DAYS_MS).toISOString();
 
-  const totalRevenue =
-    tenants?.reduce((sum, t) => sum + t.monthlyRevenue, 0) ?? 0;
-  const activeStores =
-    tenants?.filter((t) => t.module === "clearrack" && t.status === "active")
-      .length ?? 0;
-  const pendingOrders =
-    orders?.filter((o) => o.status !== "Delivered").length ?? 0;
-  const pendingBookings =
-    reservations?.filter((r) => r.status === "pending").length ?? 0;
+    // Independent fetches — a failure in one (e.g. an empty/erroring ledger)
+    // must not block the other, same Promise.allSettled convention used on
+    // the merchants page.
+    Promise.allSettled([
+      getRevenueReport(adminApi, from, to, "day"),
+      listPayments(adminApi),
+    ]).then(([revenueResult, paymentsResult]) => {
+      if (revenueResult.status === "fulfilled") {
+        setRevenue(revenueResult.value);
+      } else {
+        setError(
+          revenueResult.reason instanceof Error
+            ? revenueResult.reason.message
+            : "Couldn't load the revenue report.",
+        );
+      }
+      if (paymentsResult.status === "fulfilled") {
+        setPayments(paymentsResult.value);
+      }
+      setIsLoading(false);
+    });
+  }, []);
 
-  const recentOrders = orders?.slice(0, 4) ?? [];
+  const uniqueMerchants = payments
+    ? new Set(payments.map((p) => p.tenantId)).size
+    : 0;
+  const avgPayment =
+    revenue && revenue.paymentCount > 0
+      ? revenue.totalRevenue / revenue.paymentCount
+      : 0;
+  const recentPayments = payments
+    ? [...payments]
+        .sort(
+          (a, b) =>
+            new Date(b.paymentDate).getTime() -
+            new Date(a.paymentDate).getTime(),
+        )
+        .slice(0, 8)
+    : [];
 
   return (
     <div className="p-8">
@@ -33,66 +71,91 @@ export default function AdminDashboard() {
         Dashboard Overview
       </h1>
 
+      {error && (
+        <p className="text-sm text-rose-400 mb-4">{error}</p>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card
-          title="Total Platform Revenue"
-          value={isLoading ? "—" : `KES ${totalRevenue.toLocaleString()}`}
+          title="Platform Revenue (30d)"
+          value={
+            isLoading ? "—" : `KES ${revenue?.totalRevenue.toLocaleString() ?? 0}`
+          }
           icon={<DollarSign className="w-5 h-5" />}
         />
         <Card
-          title="Active Stores"
-          value={isLoading ? "—" : String(activeStores)}
+          title="Payments Processed (30d)"
+          value={isLoading ? "—" : String(revenue?.paymentCount ?? 0)}
+          icon={<Receipt className="w-5 h-5" />}
+        />
+        <Card
+          title="Unique Paying Merchants"
+          value={isLoading ? "—" : String(uniqueMerchants)}
           icon={<Store className="w-5 h-5" />}
         />
         <Card
-          title="Pending Orders"
-          value={isLoading ? "—" : String(pendingOrders)}
-          icon={<Package className="w-5 h-5" />}
-        />
-        <Card
-          title="Pending Bookings"
-          value={isLoading ? "—" : String(pendingBookings)}
-          icon={<CalendarClock className="w-5 h-5" />}
+          title="Avg Payment Value (30d)"
+          value={isLoading ? "—" : `KES ${Math.round(avgPayment).toLocaleString()}`}
+          icon={<TrendingUp className="w-5 h-5" />}
         />
       </div>
 
-      <div className="mt-8 bg-surface rounded-2xl border border-primary/10 p-8">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bebas text-text tracking-wide">
-            Recent Orders
+      {revenue && revenue.byPaymentMode.length > 0 && (
+        <div className="mt-8 bg-surface rounded-2xl border border-primary/10 p-8">
+          <h2 className="text-xl font-bebas text-text tracking-wide mb-6">
+            Revenue by Payment Mode (30d)
           </h2>
-          <Link href="/dashboard/clearrack">
-            <Button variant="accent">View All Orders</Button>
-          </Link>
+          <div className="flex flex-wrap gap-4">
+            {revenue.byPaymentMode.map((mode) => (
+              <div
+                key={mode.paymentMode}
+                className="bg-inputBg rounded-xl px-5 py-3"
+              >
+                <StatusBadge status={mode.paymentMode} />
+                <p className="text-text font-bold mt-2">
+                  KES {mode.amount.toLocaleString()}
+                </p>
+                <p className="text-muted text-xs">{mode.count} payments</p>
+              </div>
+            ))}
+          </div>
         </div>
+      )}
 
-        {recentOrders.length === 0 ? (
+      <div className="mt-8 bg-surface rounded-2xl border border-primary/10 p-8">
+        <h2 className="text-xl font-bebas text-text tracking-wide mb-6">
+          Recent Payments
+        </h2>
+
+        {recentPayments.length === 0 ? (
           <p className="text-muted text-sm">
-            {isLoading ? "Loading orders..." : "No orders yet."}
+            {isLoading ? "Loading payments..." : "No payments logged yet."}
           </p>
         ) : (
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-muted uppercase text-xs tracking-widest border-b border-input-bg">
-                <th className="pb-3 font-medium">Order</th>
+                <th className="pb-3 font-medium">Merchant</th>
                 <th className="pb-3 font-medium">Date</th>
-                <th className="pb-3 font-medium">Status</th>
-                <th className="pb-3 font-medium text-right">Total</th>
+                <th className="pb-3 font-medium">Mode</th>
+                <th className="pb-3 font-medium text-right">Amount</th>
               </tr>
             </thead>
             <tbody>
-              {recentOrders.map((order) => (
+              {recentPayments.map((payment) => (
                 <tr
-                  key={order.id}
+                  key={payment.id}
                   className="border-b border-input-bg last:border-0"
                 >
-                  <td className="py-3 text-text">{order.id}</td>
-                  <td className="py-3 text-muted">{order.date}</td>
+                  <td className="py-3 text-text">{payment.tenantBrandName}</td>
+                  <td className="py-3 text-muted">
+                    {new Date(payment.paymentDate).toLocaleDateString()}
+                  </td>
                   <td className="py-3">
-                    <StatusBadge status={order.status} />
+                    <StatusBadge status={payment.paymentMode} />
                   </td>
                   <td className="py-3 text-text text-right">
-                    KES {order.total.toLocaleString()}
+                    KES {payment.amount.toLocaleString()}
                   </td>
                 </tr>
               ))}

@@ -1,6 +1,6 @@
 # Solvuri Admin Portal
 
-An internal operator console: a login screen and a dashboard (Global Stats, Clearrack Stores, Safyri Bookings, Platform Settings) backed by `@repo/data`'s mock tenant/order/reservation hooks — real page logic, no real backend yet.
+An internal operator console: a login screen and a dashboard covering Global Stats, Merchants, Clearrack Stores, Safyri Bookings, POS Locations, and Platform Settings. Auth, Global Stats (real platform revenue), and Merchants (onboarding + M-Pesa verify/enable) are wired to the real backend; Clearrack Stores/Safyri Bookings/POS Locations/Platform Settings still run on `@repo/data`'s mock hooks. See `AGENTS.md` for the exact split.
 
 ## Running locally
 

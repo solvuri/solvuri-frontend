@@ -156,8 +156,8 @@ export interface RegisterAgentResult {
 }
 
 // POST /api/merchants/agents — Merchant owner only. Registers a new
-// cashier/staff login under the caller's own tenant. No merchant-facing
-// app hosts a UI for this yet; exported for future use.
+// cashier/staff login under the caller's own tenant. Used by
+// apps/clearracks' merchant portal (app/merchant/(portal)/agents).
 export async function registerAgent(
   client: AxiosInstance,
   input: RegisterAgentInput,
@@ -167,6 +167,34 @@ export async function registerAgent(
     input,
   );
   return response.data;
+}
+
+// GET /api/merchants/agents — Merchant owner only. Lists the caller's own
+// agents (never another tenant's).
+export async function listAgents(
+  client: AxiosInstance,
+): Promise<RegisterAgentResult[]> {
+  const response = await client.get<RegisterAgentResult[]>(
+    "/api/merchants/agents",
+  );
+  return response.data;
+}
+
+// PUT /api/merchants/agents/{agentId}/deactivate — Merchant owner only.
+// Blocks the agent's ability to log in entirely (not just POS access).
+export async function deactivateAgent(
+  client: AxiosInstance,
+  agentId: number,
+): Promise<void> {
+  await client.put(`/api/merchants/agents/${agentId}/deactivate`);
+}
+
+// PUT /api/merchants/agents/{agentId}/reactivate — Merchant owner only.
+export async function reactivateAgent(
+  client: AxiosInstance,
+  agentId: number,
+): Promise<void> {
+  await client.put(`/api/merchants/agents/${agentId}/reactivate`);
 }
 
 export interface RegisterAdminInput {

@@ -1,6 +1,6 @@
 # Solvuri POS
 
-An in-person register app for the POS module: log in as a cashier, browse a real product catalog, build a running sale, take a cash/card/M-Pesa payment, and view a real receipt — plus a real sales history for the merchant. Multi-tenant via subdomain routing (`<subdomain>.solvuripos.xyz` in production, `<subdomain>.localhost:3003` in dev), same mechanism as `apps/clearracks`'s storefront — but unlike clearracks, every route here requires a real cashier login, since every POS endpoint on the backend requires an authenticated `Merchant`/`MerchantAgent` caller.
+An in-person register app for the POS module: log in as a cashier, browse a real product catalog, build a running sale against a real server-side cart (discounts included), take a split cash/card/M-Pesa payment, and view a real receipt — plus a real sales history and optional register/till session tracking (open/close, cash-in/out, reconciliation) for the merchant. Multi-tenant via subdomain routing (`<subdomain>.solvuripos.xyz` in production, `<subdomain>.localhost:3003` in dev), same mechanism as `apps/clearracks`'s storefront — but unlike clearracks, every route here requires a real cashier login, since every POS endpoint on the backend requires an authenticated `Merchant`/`MerchantAgent` caller.
 
 ## Running locally
 

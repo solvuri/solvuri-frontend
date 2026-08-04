@@ -17,12 +17,12 @@ export default function RegisterPage() {
         {error && (
           <p className="text-sm text-rose-400">Couldn&apos;t load the catalog.</p>
         )}
-        {products && <ProductGrid products={products} />}
+        {products && merchantId !== null && (
+          <ProductGrid products={products} merchantId={merchantId} />
+        )}
       </div>
 
-      <div>
-        <SaleTicket />
-      </div>
+      <div>{merchantId !== null && <SaleTicket merchantId={merchantId} />}</div>
     </div>
   );
 }

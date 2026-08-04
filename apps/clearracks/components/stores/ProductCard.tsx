@@ -5,16 +5,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { useStore } from "@/lib/store";
 import { Lucide } from "@repo/ui";
-import type { Product } from "@repo/types";
-const { ShoppingCart, Heart, Star } = Lucide;
+const { ShoppingCart, Heart } = Lucide;
 
-type ProductCardProps = Pick<
-  Product,
-  "id" | "name" | "price" | "rating" | "reviews" | "isSold"
-> & {
+interface ProductCardProps {
+  id: number;
+  name: string;
+  price: number;
   categoryName: string;
   image: string;
-};
+  inStock: boolean;
+}
 
 export default function ProductCard({
   id,
@@ -22,15 +22,11 @@ export default function ProductCard({
   price,
   categoryName,
   image,
-  rating = 4.7,
-  reviews = 38,
-  isSold = false,
+  inStock,
 }: ProductCardProps) {
-  // Access the cart state and addToCart function
   const cart = useStore((state) => state.cart);
   const addToCart = useStore((state) => state.addToCart);
 
-  // Check if item is already in the cart
   const isInCart = cart.some((item) => item.id === id);
 
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -70,7 +66,7 @@ export default function ProductCard({
         <Heart size={14} className="text-brand-muted" />
       </button>
 
-      {isSold && (
+      {!inStock && (
         <div className="absolute inset-0 bg-white/60 flex items-center justify-center z-10">
           <span className="bg-zinc-900 text-white text-[10px] font-bold uppercase px-3 py-1 rounded">
             Sold Out
@@ -88,13 +84,6 @@ export default function ProductCard({
           <h3 className="text-sm font-medium text-zinc-900 truncate">{name}</h3>
         </Link>
 
-        {/* Rating Row */}
-        <div className="flex items-center gap-1 text-[10px] text-zinc-500">
-          <Star size={10} className="fill-yellow-400 text-yellow-400" />
-          <span className="font-bold text-zinc-700">{rating}</span>
-          <span>({reviews})</span>
-        </div>
-
         {/* Price and Cart Row */}
         <div className="flex items-center justify-between mt-1">
           <span className="text-sm font-bold text-zinc-900">
@@ -102,7 +91,7 @@ export default function ProductCard({
           </span>
           <button
             aria-label={isInCart ? "Added to cart" : "Add to cart"}
-            disabled={isSold || isInCart}
+            disabled={!inStock || isInCart}
             onClick={handleAddToCart}
             className={`p-2 rounded-lg transition-colors cursor-pointer disabled:opacity-50 ${
               isInCart

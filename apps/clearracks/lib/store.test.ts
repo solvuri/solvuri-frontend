@@ -2,13 +2,13 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { useStore } from "./store";
 
 const item = {
-  id: "prod-1",
+  id: 1,
   name: "Safari Linen Shirt",
   price: 2850,
   image: "img.jpg",
 };
 const item2 = {
-  id: "prod-2",
+  id: 2,
   name: "Leather Safari Bag",
   price: 8500,
   image: "img2.jpg",
@@ -51,5 +51,12 @@ describe("useStore cart slice", () => {
 
     useStore.getState().decrement(item.id);
     expect(useStore.getState().cart[0]?.quantity).toBe(1);
+  });
+
+  it("clears the whole cart", () => {
+    useStore.getState().addToCart(item);
+    useStore.getState().addToCart(item2);
+    useStore.getState().clearCart();
+    expect(useStore.getState().cart).toEqual([]);
   });
 });

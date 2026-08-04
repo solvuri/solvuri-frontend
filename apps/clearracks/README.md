@@ -27,7 +27,7 @@ Cart state is a Zustand store local to this app (`lib/store.ts`), persisted to `
 
 ## Data
 
-The storefront listing page uses `@repo/data`'s `useProducts()` hook and the product detail page uses `useProduct(id)`, both currently backed by the same mock data (`packages/data/src/mock/products.ts`) rather than a real API. Swapping in a real endpoint only requires changing `fetchProducts`/`fetchProduct` in `packages/data/src/products.ts` — no consumer-side changes needed.
+The storefront is wired to the real Clearack API (`lib/clearackApi.ts`) — real product/category browsing and checkout, anonymous end-to-end (no buyer login exists in the real system). `lib/merchants.ts` maps a subdomain to a real `merchantId` via a hardcoded stand-in table until a real anonymous domain-lookup endpoint exists. Order history has no real anonymous equivalent, so `orders/page.tsx`/`orders/[id]/page.tsx` are honest stubs, not fabricated data. See `AGENTS.md` for the full list of real-vs-simplified pieces (checkout only uses the no-payment `/request` fallback, not real STK-push).
 
 ## Notes
 

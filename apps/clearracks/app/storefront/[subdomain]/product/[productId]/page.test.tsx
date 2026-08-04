@@ -1,7 +1,6 @@
 import { Suspense } from "react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { act, render, screen } from "@testing-library/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ProductDetailPage from "./page";
 
 // Regression test for the params-as-Promise bug: this page was originally
@@ -9,22 +8,58 @@ import ProductDetailPage from "./page";
 // type-checked fine but silently received `undefined` at runtime in this
 // Next.js version, since `params` is always a Promise — even for Client
 // Components. If this ever regresses back to synchronous access, these
-// tests fail because the product/order never resolves.
+// tests fail because the product never resolves.
 //
 // The initial render must happen inside an awaited `act()` — the page
 // suspends on `use(params)` synchronously inside `render()`, and without
 // this, React schedules the retry outside of what `render()` itself awaits.
+
+vi.mock("@/lib/merchants", () => ({
+  resolveMerchantId: (subdomain: string) =>
+    subdomain === "onestop" ? 1 : null,
+}));
+
+vi.mock("@/lib/clearackApi", () => ({
+  useMerchantProducts: (merchantId: number | null) => {
+    if (merchantId !== 1) {
+      return { data: undefined, isLoading: false, error: null };
+    }
+    return {
+      data: [
+        {
+          id: 101,
+          productName: "Safari Linen Shirt",
+          price: 2850,
+          stockQuantity: 5,
+          mainImageUrl: null,
+          isVisible: true,
+          categoryId: 1,
+        },
+        {
+          id: 102,
+          productName: "Leather Safari Bag",
+          price: 8500,
+          stockQuantity: 2,
+          mainImageUrl: null,
+          isVisible: true,
+          categoryId: 1,
+        },
+      ],
+      isLoading: false,
+      error: null,
+    };
+  },
+  useMerchantCategories: () => ({
+    data: [{ id: 1, categoryName: "Accessories" }],
+    isLoading: false,
+    error: null,
+  }),
+}));
+
 async function renderWithProviders(ui: React.ReactElement) {
-  const queryClient = new QueryClient({
-    defaultOptions: { queries: { retry: false } },
-  });
   let utils!: ReturnType<typeof render>;
   await act(async () => {
-    utils = render(
-      <QueryClientProvider client={queryClient}>
-        <Suspense fallback="loading">{ui}</Suspense>
-      </QueryClientProvider>,
-    );
+    utils = render(<Suspense fallback="loading">{ui}</Suspense>);
   });
   return utils;
 }
@@ -32,7 +67,9 @@ async function renderWithProviders(ui: React.ReactElement) {
 describe("ProductDetailPage", () => {
   it("renders the matching product for a known id", async () => {
     await renderWithProviders(
-      <ProductDetailPage params={Promise.resolve({ productId: "prod-1" })} />,
+      <ProductDetailPage
+        params={Promise.resolve({ subdomain: "onestop", productId: "101" })}
+      />,
     );
 
     expect(await screen.findByText("Safari Linen Shirt")).toBeInTheDocument();
@@ -40,7 +77,9 @@ describe("ProductDetailPage", () => {
 
   it("renders a different product for a different id", async () => {
     await renderWithProviders(
-      <ProductDetailPage params={Promise.resolve({ productId: "prod-2" })} />,
+      <ProductDetailPage
+        params={Promise.resolve({ subdomain: "onestop", productId: "102" })}
+      />,
     );
 
     expect(await screen.findByText("Leather Safari Bag")).toBeInTheDocument();
@@ -49,7 +88,7 @@ describe("ProductDetailPage", () => {
   it("shows a not-found message for an unknown id", async () => {
     await renderWithProviders(
       <ProductDetailPage
-        params={Promise.resolve({ productId: "does-not-exist" })}
+        params={Promise.resolve({ subdomain: "onestop", productId: "999" })}
       />,
     );
 

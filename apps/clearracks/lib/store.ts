@@ -3,7 +3,7 @@ import { persist } from "zustand/middleware";
 import { StateCreator } from "zustand";
 
 export interface CartItem {
-  id: string;
+  id: number;
   name: string;
   price: number;
   image: string;
@@ -13,9 +13,10 @@ export interface CartItem {
 export interface CartSlice {
   cart: CartItem[];
   addToCart: (item: Omit<CartItem, "quantity">) => void;
-  removeFromCart: (id: string) => void;
-  increment: (id: string) => void;
-  decrement: (id: string) => void;
+  removeFromCart: (id: number) => void;
+  increment: (id: number) => void;
+  decrement: (id: number) => void;
+  clearCart: () => void;
 }
 
 const createCartSlice: StateCreator<CartSlice> = (set) => ({
@@ -46,6 +47,7 @@ const createCartSlice: StateCreator<CartSlice> = (set) => ({
         i.id === id && i.quantity > 1 ? { ...i, quantity: i.quantity - 1 } : i,
       ),
     })),
+  clearCart: () => set({ cart: [] }),
 });
 
 export const useStore = create<CartSlice>()(

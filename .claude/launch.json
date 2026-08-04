@@ -1,0 +1,29 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "admin-portal",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "admin-portal", "dev"],
+      "port": 3002
+    },
+    {
+      "name": "clearracks",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "clearracks", "dev"],
+      "port": 3001
+    },
+    {
+      "name": "web",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "web", "dev"],
+      "port": 3000
+    },
+    {
+      "name": "pos",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "pos", "dev"],
+      "port": 3003
+    }
+  ]
+}

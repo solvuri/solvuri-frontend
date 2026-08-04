@@ -2,14 +2,25 @@
 import { useQuery } from "@tanstack/react-query";
 import type {
   PosCart,
+  PosCashierReport,
   PosDiscountInput,
+  PosInventoryItem,
+  PosInventoryMovement,
   PosPaymentInput,
+  PosPaymentMethodReport,
   PosProduct,
+  PosProfitReport,
   PosReceipt,
   PosRegisterReconciliation,
   PosRegisterSession,
+  PosReturnsReport,
   PosSaleDetail,
+  PosSalesReport,
   PosSaleSummary,
+  PosStockBatch,
+  PosTaxReport,
+  PosTopCustomer,
+  PosTopProduct,
 } from "@repo/types";
 import { posApi } from "./api";
 
@@ -308,4 +319,360 @@ export function useReconciliationPreview(
       fetchReconciliationPreview(merchantId as number, sessionId as number),
     enabled: merchantId !== null && sessionId !== null,
   });
+}
+
+// --- Reports (Merchant owner only, or Solvuri admin — never MerchantAgent) ---
+
+export function fetchSalesReport(
+  merchantId: number,
+  from: string,
+  to: string,
+): Promise<PosSalesReport> {
+  return posApi
+    .get<PosSalesReport>("/api/pos/reports/sales", {
+      params: { merchantId, from, to },
+    })
+    .then((res) => res.data);
+}
+
+export function useSalesReport(
+  merchantId: number | null,
+  from: string,
+  to: string,
+) {
+  return useQuery({
+    queryKey: ["pos-report-sales", merchantId, from, to],
+    queryFn: () => fetchSalesReport(merchantId as number, from, to),
+    enabled: merchantId !== null,
+  });
+}
+
+export function fetchProfitReport(
+  merchantId: number,
+  from: string,
+  to: string,
+): Promise<PosProfitReport> {
+  return posApi
+    .get<PosProfitReport>("/api/pos/reports/profit", {
+      params: { merchantId, from, to },
+    })
+    .then((res) => res.data);
+}
+
+export function useProfitReport(
+  merchantId: number | null,
+  from: string,
+  to: string,
+) {
+  return useQuery({
+    queryKey: ["pos-report-profit", merchantId, from, to],
+    queryFn: () => fetchProfitReport(merchantId as number, from, to),
+    enabled: merchantId !== null,
+  });
+}
+
+export function fetchTaxReport(
+  merchantId: number,
+  from: string,
+  to: string,
+): Promise<PosTaxReport> {
+  return posApi
+    .get<PosTaxReport>("/api/pos/reports/tax", {
+      params: { merchantId, from, to },
+    })
+    .then((res) => res.data);
+}
+
+export function useTaxReport(
+  merchantId: number | null,
+  from: string,
+  to: string,
+) {
+  return useQuery({
+    queryKey: ["pos-report-tax", merchantId, from, to],
+    queryFn: () => fetchTaxReport(merchantId as number, from, to),
+    enabled: merchantId !== null,
+  });
+}
+
+export function fetchTopProducts(
+  merchantId: number,
+  from: string,
+  to: string,
+  take = 5,
+): Promise<PosTopProduct[]> {
+  return posApi
+    .get<PosTopProduct[]>("/api/pos/reports/top-products", {
+      params: { merchantId, from, to, take },
+    })
+    .then((res) => res.data);
+}
+
+export function useTopProducts(
+  merchantId: number | null,
+  from: string,
+  to: string,
+  take = 5,
+) {
+  return useQuery({
+    queryKey: ["pos-report-top-products", merchantId, from, to, take],
+    queryFn: () => fetchTopProducts(merchantId as number, from, to, take),
+    enabled: merchantId !== null,
+  });
+}
+
+export function fetchTopCustomers(
+  merchantId: number,
+  from: string,
+  to: string,
+  take = 5,
+): Promise<PosTopCustomer[]> {
+  return posApi
+    .get<PosTopCustomer[]>("/api/pos/reports/top-customers", {
+      params: { merchantId, from, to, take },
+    })
+    .then((res) => res.data);
+}
+
+export function useTopCustomers(
+  merchantId: number | null,
+  from: string,
+  to: string,
+  take = 5,
+) {
+  return useQuery({
+    queryKey: ["pos-report-top-customers", merchantId, from, to, take],
+    queryFn: () => fetchTopCustomers(merchantId as number, from, to, take),
+    enabled: merchantId !== null,
+  });
+}
+
+export function fetchCashierReport(
+  merchantId: number,
+  from: string,
+  to: string,
+): Promise<PosCashierReport[]> {
+  return posApi
+    .get<PosCashierReport[]>("/api/pos/reports/cashiers", {
+      params: { merchantId, from, to },
+    })
+    .then((res) => res.data);
+}
+
+export function useCashierReport(
+  merchantId: number | null,
+  from: string,
+  to: string,
+) {
+  return useQuery({
+    queryKey: ["pos-report-cashiers", merchantId, from, to],
+    queryFn: () => fetchCashierReport(merchantId as number, from, to),
+    enabled: merchantId !== null,
+  });
+}
+
+export function fetchPaymentMethodReport(
+  merchantId: number,
+  from: string,
+  to: string,
+): Promise<PosPaymentMethodReport[]> {
+  return posApi
+    .get<PosPaymentMethodReport[]>("/api/pos/reports/payment-methods", {
+      params: { merchantId, from, to },
+    })
+    .then((res) => res.data);
+}
+
+export function usePaymentMethodReport(
+  merchantId: number | null,
+  from: string,
+  to: string,
+) {
+  return useQuery({
+    queryKey: ["pos-report-payment-methods", merchantId, from, to],
+    queryFn: () => fetchPaymentMethodReport(merchantId as number, from, to),
+    enabled: merchantId !== null,
+  });
+}
+
+export function fetchReturnsReport(
+  merchantId: number,
+  from: string,
+  to: string,
+): Promise<PosReturnsReport> {
+  return posApi
+    .get<PosReturnsReport>("/api/pos/reports/returns", {
+      params: { merchantId, from, to },
+    })
+    .then((res) => res.data);
+}
+
+export function useReturnsReport(
+  merchantId: number | null,
+  from: string,
+  to: string,
+) {
+  return useQuery({
+    queryKey: ["pos-report-returns", merchantId, from, to],
+    queryFn: () => fetchReturnsReport(merchantId as number, from, to),
+    enabled: merchantId !== null,
+  });
+}
+
+// --- Inventory & stock (open to Merchant and MerchantAgent alike) ---
+
+export function fetchInventory(
+  merchantId: number,
+): Promise<PosInventoryItem[]> {
+  return posApi
+    .get<PosInventoryItem[]>("/api/pos/inventory", { params: { merchantId } })
+    .then((res) => res.data);
+}
+
+export function useInventory(merchantId: number | null) {
+  return useQuery({
+    queryKey: ["pos-inventory", merchantId],
+    queryFn: () => fetchInventory(merchantId as number),
+    enabled: merchantId !== null,
+  });
+}
+
+export function fetchLowStock(
+  merchantId: number,
+): Promise<PosInventoryItem[]> {
+  return posApi
+    .get<PosInventoryItem[]>("/api/pos/inventory/low-stock", {
+      params: { merchantId },
+    })
+    .then((res) => res.data);
+}
+
+export function useLowStock(merchantId: number | null) {
+  return useQuery({
+    queryKey: ["pos-inventory-low-stock", merchantId],
+    queryFn: () => fetchLowStock(merchantId as number),
+    enabled: merchantId !== null,
+  });
+}
+
+export function fetchOutOfStock(
+  merchantId: number,
+): Promise<PosInventoryItem[]> {
+  return posApi
+    .get<PosInventoryItem[]>("/api/pos/inventory/out-of-stock", {
+      params: { merchantId },
+    })
+    .then((res) => res.data);
+}
+
+export function useOutOfStock(merchantId: number | null) {
+  return useQuery({
+    queryKey: ["pos-inventory-out-of-stock", merchantId],
+    queryFn: () => fetchOutOfStock(merchantId as number),
+    enabled: merchantId !== null,
+  });
+}
+
+export function fetchInventoryMovements(
+  merchantId: number,
+): Promise<PosInventoryMovement[]> {
+  return posApi
+    .get<PosInventoryMovement[]>("/api/pos/inventory/movements", {
+      params: { merchantId },
+    })
+    .then((res) => res.data);
+}
+
+export function useInventoryMovements(merchantId: number | null) {
+  return useQuery({
+    queryKey: ["pos-inventory-movements", merchantId],
+    queryFn: () => fetchInventoryMovements(merchantId as number),
+    enabled: merchantId !== null,
+  });
+}
+
+// Confirmed via probing: both adjustment and supplier-return responses are
+// just { stockQuantity } — the API doc gives request examples for both but
+// no response body for either.
+export function submitAdjustment(
+  merchantId: number,
+  productId: number,
+  quantity: number,
+  reason: string,
+  notes?: string,
+): Promise<{ stockQuantity: number }> {
+  return posApi
+    .post<{ stockQuantity: number }>("/api/pos/inventory/adjustment", {
+      merchantId,
+      productId,
+      quantity,
+      reason,
+      notes,
+    })
+    .then((res) => res.data);
+}
+
+export function submitSupplierReturn(
+  merchantId: number,
+  productId: number,
+  quantity: number,
+  notes?: string,
+): Promise<{ stockQuantity: number }> {
+  return posApi
+    .post<{ stockQuantity: number }>("/api/pos/inventory/supplier-return", {
+      merchantId,
+      productId,
+      quantity,
+      notes,
+    })
+    .then((res) => res.data);
+}
+
+export function createStockBatch(
+  merchantId: number,
+  productId: number,
+  unitPrice: number,
+  label: string,
+  expectedQuantity: number,
+): Promise<PosStockBatch> {
+  return posApi
+    .post<PosStockBatch>("/api/pos/stock-batches", {
+      merchantId,
+      productId,
+      unitPrice,
+      label,
+      expectedQuantity,
+    })
+    .then((res) => res.data);
+}
+
+export function fetchStockBatches(
+  merchantId: number,
+): Promise<PosStockBatch[]> {
+  return posApi
+    .get<PosStockBatch[]>("/api/pos/stock-batches", {
+      params: { merchantId },
+    })
+    .then((res) => res.data);
+}
+
+export function useStockBatches(merchantId: number | null) {
+  return useQuery({
+    queryKey: ["pos-stock-batches", merchantId],
+    queryFn: () => fetchStockBatches(merchantId as number),
+    enabled: merchantId !== null,
+  });
+}
+
+export function receiveStockBatch(
+  merchantId: number,
+  code: string,
+  quantity: number,
+): Promise<PosStockBatch> {
+  return posApi
+    .post<PosStockBatch>(`/api/pos/stock-batches/${code}/receive`, {
+      merchantId,
+      quantity,
+    })
+    .then((res) => res.data);
 }

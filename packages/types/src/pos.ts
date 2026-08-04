@@ -111,3 +111,104 @@ export interface PosRegisterReconciliation {
   actualCashAmount: number | null;
   variance: number | null;
 }
+
+// Report shapes, confirmed against the real backend — several field
+// names differ from the API doc's own prose/examples (e.g. "totalTax"
+// not "taxCollected", "unitsSold" not "quantitySold", "cashierUserId"/
+// "cashierName" not "agentUserId"/"agentName").
+export interface PosSalesReportDay {
+  date: string;
+  saleCount: number;
+  revenue: number;
+}
+
+export interface PosSalesReport {
+  from: string;
+  to: string;
+  saleCount: number;
+  totalRevenue: number;
+  byDay: PosSalesReportDay[];
+}
+
+export interface PosProfitReport {
+  from: string;
+  to: string;
+  totalRevenue: number;
+  totalCost: number;
+  totalProfit: number;
+}
+
+export interface PosTaxReport {
+  from: string;
+  to: string;
+  taxableRevenue: number;
+  totalTax: number;
+}
+
+export interface PosTopProduct {
+  productId: number;
+  productName: string;
+  unitsSold: number;
+  revenue: number;
+}
+
+export interface PosTopCustomer {
+  customerId: number | null;
+  customerName: string;
+  orderCount: number;
+  totalSpent: number;
+}
+
+export interface PosCashierReport {
+  cashierUserId: number;
+  cashierName: string;
+  saleCount: number;
+  revenue: number;
+}
+
+export interface PosPaymentMethodReport {
+  method: string;
+  count: number;
+  totalAmount: number;
+}
+
+export interface PosReturnsReport {
+  refundCount: number;
+  totalRefunded: number;
+  voidCount: number;
+}
+
+// Inventory & stock shapes, also confirmed against the real backend.
+export interface PosInventoryItem {
+  productId: number;
+  productName: string;
+  stockQuantity: number;
+  lowStockThreshold: number;
+}
+
+export interface PosInventoryMovement {
+  id: number;
+  productId: number;
+  productName: string;
+  quantity: number;
+  transactionType: string;
+  reference: string | null;
+  notes: string | null;
+  createdAt: string;
+}
+
+export interface PosStockBatch {
+  id: number;
+  productId: number;
+  productName: string;
+  unitPrice: number;
+  label: string;
+  qrCode: string;
+  // Only populated on the create response — subsequent fetches return
+  // null, confirmed against the real backend (presumably to keep list/
+  // lookup payloads small once the code itself is already known).
+  qrImage: string | null;
+  expectedQuantity: number;
+  receivedQuantity: number;
+  createdAt: string;
+}

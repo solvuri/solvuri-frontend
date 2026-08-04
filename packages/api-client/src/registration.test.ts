@@ -1,9 +1,12 @@
 import { describe, expect, it, vi } from "vitest";
 import type { AxiosInstance } from "axios";
 import {
+  deactivateAgent,
+  listAgents,
   listFeatures,
   listSystemCategories,
   listTenants,
+  reactivateAgent,
   registerAdmin,
   registerAgent,
   registerTenant,
@@ -167,6 +170,51 @@ describe("registerAgent", () => {
 
     expect(client.post).toHaveBeenCalledWith("/api/merchants/agents", input);
     expect(output).toEqual(result);
+  });
+});
+
+describe("listAgents", () => {
+  it("fetches the caller's own agents", async () => {
+    const agents = [
+      {
+        id: 4,
+        userId: 57,
+        username: "jkamau",
+        email: "jkamau@example-shop.co.ke",
+        phoneNumber: "254712345678",
+        agentCode: "AGT-004",
+        isActive: true,
+        createdAt: "2026-07-29T09:12:44Z",
+      },
+    ];
+    const client = mockClient(agents);
+
+    const result = await listAgents(client);
+
+    expect(client.get).toHaveBeenCalledWith("/api/merchants/agents");
+    expect(result).toEqual(agents);
+  });
+});
+
+describe("deactivateAgent / reactivateAgent", () => {
+  it("deactivates an agent by id", async () => {
+    const client = mockClient(null);
+
+    await deactivateAgent(client, 4);
+
+    expect(client.put).toHaveBeenCalledWith(
+      "/api/merchants/agents/4/deactivate",
+    );
+  });
+
+  it("reactivates an agent by id", async () => {
+    const client = mockClient(null);
+
+    await reactivateAgent(client, 4);
+
+    expect(client.put).toHaveBeenCalledWith(
+      "/api/merchants/agents/4/reactivate",
+    );
   });
 });
 

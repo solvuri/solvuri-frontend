@@ -8,7 +8,7 @@ const { Plus, Minus, X } = Lucide;
 
 const TAX_RATE = 0.16;
 
-export default function SaleTicket({ subdomain }: { subdomain: string }) {
+export default function SaleTicket() {
   const items = useRegister((state) => state.items);
   const incrementQty = useRegister((state) => state.incrementQty);
   const decrementQty = useRegister((state) => state.decrementQty);
@@ -95,7 +95,7 @@ export default function SaleTicket({ subdomain }: { subdomain: string }) {
           Charge
         </Button>
       ) : (
-        <Link href={`/register/${subdomain}/payment`} className="block mt-4">
+        <Link href="/payment" className="block mt-4">
           <Button variant="accent" className="w-full">
             Charge
           </Button>

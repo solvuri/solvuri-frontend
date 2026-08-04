@@ -3,37 +3,24 @@ import { persist } from "zustand/middleware";
 import { StateCreator } from "zustand";
 
 export interface SaleLineItem {
-  productId: string;
+  productId: number;
   name: string;
   price: number;
   image: string;
   quantity: number;
 }
 
-export interface LastReceipt {
-  items: SaleLineItem[];
-  subtotal: number;
-  tax: number;
-  total: number;
-  paymentMethod: "cash" | "card" | "mpesa";
-}
-
 export interface RegisterSlice {
   items: SaleLineItem[];
-  lastReceipt: LastReceipt | null;
   addItem: (item: Omit<SaleLineItem, "quantity">) => void;
-  removeItem: (productId: string) => void;
-  incrementQty: (productId: string) => void;
-  decrementQty: (productId: string) => void;
-  completeSale: (paymentMethod: "cash" | "card" | "mpesa") => void;
+  removeItem: (productId: number) => void;
+  incrementQty: (productId: number) => void;
+  decrementQty: (productId: number) => void;
+  clearItems: () => void;
 }
 
-// 16% VAT, matching apps/clearracks's hardcoded tax-rate convention.
-const TAX_RATE = 0.16;
-
-const createRegisterSlice: StateCreator<RegisterSlice> = (set, get) => ({
+const createRegisterSlice: StateCreator<RegisterSlice> = (set) => ({
   items: [],
-  lastReceipt: null,
   addItem: (item) =>
     set((state) => {
       const existing = state.items.find((i) => i.productId === item.productId);
@@ -66,16 +53,7 @@ const createRegisterSlice: StateCreator<RegisterSlice> = (set, get) => ({
           : i,
       ),
     })),
-  completeSale: (paymentMethod) => {
-    const items = get().items;
-    const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
-    const tax = Math.round(subtotal * TAX_RATE);
-    const total = subtotal + tax;
-    set({
-      items: [],
-      lastReceipt: { items, subtotal, tax, total, paymentMethod },
-    });
-  },
+  clearItems: () => set({ items: [] }),
 });
 
 export const useRegister = create<RegisterSlice>()(

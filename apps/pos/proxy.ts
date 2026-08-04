@@ -7,6 +7,33 @@ import type { NextRequest } from "next/server";
 // two apps' subdomain schemes don't collide.
 const POS_ROOT_DOMAIN = process.env.POS_ROOT_DOMAIN || "solvuripos.xyz";
 
+// Kept as a local constant rather than importing @repo/api-client's
+// AUTH_COOKIE_NAME — this file runs in the Edge runtime, and there's no
+// reason to pull axios into an Edge middleware bundle just for a string.
+const AUTH_COOKIE = "solvuri_auth_token";
+const CASHIER_ROLES = new Set(["Merchant", "MerchantAgent"]);
+
+// Minimal, self-contained JWT payload decode for role-gating only — no
+// signature verification (the backend is the real enforcement point for
+// every request). Deliberately not shared with @repo/api-client's
+// decodeToken to keep this file free of any Node-oriented dependency,
+// same approach as apps/admin-portal's proxy.ts.
+function getAppRole(token: string): string | null {
+  try {
+    const payloadSegment = token.split(".")[1];
+    if (!payloadSegment) return null;
+    const base64 = payloadSegment.replace(/-/g, "+").replace(/_/g, "/");
+    const padded = base64.padEnd(
+      base64.length + ((4 - (base64.length % 4)) % 4),
+      "=",
+    );
+    const claims = JSON.parse(atob(padded));
+    return claims.AppRole ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export function proxy(request: NextRequest) {
   const url = request.nextUrl.clone();
   const hostname = request.headers.get("host") || "";
@@ -33,6 +60,18 @@ export function proxy(request: NextRequest) {
   if (!isRootDomain) {
     // 3. Extract subdomain from hostname (e.g., demo.solvuripos.xyz -> demo)
     const subdomain = hostname.split(".")[0];
+
+    // 4. Auth gate — every register/sales route requires an authenticated
+    // Merchant or MerchantAgent (IsCashier() on the real backend). The
+    // login page itself is exempt, or nobody could ever sign in.
+    if (url.pathname !== "/login") {
+      const token = request.cookies.get(AUTH_COOKIE)?.value;
+      const appRole = token ? getAppRole(token) : null;
+      if (!appRole || !CASHIER_ROLES.has(appRole)) {
+        url.pathname = "/login";
+        return NextResponse.redirect(url);
+      }
+    }
 
     // Rewrite internal request to the tenant's register
     url.pathname = `/register/${subdomain}${url.pathname}`;

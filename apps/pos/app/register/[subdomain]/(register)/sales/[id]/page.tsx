@@ -3,7 +3,8 @@
 import { use } from "react";
 import Link from "next/link";
 import { Lucide } from "@repo/ui";
-import { useSale } from "@repo/data";
+import { useSale } from "@/lib/posApi";
+import { getMerchantId } from "@/lib/auth";
 
 const { ChevronLeft, Receipt } = Lucide;
 
@@ -12,8 +13,10 @@ export default function SaleDetailPage({
 }: {
   params: Promise<{ subdomain: string; id: string }>;
 }) {
-  const { subdomain, id } = use(params);
-  const { data: sale, isLoading, error } = useSale(id);
+  const { id } = use(params);
+  const merchantId = getMerchantId();
+  const saleId = Number(id);
+  const { data: sale, isLoading, error } = useSale(merchantId, saleId);
 
   if (isLoading) {
     return <p className="text-muted text-sm">Loading sale...</p>;
@@ -27,7 +30,7 @@ export default function SaleDetailPage({
     <div className="max-w-md">
       <div className="flex items-center gap-4 mb-6">
         <Link
-          href={`/register/${subdomain}/sales`}
+          href="/sales"
           aria-label="Back to sales history"
           className="p-2 bg-surface border border-primary/10 rounded-lg"
         >
@@ -42,11 +45,11 @@ export default function SaleDetailPage({
         </h3>
         {sale.items.map((item) => (
           <div
-            key={item.productId}
+            key={item.orderItemId}
             className="flex justify-between text-sm py-2 text-muted"
           >
             <span>
-              {item.name} <span>x{item.quantity}</span>
+              {item.productName} <span>x{item.quantity}</span>
             </span>
             <span className="font-bold text-text">
               KES {(item.price * item.quantity).toLocaleString()}
@@ -54,32 +57,30 @@ export default function SaleDetailPage({
           </div>
         ))}
         <div className="border-t border-input-bg pt-4 space-y-2 text-sm text-muted">
-          <div className="flex justify-between">
-            <span>Subtotal</span>
-            <span>KES {sale.subtotal.toLocaleString()}</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Tax</span>
-            <span>KES {sale.tax.toLocaleString()}</span>
-          </div>
-          <div className="flex justify-between font-bold text-lg text-text pt-2 border-t border-input-bg">
+          <div className="flex justify-between font-bold text-lg text-text pt-2">
             <span>Total</span>
-            <span>KES {sale.total.toLocaleString()}</span>
+            <span>KES {sale.totalAmount.toLocaleString()}</span>
           </div>
         </div>
       </section>
 
       <section className="bg-surface p-6 rounded-2xl border border-primary/10">
         <div className="flex justify-between text-sm">
-          <span className="text-muted">Payment method</span>
-          <span className="text-text capitalize">{sale.paymentMethod}</span>
+          <span className="text-muted">Customer</span>
+          <span className="text-text">{sale.customerName}</span>
         </div>
-        {sale.cashierName && (
-          <div className="flex justify-between text-sm mt-2">
-            <span className="text-muted">Cashier</span>
-            <span className="text-text">{sale.cashierName}</span>
+        <div className="flex justify-between text-sm mt-2">
+          <span className="text-muted">Status</span>
+          <span className="text-text">{sale.status}</span>
+        </div>
+        {sale.payments.map((payment) => (
+          <div key={payment.id} className="flex justify-between text-sm mt-2">
+            <span className="text-muted capitalize">{payment.method}</span>
+            <span className="text-text">
+              KES {payment.amount.toLocaleString()}
+            </span>
           </div>
-        )}
+        ))}
       </section>
     </div>
   );

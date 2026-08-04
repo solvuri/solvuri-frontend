@@ -9,6 +9,10 @@ const STATUS_STYLES: Record<string, string> = {
   cash: "bg-emerald-500/15 text-emerald-400",
   card: "bg-sky-500/15 text-sky-400",
   mpesa: "bg-amber-500/15 text-amber-400",
+  verified: "bg-emerald-500/15 text-emerald-400",
+  unverified: "bg-amber-500/15 text-amber-400",
+  enabled: "bg-emerald-500/15 text-emerald-400",
+  disabled: "bg-muted/15 text-muted",
 };
 
 const DEFAULT_STYLE = "bg-muted/15 text-muted";

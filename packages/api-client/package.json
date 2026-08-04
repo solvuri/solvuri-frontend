@@ -6,7 +6,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "axios": "^1.18.1"
+    "axios": "^1.18.1",
+    "@repo/types": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^22.15.3",

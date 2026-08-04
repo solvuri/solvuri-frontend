@@ -67,11 +67,6 @@ export default function CartPage() {
                 </button>
               </div>
 
-              {/* Variant info (Assuming mock data if needed) */}
-              <p className="text-[10px] text-zinc-400">
-                Large (65L) • Tan Brown
-              </p>
-
               <div className="flex justify-between items-center mt-2">
                 <p className="text-sm font-bold text-blue-700">
                   KES {item.price.toLocaleString()}

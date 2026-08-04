@@ -7,16 +7,25 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Lucide } from "@repo/ui";
-import { useProduct } from "@repo/data";
+import { useMerchantCategories, useMerchantProducts } from "@/lib/clearackApi";
+import { resolveMerchantId } from "@/lib/merchants";
 const { ChevronLeft, Heart, Share2 } = Lucide;
 
 export default function ProductDetailPage({
   params,
 }: {
-  params: Promise<{ productId: string }>;
+  params: Promise<{ subdomain: string; productId: string }>;
 }) {
-  const { productId } = use(params);
-  const { data: product, isLoading, error } = useProduct(productId);
+  const { subdomain, productId } = use(params);
+  const merchantId = resolveMerchantId(subdomain);
+
+  // No dedicated single-product anonymous endpoint exists — fetch the
+  // merchant's whole catalog (same call the storefront home page makes,
+  // cached by React Query) and find the matching id client-side.
+  const { data: products, isLoading, error } = useMerchantProducts(merchantId);
+  const { data: categories } = useMerchantCategories(merchantId);
+
+  const product = products?.find((p) => p.id === Number(productId));
 
   if (isLoading) {
     return (
@@ -34,13 +43,17 @@ export default function ProductDetailPage({
     );
   }
 
+  const categoryName =
+    categories?.find((c) => c.id === product.categoryId)?.categoryName ??
+    "General";
+
   return (
     <main className="min-h-screen bg-zinc-50 pb-24">
       {/* 1. Hero Image - Kept here for clean page structure */}
       <div className="relative h-87.5 w-full bg-zinc-200">
         <Image
-          src={product.images[0] ?? ""}
-          alt={product.name}
+          src={product.mainImageUrl || "/placeholder.png"}
+          alt={product.productName}
           fill
           sizes="100vw"
           priority
@@ -72,7 +85,7 @@ export default function ProductDetailPage({
       </div>
 
       {/* 2. Import the logic-heavy component */}
-      <ProductDetail product={product} />
+      <ProductDetail product={product} categoryName={categoryName} />
     </main>
   );
 }

@@ -1,119 +1,26 @@
 "use client";
 
-import { use } from "react";
 import Link from "next/link";
 import { Lucide } from "@repo/ui";
-import { useOrder } from "@repo/data";
-const { ChevronLeft, Package, MapPin } = Lucide;
+const { PackageSearch } = Lucide;
 
-export default function OrderDetailsPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = use(params);
-  const { data: order, isLoading, error } = useOrder(id);
-
-  if (isLoading) {
-    return (
-      <main className="min-h-screen bg-zinc-50 p-4 pb-24">
-        <p className="text-sm text-zinc-500">Loading order…</p>
-      </main>
-    );
-  }
-
-  if (error || !order) {
-    return (
-      <main className="min-h-screen bg-zinc-50 p-4 pb-24">
-        <p className="text-sm text-red-600">Couldn&apos;t find this order.</p>
-      </main>
-    );
-  }
-
+// Same honest limitation as ../page.tsx: no anonymous order-lookup
+// endpoint exists in the real API, so there's no real detail to show here.
+export default function OrderDetailsPage() {
   return (
-    <main className="min-h-screen bg-zinc-50 p-4 pb-24">
-      {/* Header */}
-      <div className="flex items-center gap-4 mb-6">
-        <Link
-          href="/orders"
-          aria-label="Back to orders"
-          className="p-2 bg-white border rounded-lg"
-        >
-          <ChevronLeft size={20} />
-        </Link>
-        <h1 className="text-xl font-black">Order #{order.id}</h1>
-      </div>
-
-      {/* Status Card */}
-      <div className="bg-white p-6 rounded-xl border mb-4 flex justify-between items-center">
-        <div>
-          <p className="text-xs text-zinc-500 font-bold uppercase">Status</p>
-          <p className="font-black text-emerald-600">{order.status}</p>
-        </div>
-        <div className="text-right">
-          <p className="text-xs text-zinc-500 font-bold uppercase">Date</p>
-          <p className="font-bold text-zinc-900">{order.date}</p>
-        </div>
-      </div>
-
-      {/* Items Section */}
-      <section className="bg-white p-6 rounded-xl border mb-4">
-        <h3 className="font-bold mb-4 flex items-center gap-2">
-          <Package size={18} /> Items
-        </h3>
-        {order.items.map((item, i) => (
-          <div key={i} className="flex justify-between text-sm py-2">
-            <span>
-              {item.name}{" "}
-              <span className="text-zinc-500">x{item.quantity}</span>
-            </span>
-            <span className="font-bold">
-              KES {(item.price * item.quantity).toLocaleString()}
-            </span>
-          </div>
-        ))}
-        <div className="border-t pt-4 space-y-2 text-sm text-zinc-600">
-          <div className="flex justify-between">
-            <span>Subtotal</span>
-            <span>
-              KES{" "}
-              {order.items
-                .reduce((acc, i) => acc + i.price * i.quantity, 0)
-                .toLocaleString()}
-            </span>
-          </div>
-          <div className="flex justify-between">
-            <span>Shipping</span>
-            <span>KES {order.shipping.toLocaleString()}</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Tax</span>
-            <span>KES {order.tax.toLocaleString()}</span>
-          </div>
-          <div className="flex justify-between font-black text-lg text-blue-900 pt-2 border-t">
-            <span>Total</span>
-            <span>KES {order.total.toLocaleString()}</span>
-          </div>
-        </div>
-      </section>
-
-      {/* Delivery Info */}
-      <section className="bg-white p-6 rounded-xl border">
-        <h3 className="font-bold mb-4 flex items-center gap-2">
-          <MapPin size={18} /> Shipping Address
-        </h3>
-        <p className="text-sm text-zinc-600">{order.address}</p>
-      </section>
-
-      {/* Action Footer */}
-      <div className="fixed bottom-0 left-0 w-full p-4 bg-white border-t flex gap-3">
-        <button className="flex-1 border py-3 rounded-xl font-bold">
-          Contact Support
-        </button>
-        <button className="flex-1 bg-blue-700 text-white py-3 rounded-xl font-bold">
-          Track Order
-        </button>
-      </div>
+    <main className="min-h-screen bg-zinc-50 p-4 flex flex-col items-center justify-center text-center">
+      <PackageSearch size={40} className="text-zinc-400 mb-4" />
+      <h1 className="text-lg font-black text-zinc-900 mb-2">
+        Order lookup isn&apos;t available yet
+      </h1>
+      <p className="text-sm text-zinc-500 max-w-sm mb-6">
+        Guest checkout orders aren&apos;t tied to an account, so there&apos;s
+        no way to look up a specific order here yet. Check the confirmation
+        email or SMS the merchant sent after checkout.
+      </p>
+      <Link href="../.." className="text-blue-700 text-sm font-bold underline">
+        Back to store
+      </Link>
     </main>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import {
   Feature,
   SystemCategory,
@@ -11,7 +11,11 @@ import {
   registerTenant,
   setMerchantCategories,
   setMerchantFeatures,
+  getMerchantMpesaSettings,
+  verifyMpesaSettings,
+  setMpesaEnabled,
 } from "@repo/api-client";
+import type { MerchantMpesaSettings } from "@repo/types";
 import { Button, Input } from "@repo/ui";
 import { adminApi } from "../../../lib/api";
 import { StatusBadge } from "../../../components/StatusBadge";
@@ -46,6 +50,21 @@ export default function MerchantsPage() {
   );
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [expandedTenantId, setExpandedTenantId] = useState<number | null>(
+    null,
+  );
+  const [mpesaSettings, setMpesaSettings] = useState<
+    Record<number, MerchantMpesaSettings | null>
+  >({});
+  const [mpesaLoading, setMpesaLoading] = useState<Record<number, boolean>>(
+    {},
+  );
+  const [mpesaError, setMpesaError] = useState<Record<number, string>>({});
+  const [testPhone, setTestPhone] = useState<Record<number, string>>({});
+  const [mpesaSubmitting, setMpesaSubmitting] = useState<
+    Record<number, boolean>
+  >({});
 
   const loadDirectory = async () => {
     setTenantsLoading(true);
@@ -176,6 +195,76 @@ export default function MerchantsPage() {
       setError(err instanceof Error ? err.message : "Couldn't set features.");
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const toggleExpand = async (tenantId: number) => {
+    if (expandedTenantId === tenantId) {
+      setExpandedTenantId(null);
+      return;
+    }
+    setExpandedTenantId(tenantId);
+    if (tenantId in mpesaSettings) return;
+    setMpesaLoading((prev) => ({ ...prev, [tenantId]: true }));
+    setMpesaError((prev) => ({ ...prev, [tenantId]: "" }));
+    try {
+      const settings = await getMerchantMpesaSettings(adminApi, tenantId);
+      setMpesaSettings((prev) => ({ ...prev, [tenantId]: settings }));
+    } catch (err) {
+      setMpesaSettings((prev) => ({ ...prev, [tenantId]: null }));
+      setMpesaError((prev) => ({
+        ...prev,
+        [tenantId]:
+          err instanceof Error
+            ? err.message
+            : "Couldn't load M-Pesa settings.",
+      }));
+    } finally {
+      setMpesaLoading((prev) => ({ ...prev, [tenantId]: false }));
+    }
+  };
+
+  const handleVerify = async (tenantId: number) => {
+    const phone = testPhone[tenantId];
+    if (!phone) {
+      setMpesaError((prev) => ({
+        ...prev,
+        [tenantId]: "Enter a phone number to send the test push to.",
+      }));
+      return;
+    }
+    setMpesaError((prev) => ({ ...prev, [tenantId]: "" }));
+    setMpesaSubmitting((prev) => ({ ...prev, [tenantId]: true }));
+    try {
+      await verifyMpesaSettings(adminApi, tenantId, phone);
+      const settings = await getMerchantMpesaSettings(adminApi, tenantId);
+      setMpesaSettings((prev) => ({ ...prev, [tenantId]: settings }));
+    } catch (err) {
+      setMpesaError((prev) => ({
+        ...prev,
+        [tenantId]:
+          err instanceof Error ? err.message : "Verification push failed.",
+      }));
+    } finally {
+      setMpesaSubmitting((prev) => ({ ...prev, [tenantId]: false }));
+    }
+  };
+
+  const handleToggleEnabled = async (tenantId: number, isEnabled: boolean) => {
+    setMpesaError((prev) => ({ ...prev, [tenantId]: "" }));
+    setMpesaSubmitting((prev) => ({ ...prev, [tenantId]: true }));
+    try {
+      await setMpesaEnabled(adminApi, tenantId, isEnabled);
+      const settings = await getMerchantMpesaSettings(adminApi, tenantId);
+      setMpesaSettings((prev) => ({ ...prev, [tenantId]: settings }));
+    } catch (err) {
+      setMpesaError((prev) => ({
+        ...prev,
+        [tenantId]:
+          err instanceof Error ? err.message : "Couldn't update status.",
+      }));
+    } finally {
+      setMpesaSubmitting((prev) => ({ ...prev, [tenantId]: false }));
     }
   };
 
@@ -380,20 +469,139 @@ export default function MerchantsPage() {
                   <th className="pb-3 font-medium">Brand</th>
                   <th className="pb-3 font-medium">Domain</th>
                   <th className="pb-3 font-medium">Status</th>
+                  <th className="pb-3 font-medium">Online Payment</th>
                 </tr>
               </thead>
               <tbody>
                 {tenants.map((tenant) => (
-                  <tr
-                    key={tenant.id}
-                    className="border-b border-input-bg last:border-0"
-                  >
-                    <td className="py-3 text-text">{tenant.brandName}</td>
-                    <td className="py-3 text-muted">{tenant.domainName}</td>
-                    <td className="py-3">
-                      <StatusBadge status={tenant.subscription?.status ?? "unknown"} />
-                    </td>
-                  </tr>
+                  <Fragment key={tenant.id}>
+                    <tr
+                      className="border-b border-input-bg last:border-0 cursor-pointer"
+                      onClick={() => toggleExpand(tenant.id)}
+                    >
+                      <td className="py-3 text-text">{tenant.brandName}</td>
+                      <td className="py-3 text-muted">{tenant.domainName}</td>
+                      <td className="py-3">
+                        <StatusBadge
+                          status={tenant.subscription?.status ?? "unknown"}
+                        />
+                      </td>
+                      <td className="py-3 text-accent text-xs font-bold">
+                        {expandedTenantId === tenant.id ? "Hide" : "Manage"}
+                      </td>
+                    </tr>
+                    {expandedTenantId === tenant.id && (
+                      <tr
+                        key={`${tenant.id}-mpesa`}
+                        className="border-b border-input-bg last:border-0"
+                      >
+                        <td colSpan={4} className="py-4">
+                          {mpesaLoading[tenant.id] ? (
+                            <p className="text-muted text-xs">
+                              Loading M-Pesa settings...
+                            </p>
+                          ) : mpesaSettings[tenant.id] === undefined ||
+                            mpesaSettings[tenant.id] === null ? (
+                            <p className="text-muted text-xs">
+                              {mpesaError[tenant.id] ||
+                                "This merchant hasn't submitted M-Pesa credentials yet."}
+                            </p>
+                          ) : (
+                            <div className="bg-inputBg rounded-xl p-4 space-y-3 max-w-md">
+                              <div className="flex items-center gap-2 text-xs">
+                                <span className="text-muted">Credentials:</span>
+                                <StatusBadge
+                                  status={
+                                    mpesaSettings[tenant.id]?.hasSecrets
+                                      ? "active"
+                                      : "pending"
+                                  }
+                                />
+                              </div>
+                              <div className="flex items-center gap-2 text-xs">
+                                <span className="text-muted">Verified:</span>
+                                <StatusBadge
+                                  status={
+                                    mpesaSettings[tenant.id]?.isVerified
+                                      ? "verified"
+                                      : "unverified"
+                                  }
+                                />
+                              </div>
+                              <div className="flex items-center gap-2 text-xs">
+                                <span className="text-muted">
+                                  Online checkout:
+                                </span>
+                                <StatusBadge
+                                  status={
+                                    mpesaSettings[tenant.id]?.isEnabled
+                                      ? "enabled"
+                                      : "disabled"
+                                  }
+                                />
+                              </div>
+
+                              <div
+                                className="flex items-center gap-2 pt-2"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <input
+                                  type="text"
+                                  placeholder="Test phone (2547...)"
+                                  value={testPhone[tenant.id] ?? ""}
+                                  onChange={(e) =>
+                                    setTestPhone((prev) => ({
+                                      ...prev,
+                                      [tenant.id]: e.target.value,
+                                    }))
+                                  }
+                                  className="flex-1 bg-background text-text rounded px-2 py-1 text-xs"
+                                />
+                                <Button
+                                  type="button"
+                                  variant="secondary"
+                                  disabled={mpesaSubmitting[tenant.id]}
+                                  onClick={() => handleVerify(tenant.id)}
+                                >
+                                  {mpesaSubmitting[tenant.id]
+                                    ? "Sending..."
+                                    : "Send verification push"}
+                                </Button>
+                              </div>
+
+                              <div onClick={(e) => e.stopPropagation()}>
+                                <Button
+                                  type="button"
+                                  variant="accent"
+                                  disabled={
+                                    mpesaSubmitting[tenant.id] ||
+                                    !mpesaSettings[tenant.id]?.isVerified
+                                  }
+                                  onClick={() =>
+                                    handleToggleEnabled(
+                                      tenant.id,
+                                      !mpesaSettings[tenant.id]?.isEnabled,
+                                    )
+                                  }
+                                >
+                                  {mpesaSettings[tenant.id]?.isEnabled
+                                    ? "Disable"
+                                    : "Enable"}{" "}
+                                  online checkout
+                                </Button>
+                              </div>
+
+                              {mpesaError[tenant.id] && (
+                                <p className="text-xs text-rose-400">
+                                  {mpesaError[tenant.id]}
+                                </p>
+                              )}
+                            </div>
+                          )}
+                        </td>
+                      </tr>
+                    )}
+                  </Fragment>
                 ))}
               </tbody>
             </table>

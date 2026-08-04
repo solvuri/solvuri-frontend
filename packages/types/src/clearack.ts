@@ -44,3 +44,35 @@ export interface CheckoutRequestInput {
 export interface CheckoutRequestResult {
   orderId: number;
 }
+
+export interface MerchantMpesaSettings {
+  id: number;
+  consumerKey: string;
+  shortcode: string;
+  partyB: string;
+  callbackUrl: string;
+  transactionType: string;
+  isEnabled: boolean;
+  isVerified: boolean;
+  hasSecrets: boolean;
+}
+
+export interface MpesaSettingsInput {
+  consumerKey: string;
+  consumerSecret: string;
+  shortcode: string;
+  passkey: string;
+  partyB: string;
+  transactionType: string;
+}
+
+export interface CheckoutInitiateResult {
+  orderId: number;
+  checkoutRequestId: string;
+}
+
+export interface CheckoutStatusResult {
+  orderId: number;
+  paymentStatus: string;
+  orderStatus: string;
+}

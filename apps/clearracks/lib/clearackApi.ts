@@ -1,8 +1,10 @@
 // apps/clearracks/lib/clearackApi.ts
 import { useQuery } from "@tanstack/react-query";
 import type {
+  CheckoutInitiateResult,
   CheckoutRequestInput,
   CheckoutRequestResult,
+  CheckoutStatusResult,
   ClearackCategory,
   ClearackProduct,
   DeliveryTown,
@@ -73,4 +75,46 @@ export function submitCheckoutRequest(
       input,
     )
     .then((res) => res.data);
+}
+
+// POST /api/clearack/checkout/{merchantId}/initiate — anonymous. Pays now
+// via STK push to the merchant's own till. Rejected server-side (with a
+// message pointing at the /request fallback above) if the merchant hasn't
+// paid for Online Checkout or verified+enabled their Mpesa credentials —
+// there's no anonymous way to check that in advance, so the backend's own
+// rejection is the source of truth, not a frontend pre-check.
+export function submitCheckoutInitiate(
+  merchantId: number,
+  input: CheckoutRequestInput,
+): Promise<CheckoutInitiateResult> {
+  return clearracksApi
+    .post<CheckoutInitiateResult>(
+      `/api/clearack/checkout/${merchantId}/initiate`,
+      input,
+    )
+    .then((res) => res.data);
+}
+
+// GET /api/clearack/checkout/status/{checkoutRequestId} — anonymous.
+// Actively resolves a Pending STK push (queries Daraja, doesn't just wait
+// on the webhook). refetchInterval stops polling itself the moment
+// paymentStatus leaves "Pending" — no manual setInterval/cleanup needed.
+export function fetchCheckoutStatus(
+  checkoutRequestId: string,
+): Promise<CheckoutStatusResult> {
+  return clearracksApi
+    .get<CheckoutStatusResult>(
+      `/api/clearack/checkout/status/${checkoutRequestId}`,
+    )
+    .then((res) => res.data);
+}
+
+export function useCheckoutStatus(checkoutRequestId: string | null) {
+  return useQuery({
+    queryKey: ["checkout-status", checkoutRequestId],
+    queryFn: () => fetchCheckoutStatus(checkoutRequestId as string),
+    enabled: checkoutRequestId !== null,
+    refetchInterval: (query) =>
+      query.state.data?.paymentStatus === "Pending" ? 4000 : false,
+  });
 }

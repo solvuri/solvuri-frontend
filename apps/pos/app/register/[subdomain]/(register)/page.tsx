@@ -1,17 +1,13 @@
 "use client";
 
-import { use } from "react";
-import { useProducts } from "@repo/data";
+import { useCatalogProducts } from "@/lib/posApi";
+import { getMerchantId } from "@/lib/auth";
 import ProductGrid from "@/components/register/ProductGrid";
 import SaleTicket from "@/components/register/SaleTicket";
 
-export default function RegisterPage({
-  params,
-}: {
-  params: Promise<{ subdomain: string }>;
-}) {
-  const { subdomain } = use(params);
-  const { data: products, isLoading, error } = useProducts();
+export default function RegisterPage() {
+  const merchantId = getMerchantId();
+  const { data: products, isLoading, error } = useCatalogProducts(merchantId);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -25,7 +21,7 @@ export default function RegisterPage({
       </div>
 
       <div>
-        <SaleTicket subdomain={subdomain} />
+        <SaleTicket />
       </div>
     </div>
   );

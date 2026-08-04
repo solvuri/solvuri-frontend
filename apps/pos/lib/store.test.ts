@@ -2,13 +2,13 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { useRegister } from "./store";
 
 const item = {
-  productId: "prod-1",
+  productId: 1,
   name: "Safari Linen Shirt",
   price: 2850,
   image: "img.jpg",
 };
 const item2 = {
-  productId: "prod-2",
+  productId: 2,
   name: "Leather Safari Bag",
   price: 8500,
   image: "img2.jpg",
@@ -16,7 +16,7 @@ const item2 = {
 
 beforeEach(() => {
   localStorage.clear();
-  useRegister.setState({ items: [], lastReceipt: null });
+  useRegister.setState({ items: [] });
 });
 
 describe("useRegister register slice", () => {
@@ -55,22 +55,10 @@ describe("useRegister register slice", () => {
     expect(useRegister.getState().items[0]?.quantity).toBe(1);
   });
 
-  it("completeSale snapshots items/totals into lastReceipt and clears items", () => {
+  it("clears the whole cart", () => {
     useRegister.getState().addItem(item);
     useRegister.getState().addItem(item2);
-    useRegister.getState().completeSale("cash");
-
-    const state = useRegister.getState();
-    expect(state.items).toEqual([]);
-    expect(state.lastReceipt?.paymentMethod).toBe("cash");
-    expect(state.lastReceipt?.subtotal).toBe(2850 + 8500);
-    expect(state.lastReceipt?.tax).toBe(Math.round((2850 + 8500) * 0.16));
-    expect(state.lastReceipt?.total).toBe(
-      2850 + 8500 + Math.round((2850 + 8500) * 0.16),
-    );
-    expect(state.lastReceipt?.items.map((i) => i.productId)).toEqual([
-      item.productId,
-      item2.productId,
-    ]);
+    useRegister.getState().clearItems();
+    expect(useRegister.getState().items).toEqual([]);
   });
 });

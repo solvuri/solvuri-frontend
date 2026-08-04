@@ -4,12 +4,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { clearAuthToken } from "@repo/api-client";
 import { useCurrentRegisterSession } from "@/lib/posApi";
-import { getMerchantId } from "@/lib/auth";
+import { getMerchantId, useCurrentUser } from "@/lib/auth";
 
 export default function RegisterHeader({ subdomain }: { subdomain: string }) {
   const router = useRouter();
   const label = subdomain.charAt(0).toUpperCase() + subdomain.slice(1);
   const merchantId = getMerchantId();
+  const user = useCurrentUser();
   const { data: session } = useCurrentRegisterSession(merchantId);
 
   const handleLogout = () => {
@@ -37,6 +38,14 @@ export default function RegisterHeader({ subdomain }: { subdomain: string }) {
         <Link href="/sales" className="text-sm text-muted hover:text-text">
           Sales History
         </Link>
+        <Link href="/inventory" className="text-sm text-muted hover:text-text">
+          Inventory
+        </Link>
+        {user?.appRole === "Merchant" && (
+          <Link href="/reports" className="text-sm text-muted hover:text-text">
+            Reports
+          </Link>
+        )}
         <button
           type="button"
           onClick={handleLogout}

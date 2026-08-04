@@ -50,3 +50,4 @@ export * from "./token";
 export * from "./auth";
 export * from "./registration";
 export * from "./mpesaSettings";
+export * from "./payments";

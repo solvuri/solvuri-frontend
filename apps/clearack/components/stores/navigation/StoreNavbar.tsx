@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { useStore } from "@/lib/store";
+import { displayName } from "@/lib/merchants";
 
 import { Lucide } from "@repo/ui";
 const { ShoppingCart, Search, Menu } = Lucide;
 
-export default function StoreNavbar() {
+export default function StoreNavbar({ subdomain }: { subdomain: string }) {
   // Use Zustand to get the total cart quantity dynamically
   const cart = useStore((state) => state.cart);
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
@@ -19,7 +20,7 @@ export default function StoreNavbar() {
           href="/"
           className="text-xl font-black text-blue-900 tracking-tighter"
         >
-          SAFYRI
+          {displayName(subdomain).toUpperCase()}
         </Link>
 
         {/* Desktop Navigation Links */}

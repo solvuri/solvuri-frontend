@@ -7,12 +7,14 @@ import {
   listFeatures,
   listSystemCategories,
   listTenants,
+  overrideTenantSubscription,
   reactivateAgent,
   registerAdmin,
   registerAgent,
   registerTenant,
   setMerchantCategories,
   setMerchantFeatures,
+  updateTenant,
 } from "./registration";
 
 function mockClient(responseData: unknown): AxiosInstance {
@@ -65,6 +67,39 @@ describe("listTenants", () => {
 
     expect(client.get).toHaveBeenCalledWith("/api/tenants");
     expect(result).toEqual(tenants);
+  });
+});
+
+describe("updateTenant", () => {
+  it("puts a partial update of the tenant's details", async () => {
+    const client = mockClient(null);
+
+    await updateTenant(client, 7, {
+      brandName: "Onestop Renamed",
+      phoneNumber: "254712345679",
+    });
+
+    expect(client.put).toHaveBeenCalledWith("/api/tenants/7", {
+      brandName: "Onestop Renamed",
+      phoneNumber: "254712345679",
+    });
+  });
+});
+
+describe("overrideTenantSubscription", () => {
+  it("puts a direct override of the subscription's fields", async () => {
+    const client = mockClient(null);
+
+    await overrideTenantSubscription(client, 12, {
+      status: "Active",
+      isPaid: true,
+      totalPaid: 5000,
+    });
+
+    expect(client.put).toHaveBeenCalledWith(
+      "/api/tenants/subscription/12",
+      { status: "Active", isPaid: true, totalPaid: 5000 },
+    );
   });
 });
 

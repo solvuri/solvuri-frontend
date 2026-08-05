@@ -43,6 +43,11 @@ export interface TenantSummary {
   email?: string;
   phoneNumber?: string;
   subscription?: {
+    // Not yet confirmed via a live response — GET /api/tenants has 500'd
+    // every time it's been probed so far (see the known-bug note below).
+    // Included on the assumption every other entity in this API exposes
+    // its own id; verify once the bug clears before relying on it.
+    id?: number;
     status?: string;
     isPaid?: boolean;
     endDate?: string;
@@ -52,11 +57,63 @@ export interface TenantSummary {
 // GET /api/tenants — any authenticated user (no explicit role gate in the
 // backend). Lists every tenant with its subscription included; used here
 // as the admin's merchant directory.
+//
+// Known real-backend bug, not a frontend issue: this returns a bare `500`
+// (no body) once *any* tenant has a subscription attached — confirmed via
+// direct curl, independent of any frontend code. Callers should surface
+// the failure honestly (Promise.allSettled/try-catch) rather than treat it
+// as a bug in this wrapper.
 export async function listTenants(
   client: AxiosInstance,
 ): Promise<TenantSummary[]> {
   const response = await client.get<TenantSummary[]>("/api/tenants");
   return response.data;
+}
+
+export interface UpdateTenantInput {
+  brandName?: string;
+  businessDescription?: string;
+  email?: string;
+  phoneNumber?: string;
+  domainName?: string;
+  customMonthlyFee?: number | null;
+}
+
+// PUT /api/tenants/{id} — no explicit role gate in the backend, used by
+// Solvuri admin in practice. Partial update of a merchant's brand/contact/
+// domain info. No documented response body — callers should refetch
+// (e.g. listTenants) after a successful call rather than trust a return
+// value here.
+export async function updateTenant(
+  client: AxiosInstance,
+  tenantId: number,
+  input: UpdateTenantInput,
+): Promise<void> {
+  await client.put(`/api/tenants/${tenantId}`, input);
+}
+
+export interface TenantSubscriptionOverrideInput {
+  startDate?: string;
+  endDate?: string;
+  status?: string;
+  isPaid?: boolean;
+  paymentMethod?: string;
+  customMonthlyFee?: number | null;
+  totalPaid?: number;
+}
+
+// PUT /api/tenants/subscription/{subscriptionId} — no explicit role gate
+// in the backend, used by Solvuri admin in practice. Direct admin-level
+// override of subscription fields (status/dates/isPaid/totalPaid/etc.),
+// separate from the payment-driven flow in payments.ts — for correcting
+// data, not for collecting money. Takes a subscriptionId, not a tenantId.
+// No documented response body — callers should refetch after success.
+export async function overrideTenantSubscription(
+  client: AxiosInstance,
+  subscriptionId: number,
+  input: TenantSubscriptionOverrideInput,
+): Promise<void> {
+  await client.put(`/api/tenants/subscription/${subscriptionId}`, input);
 }
 
 // GET /api/tenants/{id}/subscription — any authenticated user (no explicit

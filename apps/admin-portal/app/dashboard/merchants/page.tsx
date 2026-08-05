@@ -14,6 +14,8 @@ import {
   getMerchantMpesaSettings,
   verifyMpesaSettings,
   setMpesaEnabled,
+  updateTenant,
+  overrideTenantSubscription,
 } from "@repo/api-client";
 import type { MerchantMpesaSettings } from "@repo/types";
 import { Button, Input } from "@repo/ui";
@@ -30,6 +32,26 @@ const EMPTY_DETAILS = {
   phoneNumber: "",
   password: "",
   domainName: "",
+};
+
+const EMPTY_EDIT_FORM = {
+  brandName: "",
+  businessDescription: "",
+  email: "",
+  phoneNumber: "",
+  domainName: "",
+  customMonthlyFee: "",
+};
+
+const EMPTY_OVERRIDE_FORM = {
+  subscriptionId: "",
+  status: "",
+  isPaid: false,
+  paymentMethod: "",
+  customMonthlyFee: "",
+  totalPaid: "",
+  startDate: "",
+  endDate: "",
 };
 
 export default function MerchantsPage() {
@@ -65,6 +87,16 @@ export default function MerchantsPage() {
   const [mpesaSubmitting, setMpesaSubmitting] = useState<
     Record<number, boolean>
   >({});
+
+  const [editMode, setEditMode] = useState(false);
+  const [editForm, setEditForm] = useState(EMPTY_EDIT_FORM);
+  const [editSubmitting, setEditSubmitting] = useState(false);
+  const [editError, setEditError] = useState("");
+
+  const [overrideMode, setOverrideMode] = useState(false);
+  const [overrideForm, setOverrideForm] = useState(EMPTY_OVERRIDE_FORM);
+  const [overrideSubmitting, setOverrideSubmitting] = useState(false);
+  const [overrideError, setOverrideError] = useState("");
 
   const loadDirectory = async () => {
     setTenantsLoading(true);
@@ -199,6 +231,10 @@ export default function MerchantsPage() {
   };
 
   const toggleExpand = async (tenantId: number) => {
+    setEditMode(false);
+    setEditError("");
+    setOverrideMode(false);
+    setOverrideError("");
     if (expandedTenantId === tenantId) {
       setExpandedTenantId(null);
       return;
@@ -265,6 +301,96 @@ export default function MerchantsPage() {
       }));
     } finally {
       setMpesaSubmitting((prev) => ({ ...prev, [tenantId]: false }));
+    }
+  };
+
+  const startEdit = (tenant: TenantSummary) => {
+    setEditForm({
+      brandName: tenant.brandName,
+      businessDescription: "",
+      email: tenant.email ?? "",
+      phoneNumber: tenant.phoneNumber ?? "",
+      domainName: tenant.domainName,
+      customMonthlyFee: "",
+    });
+    setEditError("");
+    setEditMode(true);
+  };
+
+  const handleSaveEdit = async (tenantId: number) => {
+    setEditError("");
+    setEditSubmitting(true);
+    try {
+      await updateTenant(adminApi, tenantId, {
+        ...(editForm.brandName && { brandName: editForm.brandName }),
+        ...(editForm.businessDescription && {
+          businessDescription: editForm.businessDescription,
+        }),
+        ...(editForm.email && { email: editForm.email }),
+        ...(editForm.phoneNumber && { phoneNumber: editForm.phoneNumber }),
+        ...(editForm.domainName && { domainName: editForm.domainName }),
+        ...(editForm.customMonthlyFee && {
+          customMonthlyFee: Number(editForm.customMonthlyFee),
+        }),
+      });
+      setEditMode(false);
+      await loadDirectory();
+    } catch (err) {
+      setEditError(
+        err instanceof Error ? err.message : "Couldn't update this merchant.",
+      );
+    } finally {
+      setEditSubmitting(false);
+    }
+  };
+
+  const startOverride = (tenant: TenantSummary) => {
+    setOverrideForm({
+      ...EMPTY_OVERRIDE_FORM,
+      subscriptionId: tenant.subscription?.id
+        ? String(tenant.subscription.id)
+        : "",
+      status: tenant.subscription?.status ?? "",
+      isPaid: tenant.subscription?.isPaid ?? false,
+    });
+    setOverrideError("");
+    setOverrideMode(true);
+  };
+
+  const handleSaveOverride = async () => {
+    const subscriptionId = Number(overrideForm.subscriptionId);
+    if (!overrideForm.subscriptionId || Number.isNaN(subscriptionId)) {
+      setOverrideError("Enter a valid subscription ID.");
+      return;
+    }
+    setOverrideError("");
+    setOverrideSubmitting(true);
+    try {
+      await overrideTenantSubscription(adminApi, subscriptionId, {
+        ...(overrideForm.status && { status: overrideForm.status }),
+        isPaid: overrideForm.isPaid,
+        ...(overrideForm.paymentMethod && {
+          paymentMethod: overrideForm.paymentMethod,
+        }),
+        ...(overrideForm.customMonthlyFee && {
+          customMonthlyFee: Number(overrideForm.customMonthlyFee),
+        }),
+        ...(overrideForm.totalPaid && {
+          totalPaid: Number(overrideForm.totalPaid),
+        }),
+        ...(overrideForm.startDate && { startDate: overrideForm.startDate }),
+        ...(overrideForm.endDate && { endDate: overrideForm.endDate }),
+      });
+      setOverrideMode(false);
+      await loadDirectory();
+    } catch (err) {
+      setOverrideError(
+        err instanceof Error
+          ? err.message
+          : "Couldn't override this subscription.",
+      );
+    } finally {
+      setOverrideSubmitting(false);
     }
   };
 
@@ -598,6 +724,252 @@ export default function MerchantsPage() {
                               )}
                             </div>
                           )}
+
+                          <div
+                            className="mt-3"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {!editMode ? (
+                              <Button
+                                type="button"
+                                variant="secondary"
+                                onClick={() => startEdit(tenant)}
+                              >
+                                Edit Details
+                              </Button>
+                            ) : (
+                              <div className="bg-inputBg rounded-xl p-4 space-y-3 max-w-md mt-2">
+                                <p className="text-xs uppercase tracking-widest text-muted">
+                                  Edit Merchant Details
+                                </p>
+                                <Input
+                                  label="Brand Name"
+                                  value={editForm.brandName}
+                                  onChange={(e) =>
+                                    setEditForm({
+                                      ...editForm,
+                                      brandName: e.target.value,
+                                    })
+                                  }
+                                />
+                                <Input
+                                  label="Business Description"
+                                  value={editForm.businessDescription}
+                                  onChange={(e) =>
+                                    setEditForm({
+                                      ...editForm,
+                                      businessDescription: e.target.value,
+                                    })
+                                  }
+                                />
+                                <Input
+                                  label="Email"
+                                  type="email"
+                                  value={editForm.email}
+                                  onChange={(e) =>
+                                    setEditForm({
+                                      ...editForm,
+                                      email: e.target.value,
+                                    })
+                                  }
+                                />
+                                <Input
+                                  label="Phone Number"
+                                  value={editForm.phoneNumber}
+                                  onChange={(e) =>
+                                    setEditForm({
+                                      ...editForm,
+                                      phoneNumber: e.target.value,
+                                    })
+                                  }
+                                />
+                                <Input
+                                  label="Domain Name"
+                                  value={editForm.domainName}
+                                  onChange={(e) =>
+                                    setEditForm({
+                                      ...editForm,
+                                      domainName: e.target.value,
+                                    })
+                                  }
+                                />
+                                <Input
+                                  label="Custom Monthly Fee"
+                                  type="number"
+                                  value={editForm.customMonthlyFee}
+                                  onChange={(e) =>
+                                    setEditForm({
+                                      ...editForm,
+                                      customMonthlyFee: e.target.value,
+                                    })
+                                  }
+                                />
+                                {editError && (
+                                  <p className="text-xs text-rose-400">
+                                    {editError}
+                                  </p>
+                                )}
+                                <div className="flex gap-2">
+                                  <Button
+                                    type="button"
+                                    variant="secondary"
+                                    onClick={() => setEditMode(false)}
+                                  >
+                                    Cancel
+                                  </Button>
+                                  <Button
+                                    type="button"
+                                    variant="accent"
+                                    disabled={editSubmitting}
+                                    onClick={() => handleSaveEdit(tenant.id)}
+                                  >
+                                    {editSubmitting ? "Saving..." : "Save"}
+                                  </Button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+
+                          <div
+                            className="mt-3"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {!overrideMode ? (
+                              <Button
+                                type="button"
+                                variant="secondary"
+                                onClick={() => startOverride(tenant)}
+                              >
+                                Override Subscription
+                              </Button>
+                            ) : (
+                              <div className="bg-inputBg rounded-xl p-4 space-y-3 max-w-md mt-2">
+                                <p className="text-xs uppercase tracking-widest text-muted">
+                                  Manual Subscription Override
+                                </p>
+                                <p className="text-xs text-muted">
+                                  Directly corrects subscription fields —
+                                  doesn&apos;t collect payment. Enter the
+                                  subscription ID (not the tenant ID); it
+                                  can&apos;t always be prefilled here.
+                                </p>
+                                <Input
+                                  label="Subscription ID"
+                                  type="number"
+                                  value={overrideForm.subscriptionId}
+                                  onChange={(e) =>
+                                    setOverrideForm({
+                                      ...overrideForm,
+                                      subscriptionId: e.target.value,
+                                    })
+                                  }
+                                />
+                                <Input
+                                  label="Status"
+                                  value={overrideForm.status}
+                                  onChange={(e) =>
+                                    setOverrideForm({
+                                      ...overrideForm,
+                                      status: e.target.value,
+                                    })
+                                  }
+                                />
+                                <label className="flex items-center gap-3 bg-background px-4 py-3 rounded-lg cursor-pointer">
+                                  <input
+                                    type="checkbox"
+                                    checked={overrideForm.isPaid}
+                                    onChange={(e) =>
+                                      setOverrideForm({
+                                        ...overrideForm,
+                                        isPaid: e.target.checked,
+                                      })
+                                    }
+                                  />
+                                  <span className="text-text text-sm">
+                                    Paid
+                                  </span>
+                                </label>
+                                <Input
+                                  label="Payment Method"
+                                  value={overrideForm.paymentMethod}
+                                  onChange={(e) =>
+                                    setOverrideForm({
+                                      ...overrideForm,
+                                      paymentMethod: e.target.value,
+                                    })
+                                  }
+                                />
+                                <Input
+                                  label="Custom Monthly Fee"
+                                  type="number"
+                                  value={overrideForm.customMonthlyFee}
+                                  onChange={(e) =>
+                                    setOverrideForm({
+                                      ...overrideForm,
+                                      customMonthlyFee: e.target.value,
+                                    })
+                                  }
+                                />
+                                <Input
+                                  label="Total Paid"
+                                  type="number"
+                                  value={overrideForm.totalPaid}
+                                  onChange={(e) =>
+                                    setOverrideForm({
+                                      ...overrideForm,
+                                      totalPaid: e.target.value,
+                                    })
+                                  }
+                                />
+                                <Input
+                                  label="Start Date"
+                                  type="date"
+                                  value={overrideForm.startDate}
+                                  onChange={(e) =>
+                                    setOverrideForm({
+                                      ...overrideForm,
+                                      startDate: e.target.value,
+                                    })
+                                  }
+                                />
+                                <Input
+                                  label="End Date"
+                                  type="date"
+                                  value={overrideForm.endDate}
+                                  onChange={(e) =>
+                                    setOverrideForm({
+                                      ...overrideForm,
+                                      endDate: e.target.value,
+                                    })
+                                  }
+                                />
+                                {overrideError && (
+                                  <p className="text-xs text-rose-400">
+                                    {overrideError}
+                                  </p>
+                                )}
+                                <div className="flex gap-2">
+                                  <Button
+                                    type="button"
+                                    variant="secondary"
+                                    onClick={() => setOverrideMode(false)}
+                                  >
+                                    Cancel
+                                  </Button>
+                                  <Button
+                                    type="button"
+                                    variant="accent"
+                                    disabled={overrideSubmitting}
+                                    onClick={handleSaveOverride}
+                                  >
+                                    {overrideSubmitting
+                                      ? "Saving..."
+                                      : "Save"}
+                                  </Button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     )}

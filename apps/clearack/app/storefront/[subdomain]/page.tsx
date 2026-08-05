@@ -75,7 +75,7 @@ export default function StorefrontPage({
           </div>
         )}
       </section>
-      <StoreFooter />
+      <StoreFooter subdomain={subdomain} />
     </main>
   );
 }

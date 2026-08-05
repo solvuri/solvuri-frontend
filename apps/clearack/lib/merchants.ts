@@ -16,3 +16,11 @@ export const KNOWN_MERCHANTS: Record<string, number> = {
 export function resolveMerchantId(subdomain: string): number | null {
   return KNOWN_MERCHANTS[subdomain] ?? null;
 }
+
+// No anonymous "get this merchant's brand name" endpoint exists either —
+// same stand-in story as resolveMerchantId above. Derives a display name
+// from the subdomain itself (e.g. "onestop" -> "Onestop") rather than
+// showing a fabricated brand name.
+export function displayName(subdomain: string): string {
+  return subdomain.charAt(0).toUpperCase() + subdomain.slice(1);
+}

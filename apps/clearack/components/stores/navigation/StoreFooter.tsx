@@ -3,21 +3,22 @@
 import React from "react";
 import Link from "next/link";
 import { FaIcons } from "@repo/ui";
+import { displayName } from "@/lib/merchants";
 const { FaFacebook, FaInstagram, FaTwitter } = FaIcons;
 
-export default function StoreFooter() {
+export default function StoreFooter({ subdomain }: { subdomain: string }) {
   const currentYear = new Date().getFullYear();
+  const brand = displayName(subdomain);
 
   return (
     <footer className="bg-zinc-900 text-zinc-400 py-12 px-6">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* Brand Column */}
         <div className="space-y-4">
-          <h2 className="text-white text-xl font-black">SAFYRI</h2>
-          <p className="text-sm">
-            Handcrafted quality for your next adventure. Made with care by local
-            artisans.
-          </p>
+          <h2 className="text-white text-xl font-black">
+            {brand.toUpperCase()}
+          </h2>
+          <p className="text-sm">Quality products, all in one place.</p>
         </div>
 
         {/* Links Columns */}
@@ -81,7 +82,9 @@ export default function StoreFooter() {
       </div>
 
       <div className="max-w-7xl mx-auto mt-12 pt-8 border-t border-zinc-800 text-center text-xs">
-        <p>© {currentYear} Safyri. All rights reserved.</p>
+        <p>
+          © {currentYear} {brand}. All rights reserved.
+        </p>
       </div>
     </footer>
   );

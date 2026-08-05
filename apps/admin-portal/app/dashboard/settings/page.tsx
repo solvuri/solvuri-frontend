@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button, Input } from "@repo/ui";
 
 const MODULES = [
-  { key: "clearrack", label: "ClearRack" },
+  { key: "clearack", label: "Clearack" },
   { key: "pos", label: "POS" },
 ] as const;
 
@@ -13,7 +13,7 @@ export default function PlatformSettingsPage() {
   const [supportEmail, setSupportEmail] = useState("support@solvuri.com");
   const [enabledModules, setEnabledModules] = useState<
     Record<string, boolean>
-  >({ clearrack: true, safyri: true, reservr: true, master: true });
+  >({ clearack: true, pos: true });
   const [savedNote, setSavedNote] = useState(false);
 
   const toggleModule = (key: string) => {

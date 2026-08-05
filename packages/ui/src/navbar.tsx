@@ -20,7 +20,7 @@ export interface NavbarProps {
   links: NavLink[];
   cta?: NavbarCta;
   /** "floating": pill nav with a working mobile menu (SOLVURI brand).
-   *  "sticky": full-width bordered header, no mobile menu (ClearRacks brand). */
+   *  "sticky": full-width bordered header, no mobile menu (Clearack brand). */
   variant?: "floating" | "sticky";
 }
 

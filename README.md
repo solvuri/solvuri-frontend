@@ -15,7 +15,7 @@ Solvuri exists to help businesses launch digital products under their own brand 
 
 The product story presented in the UI currently centers on a combination of commerce and operations-focused experiences, including:
 
-- ClearRacks for commerce-oriented experiences
+- Clearack for commerce-oriented experiences
 - POS for in-person, register-based sales
 - a public marketing and product storytelling experience in the web app
 - an admin surface for operating and managing the platform experience
@@ -34,7 +34,7 @@ The repository is organized around a clear separation between product experience
 solvuri-frontend/
 ├── apps/
 │   ├── web/                # Public marketing website and product storytelling
-│   ├── clearracks/        # ClearRacks-focused experience with storefront and marketing routes
+│   ├── clearack/          # Clearack-focused experience with storefront and marketing routes
 │   ├── admin-portal/      # Internal/admin experience for operators
 │   └── pos/                # In-person register app for the POS module
 ├── packages/
@@ -53,17 +53,17 @@ solvuri-frontend/
 ### What lives in each area
 
 - apps/web: the public-facing Solvuri website, including the homepage, product messaging, and module showcase
-- apps/clearracks: the ClearRacks experience, including marketing pages and storefront-oriented routes
+- apps/clearack: the Clearack experience, including marketing pages and storefront-oriented routes
 - apps/admin-portal: the admin and operational surface for managing the platform experience
 - apps/pos: the in-person register experience for the POS module — product catalog, running sale, cash/card/M-Pesa tender, receipts, and sales history
 - packages/ui: reusable design-system components (buttons, cards, inputs, sidebar); adoption is still growing across the four apps
 - packages/types: shared contracts for data structures and domain models
 - packages/utils: shared helpers for common application concerns (class-name merging, shared constants)
 - packages/api-client: a factory for creating per-app HTTP clients against `NEXT_PUBLIC_API_URL`
-- packages/data: a shared React Query client plus domain hooks (`useProducts`, `useProduct`, `useOrders`, `useOrder`, `useTenants`, `useTenant`, `useSales`, `useSale`, currently backed by mock data — see `packages/data/src/*.ts`) that consumers call the same way a real API-backed hook would be called
+- packages/data: a shared React Query client plus domain hooks (`useProducts`, `useProduct`, `useOrders`, `useOrder`, currently backed by mock data — see `packages/data/src/*.ts`) that consumers call the same way a real API-backed hook would be called. The tenants/sales mock hooks that used to live here were deleted once every consumer moved to real backend data.
 - packages/\*-config: shared tooling so the apps remain consistent and maintainable
 
-Cart/UI state currently lives in `apps/clearracks` directly (Zustand), since it's ClearRacks-specific business logic rather than a cross-app concern — it'll move back into a shared package if a second app needs the same kind of state.
+Cart/UI state currently lives in `apps/clearack` directly (Zustand), since it's Clearack-specific business logic rather than a cross-app concern — it'll move back into a shared package if a second app needs the same kind of state.
 
 ## Tech stack
 
@@ -74,7 +74,7 @@ The frontend is built with modern tooling and a component-driven architecture:
 - Tailwind CSS for styling
 - pnpm for package management and workspaces
 - Turborepo for monorepo orchestration
-- Zustand for local state management (currently used in the ClearRacks storefront's cart)
+- Zustand for local state management (currently used in the Clearack storefront's cart)
 - Framer Motion and TanStack React Query for UI motion and data-driven interactions
 
 ## Prerequisites
@@ -108,7 +108,7 @@ You can also start one application at a time:
 
 ```bash
 pnpm --filter @repo/web dev
-pnpm --filter @repo/clearracks dev
+pnpm --filter @repo/clearack dev
 pnpm --filter @repo/admin-portal dev
 pnpm --filter @repo/pos dev
 ```
@@ -118,7 +118,7 @@ pnpm --filter @repo/pos dev
 The current development ports are:
 
 - Web marketing site: http://localhost:3000
-- ClearRacks experience: http://localhost:3001
+- Clearack experience: http://localhost:3001
 - Admin portal: http://localhost:3002
 - POS register: http://localhost:3003
 
@@ -134,16 +134,17 @@ pnpm test
 pnpm format
 ```
 
-These commands are wired through Turborepo so the shared packages and apps can be built or validated consistently. `pnpm test` currently covers `packages/data` (the products/orders/tenants/sales hooks), `apps/clearracks` (the cart store, plus regression tests for both dynamic-route pages), and `apps/pos` (the register store, plus a regression test for the sale-detail page) — see each's `vitest.config.ts`.
+These commands are wired through Turborepo so the shared packages and apps can be built or validated consistently. `pnpm test` currently covers `packages/data` (the products/orders hooks), `apps/clearack` (the cart store, plus regression tests for both dynamic-route pages), and `apps/pos` (the register store, plus a regression test for the sale-detail page) — see each's `vitest.config.ts`.
 
 ## Deployment
 
 **This section documents the current inferred model, not a verified decision someone on the team made** — it's written down here so it's an explicit assumption to confirm or correct, rather than something the next person has to reverse-engineer from `.gitignore`.
 
-- Each app (`web`, `clearracks`, `admin-portal`, `pos`) appears to deploy independently: `.gitignore` excludes `.vercel`, each app's boilerplate README pointed at Vercel before being rewritten, and each runs on its own port locally (3000/3001/3002/3003) with no reverse proxy or edge config checked into this repo.
+- Each app (`web`, `clearack`, `admin-portal`, `pos`) appears to deploy independently: `.gitignore` excludes `.vercel`, each app's boilerplate README pointed at Vercel before being rewritten, and each runs on its own port locally (3000/3001/3002/3003) with no reverse proxy or edge config checked into this repo. This has been confirmed for `admin-portal` at least (deployed at `solvuri-frontend-admin-portal.vercel.app`).
 - No `vercel.json` or other deployment config exists anywhere in the repo.
-- The only per-app environment difference today is `NEXT_PUBLIC_API_URL` (see each app's `.env.example`); `apps/clearracks` additionally reads `ROOT_DOMAIN` and `apps/pos` reads `POS_ROOT_DOMAIN`, both for their respective subdomain-routing proxies.
+- The only per-app environment difference today is `NEXT_PUBLIC_API_URL` (see each app's `.env.example`); `apps/clearack` additionally reads `ROOT_DOMAIN` and `apps/pos` reads `POS_ROOT_DOMAIN`, both for their respective subdomain-routing proxies.
 - If "independent per-app Vercel deploys" isn't actually the plan, the CI setup (one workflow building all four apps) and the lack of any shared routing/proxy config would both need revisiting.
+- **`apps/clearracks` was renamed to `apps/clearack`** (directory, package name, and every brand mention) to fix the long-standing "Clearrack"/"Clearack" spelling drift against the real backend. If this app already has its own deployed Vercel project (following the `solvuri-frontend-admin-portal` naming pattern seen above, it would likely be `solvuri-frontend-clearracks`), that project's root directory/build settings will need updating on Vercel's side to point at `apps/clearack` — this repo change alone doesn't touch anything outside the codebase.
 
 ## Design philosophy
 

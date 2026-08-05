@@ -7,7 +7,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Super License | Solvuri",
   description:
-    "One license, every module — ClearRack and POS under a single contract with a unified admin hub.",
+    "One license, every module — Clearack and POS under a single contract with a unified admin hub.",
 };
 
 export default function SuperLicensePage() {
@@ -25,7 +25,7 @@ export default function SuperLicensePage() {
 
           <p className="text-[#9896B8] text-xl mb-12 max-w-2xl">
             Stop juggling multiple contracts and fragmented infrastructure. The
-            Super License gives you full access to ClearRack and POS —
+            Super License gives you full access to Clearack and POS —
             unified by a single, powerful administrative hub.
           </p>
 

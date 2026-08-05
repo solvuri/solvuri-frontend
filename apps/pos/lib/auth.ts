@@ -4,7 +4,7 @@ import { decodeToken, getAuthToken } from "@repo/api-client";
 // merchantId comes from the logged-in cashier's own JWT claim, never from
 // the subdomain — every POS endpoint requires an authenticated Merchant/
 // MerchantAgent caller, so there's no anonymous domain-lookup problem to
-// solve here (unlike apps/clearracks' subdomain -> merchantId stand-in).
+// solve here (unlike apps/clearack's subdomain -> merchantId stand-in).
 export function getMerchantId(): number | null {
   const token = getAuthToken();
   if (!token) return null;

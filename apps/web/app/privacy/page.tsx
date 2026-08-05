@@ -26,7 +26,7 @@ export default function PrivacyPage() {
         },
         {
           heading: "Third-party services",
-          body: "Some functionality may rely on third-party service providers (such as payment processors on modules like ClearRack or Safyri). Those providers have their own privacy practices governing the data they process.",
+          body: "Some functionality may rely on third-party service providers (such as payment processors on modules like Clearack or POS). Those providers have their own privacy practices governing the data they process.",
         },
         {
           heading: "Data retention",

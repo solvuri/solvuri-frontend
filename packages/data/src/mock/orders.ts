@@ -1,7 +1,7 @@
 import type { Order } from "@repo/types";
 
 // Stand-in order data until a real orders API exists. Only covers the two
-// order IDs that are actually product orders (matching apps/clearracks's
+// order IDs that are actually product orders (matching apps/clearack's
 // orders list page) — "SAF-*"/"SVC-*" IDs there are experience/service
 // bookings with a different shape (no shipping address) and aren't
 // represented here.

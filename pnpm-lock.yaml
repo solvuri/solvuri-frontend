@@ -72,7 +72,7 @@ importers:
         specifier: ^5
         version: 5.9.2
 
-  apps/clearracks:
+  apps/clearack:
     dependencies:
       '@repo/api-client':
         specifier: workspace:*

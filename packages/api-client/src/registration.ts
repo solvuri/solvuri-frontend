@@ -227,7 +227,7 @@ export interface RegisterAgentResult {
 
 // POST /api/merchants/agents — Merchant owner only. Registers a new
 // cashier/staff login under the caller's own tenant. Used by
-// apps/clearracks' merchant portal (app/merchant/(portal)/agents).
+// apps/clearack's merchant portal (app/merchant/(portal)/agents).
 export async function registerAgent(
   client: AxiosInstance,
   input: RegisterAgentInput,

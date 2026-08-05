@@ -14,11 +14,11 @@ export interface FooterProps {
   brand: { name: string; description?: string };
   columns: FooterColumn[];
   /** Extra content rendered next to the brand block in the "sticky" variant
-   *  (ClearRacks's "Core APIs Active" status badge). */
+   *  (Clearack's "Core APIs Active" status badge). */
   accent?: React.ReactNode;
   /** Bottom legal ribbon, "sticky" variant only. */
   legal?: React.ReactNode;
-  /** "floating": SOLVURI-brand 5-col footer. "sticky": ClearRacks-brand
+  /** "floating": SOLVURI-brand 5-col footer. "sticky": Clearack-brand
    *  12-col footer + legal ribbon. Matches Navbar's variant values. */
   variant?: "floating" | "sticky";
 }

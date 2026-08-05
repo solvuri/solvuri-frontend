@@ -4,7 +4,7 @@ import { createApiClient, clearAuthToken } from "@repo/api-client";
 export const posApi = createApiClient(process.env.NEXT_PUBLIC_API_URL!);
 
 // POS is a long-running cashier shift (unlike a short admin session or
-// clearracks' anonymous flow), so a token that expires mid-shift should
+// apps/clearack's anonymous flow), so a token that expires mid-shift should
 // bounce the cashier back to /login instead of every subsequent call
 // just failing silently. This has to see the raw 401 status, but
 // createApiClient's own interceptor (registered first) already replaces

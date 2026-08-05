@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 export const Marquee = () => {
   const items = [
-    "CLEARRACK",
+    "CLEARACK",
     "POS",
     "WHITE-LABEL",
     "MODULAR",

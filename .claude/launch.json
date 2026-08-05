@@ -8,9 +8,9 @@
       "port": 3002
     },
     {
-      "name": "clearracks",
+      "name": "clearack",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "clearracks", "dev"],
+      "runtimeArgs": ["--filter", "clearack", "dev"],
       "port": 3001
     },
     {

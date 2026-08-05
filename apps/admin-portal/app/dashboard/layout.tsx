@@ -19,7 +19,7 @@ const navItems = [
   { icon: LayoutDashboard, label: "Global Stats", href: "/dashboard" },
   { icon: Building2, label: "Merchants", href: "/dashboard/merchants" },
   { icon: LayoutGrid, label: "Catalog", href: "/dashboard/catalog" },
-  { icon: Store, label: "Clearrack Stores", href: "/dashboard/clearrack" },
+  { icon: Store, label: "Clearack Stores", href: "/dashboard/clearack" },
   { icon: CreditCard, label: "POS Locations", href: "/dashboard/pos" },
 ];
 

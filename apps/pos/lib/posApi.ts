@@ -25,7 +25,7 @@ import type {
 import { posApi } from "./api";
 
 // GET /api/clearack/products/merchant/{merchantId} — same anonymous
-// storefront catalog apps/clearracks uses. POS sells the same Product
+// storefront catalog apps/clearack uses. POS sells the same Product
 // table (no dedicated POS product-list endpoint exists), so this is a
 // deliberate reuse, not a duplicate implementation.
 export function fetchCatalogProducts(

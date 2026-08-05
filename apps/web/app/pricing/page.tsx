@@ -8,13 +8,13 @@ import { MODULES_DATA } from "../../utils/modulesData";
 export const metadata: Metadata = {
   title: "Pricing | Solvuri",
   description:
-    "Per-module pricing for ClearRack and POS, or one Super License covering every module under a single contract.",
+    "Per-module pricing for Clearack and POS, or one Super License covering every module under a single contract.",
 };
 
 // Indicative starting prices per module. Not final — see disclaimer below.
 // A module with no entry here shows a "Contact us" CTA instead of a price.
 const MODULE_PRICING: Record<string, number> = {
-  clearrack: 800,
+  clearack: 800,
 };
 
 export default function PricingPage() {

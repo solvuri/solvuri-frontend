@@ -4,21 +4,21 @@ import { ModuleInfo } from "@repo/types"; // Import from your shared package
 
 export const MODULES_DATA: ModuleInfo[] = [
   {
-    title: "CLEARRACK",
-    slug: "clearrack",
+    title: "CLEARACK",
+    slug: "clearack",
     category: "Ecommerce",
     description:
       "High-velocity white-label e-commerce storefront for stock drops.",
     longDescription:
-      "ClearRack is an infrastructure engine purpose-built for high-traffic stock drops and limited-edition product releases. It features advanced queue management to prevent server overload, instant checkout capabilities, and real-time transaction monitoring to ensure a seamless experience for your customers during peak spikes.",
+      "Clearack is an infrastructure engine purpose-built for high-traffic stock drops and limited-edition product releases. It features advanced queue management to prevent server overload, instant checkout capabilities, and real-time transaction monitoring to ensure a seamless experience for your customers during peak spikes.",
     features: [
       "Storefront + headless API",
       "Queue management for stock drops",
       "Real-time transaction monitoring",
     ],
     accentColor: "#FF8C69",
-    image: "/images/clearrack.png",
-    href: "https://clearrack.xyz",
+    image: "/images/clearack.png",
+    href: "https://clearack.xyz",
     faqs: [
       {
         q: "Is it fully white-label?",
@@ -41,7 +41,7 @@ export const MODULES_DATA: ModuleInfo[] = [
     features: [
       "Fast checkout for walk-in customers",
       "Cash, card & M-Pesa tender",
-      "Shared product catalog with ClearRack",
+      "Shared product catalog with Clearack",
       "Works on any tablet or laptop",
     ],
     accentColor: "#F59E0B",
@@ -49,7 +49,7 @@ export const MODULES_DATA: ModuleInfo[] = [
     href: "https://solvuripos.xyz",
     faqs: [
       {
-        q: "Does it share products with ClearRack?",
+        q: "Does it share products with Clearack?",
         a: "Yes, POS reads from the same product catalog, so in-person and online inventory stay in sync.",
       },
       {

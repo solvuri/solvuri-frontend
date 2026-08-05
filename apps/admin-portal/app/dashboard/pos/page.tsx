@@ -55,7 +55,7 @@ export default function PosLocationsPage() {
         if (
           result.status === "fulfilled" &&
           result.value.categories.some(
-            (c) => c.name.trim().toLowerCase() === "pos",
+            (c) => c.name.trim().toLowerCase() === "point of sale",
           )
         ) {
           posLocations.push({ tenant: tenants[i], subscription: result.value });

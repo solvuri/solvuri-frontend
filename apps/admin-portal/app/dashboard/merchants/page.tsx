@@ -16,6 +16,10 @@ import {
   setMpesaEnabled,
   updateTenant,
   overrideTenantSubscription,
+  initiateSubscriptionStkPush,
+  getSubscriptionStkPushStatus,
+  logManualPayment,
+  type PaymentMode,
 } from "@repo/api-client";
 import type { MerchantMpesaSettings } from "@repo/types";
 import { Button, Input } from "@repo/ui";
@@ -52,6 +56,24 @@ const EMPTY_OVERRIDE_FORM = {
   totalPaid: "",
   startDate: "",
   endDate: "",
+};
+
+const PAYMENT_MODES: PaymentMode[] = [
+  "Cash",
+  "Card",
+  "BankDeposit",
+  "Paybill",
+  "Till",
+];
+
+const EMPTY_PAYMENT_FORM = {
+  subscriptionId: "",
+  phoneNumber: "",
+  amount: "",
+  mode: "Cash" as PaymentMode,
+  referenceNumber: "",
+  notes: "",
+  extendDays: "",
 };
 
 export default function MerchantsPage() {
@@ -97,6 +119,13 @@ export default function MerchantsPage() {
   const [overrideForm, setOverrideForm] = useState(EMPTY_OVERRIDE_FORM);
   const [overrideSubmitting, setOverrideSubmitting] = useState(false);
   const [overrideError, setOverrideError] = useState("");
+
+  const [paymentPanelOpen, setPaymentPanelOpen] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<"stk" | "manual">("stk");
+  const [paymentForm, setPaymentForm] = useState(EMPTY_PAYMENT_FORM);
+  const [paymentSubmitting, setPaymentSubmitting] = useState(false);
+  const [paymentError, setPaymentError] = useState("");
+  const [paymentStatusMessage, setPaymentStatusMessage] = useState("");
 
   const loadDirectory = async () => {
     setTenantsLoading(true);
@@ -235,6 +264,9 @@ export default function MerchantsPage() {
     setEditError("");
     setOverrideMode(false);
     setOverrideError("");
+    setPaymentPanelOpen(false);
+    setPaymentError("");
+    setPaymentStatusMessage("");
     if (expandedTenantId === tenantId) {
       setExpandedTenantId(null);
       return;
@@ -391,6 +423,126 @@ export default function MerchantsPage() {
       );
     } finally {
       setOverrideSubmitting(false);
+    }
+  };
+
+  const startPayment = (tenant: TenantSummary) => {
+    setPaymentForm({
+      ...EMPTY_PAYMENT_FORM,
+      subscriptionId: tenant.subscription?.id
+        ? String(tenant.subscription.id)
+        : "",
+    });
+    setPaymentMethod("stk");
+    setPaymentError("");
+    setPaymentStatusMessage("");
+    setPaymentPanelOpen(true);
+  };
+
+  // Actively resolves a Pending STK push by polling every 4s, mirroring
+  // apps/clearracks' checkout-status polling — the backend queries Daraja
+  // itself on each call rather than just waiting on the webhook. Backs off
+  // client-side after 90s (the backend's own force-resolve window) so this
+  // never spins forever.
+  const pollStkStatus = async (checkoutRequestId: string) => {
+    const startedAt = Date.now();
+    while (Date.now() - startedAt < 90_000) {
+      await new Promise((resolve) => setTimeout(resolve, 4000));
+      try {
+        const status = await getSubscriptionStkPushStatus(
+          adminApi,
+          checkoutRequestId,
+        );
+        if (status.status !== "Pending") {
+          return status;
+        }
+      } catch {
+        // Transient error mid-poll — keep trying until the timeout above.
+      }
+    }
+    return null;
+  };
+
+  const handleStkPush = async () => {
+    const subscriptionId = Number(paymentForm.subscriptionId);
+    const amount = Number(paymentForm.amount);
+    if (!paymentForm.subscriptionId || Number.isNaN(subscriptionId)) {
+      setPaymentError("Enter a valid subscription ID.");
+      return;
+    }
+    if (!paymentForm.phoneNumber) {
+      setPaymentError("Enter a phone number to push the STK prompt to.");
+      return;
+    }
+    if (!paymentForm.amount || Number.isNaN(amount)) {
+      setPaymentError("Enter a valid amount.");
+      return;
+    }
+    setPaymentError("");
+    setPaymentSubmitting(true);
+    setPaymentStatusMessage("Sending STK push...");
+    try {
+      const result = await initiateSubscriptionStkPush(adminApi, {
+        subscriptionId,
+        phoneNumber: paymentForm.phoneNumber,
+        amount,
+      });
+      setPaymentStatusMessage(
+        "STK push sent — waiting for the merchant to enter their M-Pesa PIN...",
+      );
+      const outcome = await pollStkStatus(result.checkoutRequestId);
+      if (!outcome) {
+        setPaymentStatusMessage(
+          "Still pending after 90s — check the payment ledger shortly.",
+        );
+      } else if (outcome.status === "Success") {
+        setPaymentStatusMessage("Payment successful.");
+        await loadDirectory();
+      } else {
+        setPaymentStatusMessage(`Payment ${outcome.status.toLowerCase()}.`);
+      }
+    } catch (err) {
+      setPaymentError(err instanceof Error ? err.message : "STK push failed.");
+      setPaymentStatusMessage("");
+    } finally {
+      setPaymentSubmitting(false);
+    }
+  };
+
+  const handleManualPayment = async () => {
+    const subscriptionId = Number(paymentForm.subscriptionId);
+    const amount = Number(paymentForm.amount);
+    if (!paymentForm.subscriptionId || Number.isNaN(subscriptionId)) {
+      setPaymentError("Enter a valid subscription ID.");
+      return;
+    }
+    if (!paymentForm.amount || Number.isNaN(amount)) {
+      setPaymentError("Enter a valid amount.");
+      return;
+    }
+    setPaymentError("");
+    setPaymentSubmitting(true);
+    try {
+      await logManualPayment(adminApi, {
+        subscriptionId,
+        amount,
+        paymentMode: paymentForm.mode,
+        ...(paymentForm.referenceNumber && {
+          referenceNumber: paymentForm.referenceNumber,
+        }),
+        ...(paymentForm.notes && { notes: paymentForm.notes }),
+        ...(paymentForm.extendDays && {
+          extendDays: Number(paymentForm.extendDays),
+        }),
+      });
+      setPaymentPanelOpen(false);
+      await loadDirectory();
+    } catch (err) {
+      setPaymentError(
+        err instanceof Error ? err.message : "Couldn't log this payment.",
+      );
+    } finally {
+      setPaymentSubmitting(false);
     }
   };
 
@@ -965,6 +1117,185 @@ export default function MerchantsPage() {
                                     {overrideSubmitting
                                       ? "Saving..."
                                       : "Save"}
+                                  </Button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+
+                          <div
+                            className="mt-3"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {!paymentPanelOpen ? (
+                              <Button
+                                type="button"
+                                variant="secondary"
+                                onClick={() => startPayment(tenant)}
+                              >
+                                Collect Payment
+                              </Button>
+                            ) : (
+                              <div className="bg-inputBg rounded-xl p-4 space-y-3 max-w-md mt-2">
+                                <p className="text-xs uppercase tracking-widest text-muted">
+                                  Collect Subscription Payment
+                                </p>
+                                <div className="flex gap-2">
+                                  <Button
+                                    type="button"
+                                    variant={
+                                      paymentMethod === "stk"
+                                        ? "accent"
+                                        : "secondary"
+                                    }
+                                    onClick={() => setPaymentMethod("stk")}
+                                  >
+                                    STK Push
+                                  </Button>
+                                  <Button
+                                    type="button"
+                                    variant={
+                                      paymentMethod === "manual"
+                                        ? "accent"
+                                        : "secondary"
+                                    }
+                                    onClick={() => setPaymentMethod("manual")}
+                                  >
+                                    Log Manual Payment
+                                  </Button>
+                                </div>
+                                <p className="text-xs text-muted">
+                                  Enter the subscription ID (not the tenant
+                                  ID); it can&apos;t always be prefilled here.
+                                </p>
+                                <Input
+                                  label="Subscription ID"
+                                  type="number"
+                                  value={paymentForm.subscriptionId}
+                                  onChange={(e) =>
+                                    setPaymentForm({
+                                      ...paymentForm,
+                                      subscriptionId: e.target.value,
+                                    })
+                                  }
+                                />
+                                <Input
+                                  label="Amount (KES)"
+                                  type="number"
+                                  value={paymentForm.amount}
+                                  onChange={(e) =>
+                                    setPaymentForm({
+                                      ...paymentForm,
+                                      amount: e.target.value,
+                                    })
+                                  }
+                                />
+
+                                {paymentMethod === "stk" ? (
+                                  <>
+                                    <Input
+                                      label="Phone Number"
+                                      value={paymentForm.phoneNumber}
+                                      onChange={(e) =>
+                                        setPaymentForm({
+                                          ...paymentForm,
+                                          phoneNumber: e.target.value,
+                                        })
+                                      }
+                                    />
+                                    {paymentStatusMessage && (
+                                      <p className="text-xs text-accent">
+                                        {paymentStatusMessage}
+                                      </p>
+                                    )}
+                                  </>
+                                ) : (
+                                  <>
+                                    <div className="space-y-1">
+                                      <label className="text-xs text-muted">
+                                        Payment Mode
+                                      </label>
+                                      <select
+                                        className="w-full bg-background text-text rounded px-3 py-2 text-sm"
+                                        value={paymentForm.mode}
+                                        onChange={(e) =>
+                                          setPaymentForm({
+                                            ...paymentForm,
+                                            mode: e.target
+                                              .value as PaymentMode,
+                                          })
+                                        }
+                                      >
+                                        {PAYMENT_MODES.map((mode) => (
+                                          <option key={mode} value={mode}>
+                                            {mode}
+                                          </option>
+                                        ))}
+                                      </select>
+                                    </div>
+                                    <Input
+                                      label="Reference Number"
+                                      value={paymentForm.referenceNumber}
+                                      onChange={(e) =>
+                                        setPaymentForm({
+                                          ...paymentForm,
+                                          referenceNumber: e.target.value,
+                                        })
+                                      }
+                                    />
+                                    <Input
+                                      label="Notes"
+                                      value={paymentForm.notes}
+                                      onChange={(e) =>
+                                        setPaymentForm({
+                                          ...paymentForm,
+                                          notes: e.target.value,
+                                        })
+                                      }
+                                    />
+                                    <Input
+                                      label="Extend Days (override)"
+                                      type="number"
+                                      value={paymentForm.extendDays}
+                                      onChange={(e) =>
+                                        setPaymentForm({
+                                          ...paymentForm,
+                                          extendDays: e.target.value,
+                                        })
+                                      }
+                                    />
+                                  </>
+                                )}
+
+                                {paymentError && (
+                                  <p className="text-xs text-rose-400">
+                                    {paymentError}
+                                  </p>
+                                )}
+                                <div className="flex gap-2">
+                                  <Button
+                                    type="button"
+                                    variant="secondary"
+                                    disabled={paymentSubmitting}
+                                    onClick={() => setPaymentPanelOpen(false)}
+                                  >
+                                    Cancel
+                                  </Button>
+                                  <Button
+                                    type="button"
+                                    variant="accent"
+                                    disabled={paymentSubmitting}
+                                    onClick={
+                                      paymentMethod === "stk"
+                                        ? handleStkPush
+                                        : handleManualPayment
+                                    }
+                                  >
+                                    {paymentSubmitting
+                                      ? "Submitting..."
+                                      : paymentMethod === "stk"
+                                        ? "Send STK Push"
+                                        : "Log Payment"}
                                   </Button>
                                 </div>
                               </div>

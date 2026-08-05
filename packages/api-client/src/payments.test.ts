@@ -1,10 +1,17 @@
 import { describe, expect, it, vi } from "vitest";
 import type { AxiosInstance } from "axios";
-import { getRevenueReport, listPayments } from "./payments";
+import {
+  getRevenueReport,
+  getSubscriptionStkPushStatus,
+  initiateSubscriptionStkPush,
+  listPayments,
+  logManualPayment,
+} from "./payments";
 
 function mockClient(responseData: unknown): AxiosInstance {
   return {
     get: vi.fn().mockResolvedValue({ data: responseData }),
+    post: vi.fn().mockResolvedValue({ data: responseData }),
   } as unknown as AxiosInstance;
 }
 
@@ -78,5 +85,85 @@ describe("getRevenueReport", () => {
       },
     );
     expect(result).toEqual(report);
+  });
+});
+
+describe("initiateSubscriptionStkPush", () => {
+  it("posts the push request and returns the checkout reference", async () => {
+    const result = {
+      success: true,
+      message: "STK push sent",
+      checkoutRequestId: "ws_CO_290720261234567890",
+    };
+    const client = mockClient(result);
+
+    const output = await initiateSubscriptionStkPush(client, {
+      subscriptionId: 12,
+      phoneNumber: "254712345678",
+      amount: 1500,
+    });
+
+    expect(client.post).toHaveBeenCalledWith("/api/solvuri/payments/stk-push", {
+      subscriptionId: 12,
+      phoneNumber: "254712345678",
+      amount: 1500,
+    });
+    expect(output).toEqual(result);
+  });
+});
+
+describe("getSubscriptionStkPushStatus", () => {
+  it("fetches the outcome of a push by its checkout request id", async () => {
+    const status = {
+      checkoutRequestId: "ws_CO_290720261234567890",
+      status: "Success",
+      activatedFeatureIds: [5],
+    };
+    const client = mockClient(status);
+
+    const result = await getSubscriptionStkPushStatus(
+      client,
+      "ws_CO_290720261234567890",
+    );
+
+    expect(client.get).toHaveBeenCalledWith(
+      "/api/solvuri/payments/stk-push/status/ws_CO_290720261234567890",
+    );
+    expect(result).toEqual(status);
+  });
+});
+
+describe("logManualPayment", () => {
+  it("posts a manually-received payment and returns the logged row", async () => {
+    const payment = {
+      id: 88,
+      tenantId: 7,
+      tenantBrandName: "Acme Retail Ltd",
+      subscriptionId: 12,
+      amount: 1500,
+      paymentMode: "Cash",
+      referenceNumber: "RCPT-0042",
+      loggedByUsername: "jane.admin",
+      paymentDate: "2026-07-29T10:00:00Z",
+      notes: "Paid at the office in person",
+    };
+    const client = mockClient(payment);
+
+    const result = await logManualPayment(client, {
+      subscriptionId: 12,
+      amount: 1500,
+      paymentMode: "Cash",
+      referenceNumber: "RCPT-0042",
+      notes: "Paid at the office in person",
+    });
+
+    expect(client.post).toHaveBeenCalledWith("/api/solvuri/payments/manual", {
+      subscriptionId: 12,
+      amount: 1500,
+      paymentMode: "Cash",
+      referenceNumber: "RCPT-0042",
+      notes: "Paid at the office in person",
+    });
+    expect(result).toEqual(payment);
   });
 });

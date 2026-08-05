@@ -1,6 +1,6 @@
 # Solvuri Admin Portal
 
-An internal operator console: a login screen and a dashboard covering Global Stats, Merchants, Catalog, Clearrack Stores, POS Locations, and Platform Settings. Auth, Global Stats (real platform revenue), Merchants (onboarding + M-Pesa verify/enable), Catalog (System Category/Feature CRUD), and POS Locations (real merchant/subscription data) are wired to the real backend; Clearrack Stores and Platform Settings still run on `@repo/data`'s mock hooks. See `AGENTS.md` for the exact split.
+An internal operator console: a login screen and a dashboard covering Global Stats, Merchants, Catalog, Clearrack Stores, POS Locations, and Platform Settings. Auth, Global Stats (real platform revenue), Merchants (onboarding + M-Pesa verify/enable), Catalog (System Category/Feature CRUD), Clearrack Stores, and POS Locations (both real merchant/subscription data) are wired to the real backend; only Platform Settings still runs on local component state. See `AGENTS.md` for the exact split.
 
 ## Running locally
 

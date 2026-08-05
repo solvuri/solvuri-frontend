@@ -5,9 +5,7 @@ import { Button, Input } from "@repo/ui";
 
 const MODULES = [
   { key: "clearrack", label: "ClearRack" },
-  { key: "safyri", label: "Safyri" },
-  { key: "reservr", label: "Reservr" },
-  { key: "master", label: "Master" },
+  { key: "pos", label: "POS" },
 ] as const;
 
 export default function PlatformSettingsPage() {

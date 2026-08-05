@@ -60,7 +60,7 @@ solvuri-frontend/
 - packages/types: shared contracts for data structures and domain models
 - packages/utils: shared helpers for common application concerns (class-name merging, shared constants)
 - packages/api-client: a factory for creating per-app HTTP clients against `NEXT_PUBLIC_API_URL`
-- packages/data: a shared React Query client plus domain hooks (`useProducts`, `useProduct`, `useOrders`, `useOrder`, `useTenants`, `useTenant`, `useReservations`, `useReservation`, `useSales`, `useSale`, currently backed by mock data — see `packages/data/src/*.ts`) that consumers call the same way a real API-backed hook would be called
+- packages/data: a shared React Query client plus domain hooks (`useProducts`, `useProduct`, `useOrders`, `useOrder`, `useTenants`, `useTenant`, `useSales`, `useSale`, currently backed by mock data — see `packages/data/src/*.ts`) that consumers call the same way a real API-backed hook would be called
 - packages/\*-config: shared tooling so the apps remain consistent and maintainable
 
 Cart/UI state currently lives in `apps/clearracks` directly (Zustand), since it's ClearRacks-specific business logic rather than a cross-app concern — it'll move back into a shared package if a second app needs the same kind of state.
@@ -134,7 +134,7 @@ pnpm test
 pnpm format
 ```
 
-These commands are wired through Turborepo so the shared packages and apps can be built or validated consistently. `pnpm test` currently covers `packages/data` (the products/orders/tenants/reservations/sales hooks), `apps/clearracks` (the cart store, plus regression tests for both dynamic-route pages), and `apps/pos` (the register store, plus a regression test for the sale-detail page) — see each's `vitest.config.ts`.
+These commands are wired through Turborepo so the shared packages and apps can be built or validated consistently. `pnpm test` currently covers `packages/data` (the products/orders/tenants/sales hooks), `apps/clearracks` (the cart store, plus regression tests for both dynamic-route pages), and `apps/pos` (the register store, plus a regression test for the sale-detail page) — see each's `vitest.config.ts`.
 
 ## Deployment
 

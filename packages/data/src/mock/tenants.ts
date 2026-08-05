@@ -1,9 +1,10 @@
 import type { Tenant } from "@repo/types";
 
 // Stand-in tenant data until a real tenant/subscription API exists. Spans
-// all 5 modules with varied plan/status/revenue so admin views have
-// something realistic to filter and sum over. monthlyRevenue is in KES,
-// matching apps/clearracks's existing currency convention.
+// both real modules (clearrack, pos) with varied plan/status/revenue so
+// admin views have something realistic to filter and sum over.
+// monthlyRevenue is in KES, matching apps/clearracks's existing currency
+// convention.
 export const MOCK_TENANTS: Tenant[] = [
   {
     id: "tnt-001",
@@ -37,61 +38,6 @@ export const MOCK_TENANTS: Tenant[] = [
     monthlyRevenue: 78000,
     createdAt: "2026-06-30",
     settings: { whatsappNumber: "+254712345003", themeColor: "#FF8C69" },
-  },
-  {
-    id: "tnt-004",
-    name: "Maasai Mara Expeditions",
-    domain: "maasaimaraexpeditions.solvuri.app",
-    module: "safyri",
-    plan: "growth",
-    status: "active",
-    monthlyRevenue: 910000,
-    createdAt: "2025-11-20",
-    settings: { whatsappNumber: "+254712345004", themeColor: "#60A5FA" },
-  },
-  {
-    id: "tnt-005",
-    name: "Zanzibar Beach Tours",
-    domain: "zanzibarbeachtours.solvuri.app",
-    module: "safyri",
-    plan: "starter",
-    status: "suspended",
-    monthlyRevenue: 0,
-    createdAt: "2025-07-08",
-    settings: { whatsappNumber: "+254712345005", themeColor: "#60A5FA" },
-  },
-  {
-    id: "tnt-006",
-    name: "Karen Table Bistro",
-    domain: "karentablebistro.solvuri.app",
-    module: "reservr",
-    plan: "starter",
-    status: "active",
-    monthlyRevenue: 165000,
-    createdAt: "2026-03-11",
-    settings: { whatsappNumber: "+254712345006", themeColor: "#00D4AA" },
-  },
-  {
-    id: "tnt-007",
-    name: "Highlands Spa & Wellness",
-    domain: "highlandsspa.solvuri.app",
-    module: "reservr",
-    plan: "growth",
-    status: "trial",
-    monthlyRevenue: 120000,
-    createdAt: "2026-07-01",
-    settings: { whatsappNumber: "+254712345007", themeColor: "#00D4AA" },
-  },
-  {
-    id: "tnt-008",
-    name: "Solvuri HQ",
-    domain: "hq.solvuri.app",
-    module: "master",
-    plan: "enterprise",
-    status: "active",
-    monthlyRevenue: 300000,
-    createdAt: "2025-05-01",
-    settings: { whatsappNumber: "+254712345008", themeColor: "#C8D400" },
   },
   {
     id: "tnt-009",

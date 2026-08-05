@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import type { AxiosInstance } from "axios";
 import {
   deactivateAgent,
+  getTenantSubscription,
   listAgents,
   listFeatures,
   listSystemCategories,
@@ -64,6 +65,22 @@ describe("listTenants", () => {
 
     expect(client.get).toHaveBeenCalledWith("/api/tenants");
     expect(result).toEqual(tenants);
+  });
+});
+
+describe("getTenantSubscription", () => {
+  it("fetches a single tenant's subscription summary", async () => {
+    const summary = {
+      categories: [{ systemCategoryId: 1, name: "Clearack" }],
+      features: [],
+      totalMonthlyCost: 0,
+    };
+    const client = mockClient(summary);
+
+    const result = await getTenantSubscription(client, 7);
+
+    expect(client.get).toHaveBeenCalledWith("/api/tenants/7/subscription");
+    expect(result).toEqual(summary);
   });
 });
 

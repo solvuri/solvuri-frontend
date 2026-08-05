@@ -16,7 +16,7 @@ export const ModulesSection = () => {
           {/* Heading and Description: Switch from flex to grid on mobile */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-12">
             <h2 className="font-bebas text-[48px] md:text-[72px] text-[#E2E0FF] leading-[0.9] text-center md:text-left w-full md:w-auto">
-              FOUR PRODUCTS.{" "}
+              OUR PRODUCTS.{" "}
               <span className="text-[#C8D400] block md:inline">
                 ONE PLATFORM.
               </span>

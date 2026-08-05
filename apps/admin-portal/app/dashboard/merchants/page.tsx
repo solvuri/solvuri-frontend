@@ -785,7 +785,7 @@ export default function MerchantsPage() {
                                 "This merchant hasn't submitted M-Pesa credentials yet."}
                             </p>
                           ) : (
-                            <div className="bg-inputBg rounded-xl p-4 space-y-3 max-w-md">
+                            <div className="bg-background rounded-xl p-4 space-y-3 max-w-md">
                               <div className="flex items-center gap-2 text-xs">
                                 <span className="text-muted">Credentials:</span>
                                 <StatusBadge
@@ -833,7 +833,7 @@ export default function MerchantsPage() {
                                       [tenant.id]: e.target.value,
                                     }))
                                   }
-                                  className="flex-1 bg-background text-text rounded px-2 py-1 text-xs"
+                                  className="flex-1 bg-inputBg text-text rounded px-2 py-1 text-xs"
                                 />
                                 <Button
                                   type="button"
@@ -890,7 +890,7 @@ export default function MerchantsPage() {
                                 Edit Details
                               </Button>
                             ) : (
-                              <div className="bg-inputBg rounded-xl p-4 space-y-3 max-w-md mt-2">
+                              <div className="bg-background rounded-xl p-4 space-y-3 max-w-md mt-2">
                                 <p className="text-xs uppercase tracking-widest text-muted">
                                   Edit Merchant Details
                                 </p>
@@ -995,7 +995,7 @@ export default function MerchantsPage() {
                                 Override Subscription
                               </Button>
                             ) : (
-                              <div className="bg-inputBg rounded-xl p-4 space-y-3 max-w-md mt-2">
+                              <div className="bg-background rounded-xl p-4 space-y-3 max-w-md mt-2">
                                 <p className="text-xs uppercase tracking-widest text-muted">
                                   Manual Subscription Override
                                 </p>
@@ -1026,7 +1026,7 @@ export default function MerchantsPage() {
                                     })
                                   }
                                 />
-                                <label className="flex items-center gap-3 bg-background px-4 py-3 rounded-lg cursor-pointer">
+                                <label className="flex items-center gap-3 bg-inputBg px-4 py-3 rounded-lg cursor-pointer">
                                   <input
                                     type="checkbox"
                                     checked={overrideForm.isPaid}
@@ -1136,7 +1136,7 @@ export default function MerchantsPage() {
                                 Collect Payment
                               </Button>
                             ) : (
-                              <div className="bg-inputBg rounded-xl p-4 space-y-3 max-w-md mt-2">
+                              <div className="bg-background rounded-xl p-4 space-y-3 max-w-md mt-2">
                                 <p className="text-xs uppercase tracking-widest text-muted">
                                   Collect Subscription Payment
                                 </p>
@@ -1216,7 +1216,7 @@ export default function MerchantsPage() {
                                         Payment Mode
                                       </label>
                                       <select
-                                        className="w-full bg-background text-text rounded px-3 py-2 text-sm"
+                                        className="w-full bg-inputBg text-text rounded px-3 py-2 text-sm"
                                         value={paymentForm.mode}
                                         onChange={(e) =>
                                           setPaymentForm({

@@ -16,6 +16,5 @@ export { QueryClientProvider } from "@tanstack/react-query";
 export { useProducts, useProduct } from "./products";
 export { useOrders, useOrder } from "./orders";
 export { useTenants, useTenant } from "./tenants";
-export { useReservations, useReservation } from "./reservations";
 export { useSales, useSale } from "./sales";
-export type { Product, Order, Tenant, Reservation, Sale } from "@repo/types";
+export type { Product, Order, Tenant, Sale } from "@repo/types";

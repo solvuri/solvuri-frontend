@@ -59,6 +59,19 @@ export async function listTenants(
   return response.data;
 }
 
+// GET /api/tenants/{id}/subscription — any authenticated user (no explicit
+// role gate in the backend). Returns the same shape as the category/feature
+// selection endpoints below, but as a read-only fetch for a single tenant.
+export async function getTenantSubscription(
+  client: AxiosInstance,
+  tenantId: number,
+): Promise<MerchantSubscriptionSummary> {
+  const response = await client.get<MerchantSubscriptionSummary>(
+    `/api/tenants/${tenantId}/subscription`,
+  );
+  return response.data;
+}
+
 export interface SystemCategory {
   id: number;
   name: string;

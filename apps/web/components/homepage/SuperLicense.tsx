@@ -5,8 +5,7 @@ import Link from "next/link";
 
 const moduleDots = {
   ClearRack: "bg-[#FF8C69]",
-  Safyri: "bg-[#60A5FA]",
-  Reservr: "bg-[#00D4AA]",
+  POS: "bg-[#F59E0B]",
 };
 
 export const SuperLicense = () => {
@@ -27,13 +26,13 @@ export const SuperLicense = () => {
         </h2>
 
         <p className="text-[#F0EEF8] text-sm mb-10 max-w-lg mx-auto leading-relaxed">
-          Run all four products under one roof, one contract, one bill — with
+          Run every product under one roof, one contract, one bill — with
           shared accounts, analytics and billing across the board.
         </p>
 
         {/* Module Badges: Wrap on mobile if they get too long */}
         <div className="flex flex-wrap justify-center gap-3 mb-12">
-          {["ClearRack", "Safyri", "Reservr"].map((name) => (
+          {["ClearRack", "POS"].map((name) => (
             <div
               key={name}
               className="flex items-center gap-2 bg-[#0F0E2A]/20 px-4 py-2 rounded-full text-xs font-medium"
@@ -47,11 +46,10 @@ export const SuperLicense = () => {
         </div>
 
         <div className="text-3xl md:text-4xl font-bold mb-8">
-          FROM{" "}
-          <span className="font-bebas text-4xl md:text-5xl ml-2 text-[#0F0E2A]">
-            $2,400
+          <span className="font-bebas text-4xl md:text-5xl text-[#0F0E2A]">
+            CONTACT US
           </span>{" "}
-          / MONTH
+          FOR BUNDLE PRICING
         </div>
 
         {/* Orbit Container: Fixed width container to prevent overflow */}

@@ -5,7 +5,7 @@ import { ModulesGrid } from "./ModulesGrid";
 export const metadata: Metadata = {
   title: "Modules | Solvuri",
   description:
-    "ClearRack, Safyri, Reservr, and Master — four white-label infrastructure modules for e-commerce, travel, reservations, and platform orchestration.",
+    "ClearRack and POS — white-label infrastructure modules for e-commerce and point-of-sale.",
 };
 
 export default function ModulesPage() {

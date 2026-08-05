@@ -8,15 +8,13 @@ import { MODULES_DATA } from "../../utils/modulesData";
 export const metadata: Metadata = {
   title: "Pricing | Solvuri",
   description:
-    "Per-module pricing for ClearRack, Safyri, Reservr, and Master, or one Super License covering every module under a single contract.",
+    "Per-module pricing for ClearRack and POS, or one Super License covering every module under a single contract.",
 };
 
 // Indicative starting prices per module. Not final — see disclaimer below.
+// A module with no entry here shows a "Contact us" CTA instead of a price.
 const MODULE_PRICING: Record<string, number> = {
   clearrack: 800,
-  safyri: 900,
-  reservr: 600,
-  master: 500,
 };
 
 export default function PricingPage() {
@@ -61,13 +59,30 @@ export default function PricingPage() {
                   {m.description}
                 </p>
                 <div className="mb-6">
-                  <span
-                    className="text-3xl font-bebas"
-                    style={{ color: m.accentColor }}
-                  >
-                    From ${MODULE_PRICING[m.slug]?.toLocaleString()}
-                  </span>
-                  <span className="text-[#9896B8] text-sm"> / month</span>
+                  {(() => {
+                    const price = MODULE_PRICING[m.slug];
+                    return price !== undefined ? (
+                      <>
+                        <span
+                          className="text-3xl font-bebas"
+                          style={{ color: m.accentColor }}
+                        >
+                          From ${price.toLocaleString()}
+                        </span>
+                        <span className="text-[#9896B8] text-sm">
+                          {" "}
+                          / month
+                        </span>
+                      </>
+                    ) : (
+                      <span
+                        className="text-3xl font-bebas"
+                        style={{ color: m.accentColor }}
+                      >
+                        Contact us
+                      </span>
+                    );
+                  })()}
                 </div>
                 <Link href={`/contact?reason=general&module=${m.title}`}>
                   <Button
@@ -91,15 +106,13 @@ export default function PricingPage() {
                   Every Module. One Contract.
                 </h2>
                 <p className="text-[#E2E0FF] max-w-md">
-                  All four modules under one license — roughly $400/month less
-                  than licensing each separately, with one unified admin hub
+                  Every module under one license, with one unified admin hub
                   across all of them.
                 </p>
               </div>
               <div className="text-left md:text-right shrink-0">
                 <div className="text-4xl font-bebas text-white mb-4">
-                  From $2,400{" "}
-                  <span className="text-lg text-[#E2E0FF]">/ month</span>
+                  Contact Us
                 </div>
                 <Link href="/superlicense">
                   <Button className="bg-[#0F0E2A] text-white px-8 py-4 rounded-full font-bold">

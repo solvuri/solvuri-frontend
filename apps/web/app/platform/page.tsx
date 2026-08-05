@@ -27,7 +27,7 @@ const PILLARS = [
     label: "Composable",
     title: "Modules That Work Together",
     description:
-      "ClearRack, Safyri, Reservr, and Master are each complete products on their own, but they're built to compose: run one to start, and add the others as your business grows, without re-platforming.",
+      "ClearRack and POS are each complete products on their own, but they're built to compose: run one to start, and add the other as your business grows, without re-platforming.",
   },
 ];
 
@@ -73,8 +73,7 @@ export default function PlatformPage() {
               See the modules built on it
             </h2>
             <p className="mb-8 text-[#E2E0FF]">
-              ClearRack, Safyri, Reservr, and Master — each ready to deploy on
-              its own or together.
+              ClearRack and POS — each ready to deploy on its own or together.
             </p>
             <Link href="/modules">
               <Button className="bg-[#0F0E2A] text-white px-8 py-4 rounded-full font-bold">

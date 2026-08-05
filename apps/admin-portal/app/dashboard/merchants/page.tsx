@@ -440,7 +440,7 @@ export default function MerchantsPage() {
   };
 
   // Actively resolves a Pending STK push by polling every 4s, mirroring
-  // apps/clearracks' checkout-status polling — the backend queries Daraja
+  // apps/clearack's checkout-status polling — the backend queries Daraja
   // itself on each call rather than just waiting on the webhook. Backs off
   // client-side after 90s (the backend's own force-resolve window) so this
   // never spins forever.

@@ -3,21 +3,17 @@ import type { NextRequest } from "next/server";
 
 // The production root domain differs per environment, so it's an env var
 // rather than a compile-time constant (falls back to the current default).
-// Deliberately a separate env var from apps/clearack's ROOT_DOMAIN so the
-// two apps' subdomain schemes don't collide.
-const POS_ROOT_DOMAIN = process.env.POS_ROOT_DOMAIN || "solvuripos.xyz";
+const ROOT_DOMAIN = process.env.ROOT_DOMAIN || "clearack.xyz";
 
 // Kept as a local constant rather than importing @repo/api-client's
 // AUTH_COOKIE_NAME — this file runs in the Edge runtime, and there's no
 // reason to pull axios into an Edge middleware bundle just for a string.
 const AUTH_COOKIE = "solvuri_auth_token";
-const CASHIER_ROLES = new Set(["Merchant", "MerchantAgent"]);
+const MERCHANT_ROLES = new Set(["Merchant", "MerchantAgent"]);
 
 // Minimal, self-contained JWT payload decode for role-gating only — no
 // signature verification (the backend is the real enforcement point for
-// every request). Deliberately not shared with @repo/api-client's
-// decodeToken to keep this file free of any Node-oriented dependency,
-// same approach as apps/admin-portal's proxy.ts.
+// every request). Same approach as apps/admin-portal's/apps/pos's proxy.ts.
 function getAppRole(token: string): string | null {
   try {
     const payloadSegment = token.split(".")[1];
@@ -48,37 +44,36 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 2. Identify root domain (solvuripos.xyz, www.solvuripos.xyz, or local —
+  // 2. Identify root domain (clearack.xyz, www.clearack.xyz, or local —
   // matches any localhost port so this still works when the app isn't
-  // running on its default port, e.g. via `pnpm --filter pos dev`)
+  // running on its default port, e.g. via `pnpm --filter clearack dev`)
   const isRootDomain =
-    hostname === POS_ROOT_DOMAIN ||
-    hostname === `www.${POS_ROOT_DOMAIN}` ||
+    hostname === ROOT_DOMAIN ||
+    hostname === `www.${ROOT_DOMAIN}` ||
     hostname === "localhost" ||
     /^localhost:\d+$/.test(hostname);
 
   if (!isRootDomain) {
-    // 3. Extract subdomain from hostname (e.g., demo.solvuripos.xyz -> demo)
+    // 3. Extract subdomain from hostname (e.g., test-store.clearack.xyz -> test-store)
     const subdomain = hostname.split(".")[0];
 
-    // 4. Auth gate — every register/sales route requires an authenticated
-    // Merchant or MerchantAgent (IsCashier() on the real backend). The
-    // login page itself is exempt, or nobody could ever sign in.
-    if (url.pathname !== "/login") {
-      const token = request.cookies.get(AUTH_COOKIE)?.value;
-      const appRole = token ? getAppRole(token) : null;
-      if (!appRole || !CASHIER_ROLES.has(appRole)) {
-        url.pathname = "/login";
-        return NextResponse.redirect(url);
-      }
-    }
-
-    // Rewrite internal request to the tenant's register
-    url.pathname = `/register/${subdomain}${url.pathname}`;
+    // Rewrite internal request to your dynamic storefront folder
+    url.pathname = `/storefront/${subdomain}${url.pathname}`;
     return NextResponse.rewrite(url);
   }
 
-  // Allow root traffic (the minimal landing page) to proceed
+  // 4. Merchant portal auth gate — root-domain only (a merchant managing
+  // their own account isn't "visiting a store" on a subdomain). Skip the
+  // gate for the login page itself, or nobody could ever sign in.
+  if (url.pathname.startsWith("/merchant") && url.pathname !== "/merchant/login") {
+    const token = request.cookies.get(AUTH_COOKIE)?.value;
+    const appRole = token ? getAppRole(token) : null;
+    if (!appRole || !MERCHANT_ROLES.has(appRole)) {
+      return NextResponse.redirect(new URL("/merchant/login", request.url));
+    }
+  }
+
+  // Allow root traffic (marketing site + merchant portal) to proceed
   return NextResponse.next();
 }
 

@@ -101,7 +101,7 @@ export interface SubscriptionStkPushStatus {
 // Admin/SuperAdmin only. Actively resolves a Pending push (queries Daraja,
 // doesn't just wait on the webhook) — poll this every few seconds until
 // `status` leaves "Pending", same mechanics as every other STK flow in
-// this API (see apps/clearracks' checkout status polling).
+// this API (see apps/clearack's checkout status polling).
 export async function getSubscriptionStkPushStatus(
   client: AxiosInstance,
   checkoutRequestId: string,

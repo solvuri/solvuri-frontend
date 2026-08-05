@@ -4,7 +4,7 @@ import { Button } from "@repo/ui";
 import Link from "next/link";
 
 const moduleDots = {
-  ClearRack: "bg-[#FF8C69]",
+  Clearack: "bg-[#FF8C69]",
   POS: "bg-[#F59E0B]",
 };
 
@@ -32,7 +32,7 @@ export const SuperLicense = () => {
 
         {/* Module Badges: Wrap on mobile if they get too long */}
         <div className="flex flex-wrap justify-center gap-3 mb-12">
-          {["ClearRack", "POS"].map((name) => (
+          {["Clearack", "POS"].map((name) => (
             <div
               key={name}
               className="flex items-center gap-2 bg-[#0F0E2A]/20 px-4 py-2 rounded-full text-xs font-medium"

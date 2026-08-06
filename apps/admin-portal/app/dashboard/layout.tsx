@@ -11,6 +11,7 @@ const {
   Store,
   CreditCard,
   LayoutGrid,
+  Users,
   Settings,
   LogOut,
 } = Lucide;
@@ -18,6 +19,7 @@ const {
 const navItems = [
   { icon: LayoutDashboard, label: "Global Stats", href: "/dashboard" },
   { icon: Building2, label: "Merchants", href: "/dashboard/merchants" },
+  { icon: Users, label: "Users", href: "/dashboard/users" },
   { icon: LayoutGrid, label: "Catalog", href: "/dashboard/catalog" },
   { icon: Store, label: "Clearack Stores", href: "/dashboard/clearack" },
   { icon: CreditCard, label: "POS Locations", href: "/dashboard/pos" },

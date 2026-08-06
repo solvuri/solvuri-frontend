@@ -1,5 +1,6 @@
 const STATUS_STYLES: Record<string, string> = {
   active: "bg-emerald-500/15 text-emerald-400",
+  inactive: "bg-rose-500/15 text-rose-400",
   confirmed: "bg-emerald-500/15 text-emerald-400",
   delivered: "bg-emerald-500/15 text-emerald-400",
   trial: "bg-amber-500/15 text-amber-400",

@@ -76,3 +76,28 @@ export interface CheckoutStatusResult {
   paymentStatus: string;
   orderStatus: string;
 }
+
+export interface ClearackOrderItem {
+  productId: number;
+  productName: string;
+  quantity: number;
+  price: number;
+}
+
+// GET /api/clearack/orders/merchant/{merchantId} and GET .../orders/{id} —
+// the documented response example (from the POST /orders create call, §3.4)
+// doesn't show customerEmail/customerPhone/shippingAddress even though the
+// create request body has them — marked optional here since that's not
+// confirmed against a live GET response.
+export interface ClearackOrder {
+  id: number;
+  merchantId: number;
+  customerName: string;
+  customerEmail?: string | null;
+  customerPhone?: string | null;
+  shippingAddress?: string | null;
+  totalAmount: number;
+  status: string;
+  paymentStatus: string;
+  items: ClearackOrderItem[];
+}

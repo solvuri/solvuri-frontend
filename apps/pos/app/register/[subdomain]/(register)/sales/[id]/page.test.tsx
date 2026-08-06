@@ -10,12 +10,14 @@ import SaleDetailPage from "./page";
 
 vi.mock("@/lib/auth", () => ({
   getMerchantId: () => 1,
+  useCurrentUser: () => ({ username: "owner", appRole: "Merchant", merchantId: 1 }),
 }));
 
 vi.mock("@/lib/posApi", () => ({
+  useCatalogProducts: () => ({ data: [] }),
   useSale: (merchantId: number | null, saleId: number | null) => {
     if (merchantId !== 1 || (saleId !== 101 && saleId !== 102)) {
-      return { data: undefined, isLoading: false, error: null };
+      return { data: undefined, isLoading: false, error: null, refetch: vi.fn() };
     }
     const sale =
       saleId === 101
@@ -43,7 +45,7 @@ vi.mock("@/lib/posApi", () => ({
             ],
             payments: [{ id: 2, method: "Mpesa", amount: 1800, referenceNumber: "QGH7X8Y9Z0", status: "Completed" }],
           };
-    return { data: sale, isLoading: false, error: null };
+    return { data: sale, isLoading: false, error: null, refetch: vi.fn() };
   },
 }));
 

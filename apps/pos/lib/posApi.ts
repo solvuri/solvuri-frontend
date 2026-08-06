@@ -1,6 +1,8 @@
 // apps/pos/lib/posApi.ts
 import { useQuery } from "@tanstack/react-query";
 import type {
+  ExchangeSaleInput,
+  ExchangeSaleResult,
   PosCart,
   PosCashierReport,
   PosDiscountInput,
@@ -21,6 +23,8 @@ import type {
   PosTaxReport,
   PosTopCustomer,
   PosTopProduct,
+  RefundSaleInput,
+  VoidSaleInput,
 } from "@repo/types";
 import { posApi } from "./api";
 
@@ -96,6 +100,44 @@ export function useReceipt(merchantId: number | null, saleId: number | null) {
     queryFn: () => fetchReceipt(merchantId as number, saleId as number),
     enabled: merchantId !== null && saleId !== null,
   });
+}
+
+// POST /api/pos/sales/{saleId}/void — Merchant owner only. Fully reverses
+// a sale: restocks every line, reverses all payments. No response example
+// in the API doc — typed as returning the updated sale, matching every
+// other sale-lifecycle mutation on this controller; callers should refetch
+// via useSale if that assumption turns out wrong.
+export function voidSale(
+  saleId: number,
+  input: VoidSaleInput,
+): Promise<PosSaleDetail> {
+  return posApi
+    .post<PosSaleDetail>(`/api/pos/sales/${saleId}/void`, input)
+    .then((res) => res.data);
+}
+
+// POST /api/pos/sales/{saleId}/refund — full or partial (per-line) refund.
+// Same undocumented-response caveat as voidSale above.
+export function refundSale(
+  saleId: number,
+  input: RefundSaleInput,
+): Promise<PosSaleDetail> {
+  return posApi
+    .post<PosSaleDetail>(`/api/pos/sales/${saleId}/refund`, input)
+    .then((res) => res.data);
+}
+
+// POST /api/pos/sales/{saleId}/exchange — return some lines + add new
+// lines in one call. Response shape IS documented: the updated sale plus
+// netAmountDue (positive = customer owes more, negative = customer is
+// owed a refund) — the endpoint itself never auto-settles that balance.
+export function exchangeSale(
+  saleId: number,
+  input: ExchangeSaleInput,
+): Promise<ExchangeSaleResult> {
+  return posApi
+    .post<ExchangeSaleResult>(`/api/pos/sales/${saleId}/exchange`, input)
+    .then((res) => res.data);
 }
 
 // --- Cart-based checkout (discounts + split-tender payments) ---

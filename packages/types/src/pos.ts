@@ -35,6 +35,44 @@ export interface PosSaleDetail extends PosSaleSummary {
   payments: PosSalePayment[];
 }
 
+export interface VoidSaleInput {
+  merchantId: number;
+  reason?: string;
+}
+
+export interface RefundLineInput {
+  orderItemId: number;
+  quantity: number;
+}
+
+export interface RefundSaleInput {
+  merchantId: number;
+  reason?: string;
+  isFullRefund: boolean;
+  items?: RefundLineInput[];
+}
+
+export interface ExchangeNewItemInput {
+  productId: number;
+  quantity: number;
+}
+
+export interface ExchangeSaleInput {
+  merchantId: number;
+  returnItems?: RefundLineInput[];
+  newItems?: ExchangeNewItemInput[];
+}
+
+// Confirmed shape only for exchange (the API doc gives an explicit response
+// example for it); void/refund have no documented response example, so
+// they're typed as returning the same PosSaleDetail by inference from this
+// endpoint's own pattern — not confirmed via a live probe. Refetch the sale
+// afterward if that assumption turns out wrong.
+export interface ExchangeSaleResult {
+  sale: PosSaleDetail;
+  netAmountDue: number;
+}
+
 export interface PosReceipt {
   saleId: number;
   merchantName: string;

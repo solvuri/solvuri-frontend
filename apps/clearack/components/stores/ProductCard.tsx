@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useStore } from "@/lib/store";
 import { Lucide } from "@repo/ui";
-const { ShoppingCart, Heart } = Lucide;
+const { ShoppingCart } = Lucide;
 
 interface ProductCardProps {
   id: number;
@@ -57,14 +57,6 @@ export default function ProductCard({
           </span>
         </div>
       </Link>
-
-      {/* Favorite Button */}
-      <button
-        aria-label="Add to favorites"
-        className="absolute top-2 right-2 p-1.5 bg-white/90 backdrop-blur-sm rounded border border-brand-border hover:bg-zinc-50 z-10"
-      >
-        <Heart size={14} className="text-brand-muted" />
-      </button>
 
       {!inStock && (
         <div className="absolute inset-0 bg-white/60 flex items-center justify-center z-10">

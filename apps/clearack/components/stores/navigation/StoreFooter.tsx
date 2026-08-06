@@ -12,7 +12,7 @@ export default function StoreFooter({ subdomain }: { subdomain: string }) {
 
   return (
     <footer className="bg-zinc-900 text-zinc-400 py-12 px-6">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
         {/* Brand Column */}
         <div className="space-y-4">
           <h2 className="text-white text-xl font-black">
@@ -21,44 +21,22 @@ export default function StoreFooter({ subdomain }: { subdomain: string }) {
           <p className="text-sm">Quality products, all in one place.</p>
         </div>
 
-        {/* Links Columns */}
+        {/* Links Column — no About/FAQ/Shipping Policy/Contact content
+            exists to link to yet (removed rather than pointing at pages
+            with fabricated copy); "Track Order" points at the real
+            storefront orders page, which honestly explains that guest
+            order lookup isn't available rather than 404ing. */}
         <div>
           <h4 className="text-white font-bold mb-4">Shop</h4>
           <ul className="space-y-2 text-sm">
             <li>
-              <Link href="/store" className="hover:text-white">
+              <Link href="/" className="hover:text-white">
                 All Products
               </Link>
             </li>
             <li>
-              <Link href="/collections" className="hover:text-white">
-                Collections
-              </Link>
-            </li>
-            <li>
-              <Link href="/track" className="hover:text-white">
+              <Link href="/orders" className="hover:text-white">
                 Track Order
-              </Link>
-            </li>
-          </ul>
-        </div>
-
-        <div>
-          <h4 className="text-white font-bold mb-4">Support</h4>
-          <ul className="space-y-2 text-sm">
-            <li>
-              <Link href="/faq" className="hover:text-white">
-                FAQ
-              </Link>
-            </li>
-            <li>
-              <Link href="/shipping" className="hover:text-white">
-                Shipping Policy
-              </Link>
-            </li>
-            <li>
-              <Link href="/contact" className="hover:text-white">
-                Contact Us
               </Link>
             </li>
           </ul>

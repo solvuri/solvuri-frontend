@@ -35,3 +35,22 @@ export async function verifyOtp(
   );
   return response.data;
 }
+
+export interface PlatformUser {
+  id: number;
+  username: string;
+  email: string;
+  tenantId: number | null;
+  isActive: boolean;
+}
+
+// GET /api/Auth/users — Solvuri Admin/SuperAdmin only. Every platform user
+// across every tenant (support/ops visibility). tenantId: null = a
+// platform-level Admin/SuperAdmin account; non-null = belongs to that
+// Merchant tenant (owner or agent — this list doesn't distinguish which).
+export async function listPlatformUsers(
+  client: AxiosInstance,
+): Promise<PlatformUser[]> {
+  const response = await client.get<PlatformUser[]>("/api/Auth/users");
+  return response.data;
+}

@@ -136,6 +136,10 @@ pnpm format
 
 These commands are wired through Turborepo so the shared packages and apps can be built or validated consistently. `pnpm test` currently covers `packages/data` (the products/orders hooks), `apps/clearack` (the cart store, plus regression tests for both dynamic-route pages), and `apps/pos` (the register store, plus a regression test for the sale-detail page) — see each's `vitest.config.ts`.
 
+## Backend API
+
+The real backend (`https://backend-api-test.solvuri.com`) is documented in full at [`API_DOCUMENTATION.md`](./API_DOCUMENTATION.md) — every endpoint, request/response shape, and role gate, plus an OpenAPI appendix for exact request DTO field types. Treat that file as the source of truth over any individual app's `AGENTS.md` summary of what the backend supports.
+
 ## Deployment
 
 **This section documents the current inferred model, not a verified decision someone on the team made** — it's written down here so it's an explicit assumption to confirm or correct, rather than something the next person has to reverse-engineer from `.gitignore`.

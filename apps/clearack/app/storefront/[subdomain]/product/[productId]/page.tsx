@@ -1,7 +1,7 @@
 // src/app/product/[id]/page.tsx
 "use client";
 
-import { use } from "react";
+import { use, useState } from "react";
 import ProductDetail from "@/components/stores/ProductDetail";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,7 +9,7 @@ import Link from "next/link";
 import { Lucide } from "@repo/ui";
 import { useMerchantCategories, useMerchantProducts } from "@/lib/clearackApi";
 import { resolveMerchantId } from "@/lib/merchants";
-const { ChevronLeft, Heart, Share2 } = Lucide;
+const { ChevronLeft, Share2 } = Lucide;
 
 export default function ProductDetailPage({
   params,
@@ -18,6 +18,7 @@ export default function ProductDetailPage({
 }) {
   const { subdomain, productId } = use(params);
   const merchantId = resolveMerchantId(subdomain);
+  const [shareStatus, setShareStatus] = useState<"idle" | "copied">("idle");
 
   // No dedicated single-product anonymous endpoint exists — fetch the
   // merchant's whole catalog (same call the storefront home page makes,
@@ -47,6 +48,24 @@ export default function ProductDetailPage({
     categories?.find((c) => c.id === product.categoryId)?.categoryName ??
     "General";
 
+  const handleShare = async () => {
+    const shareData = {
+      title: product.productName,
+      url: window.location.href,
+    };
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch {
+        // User cancelled the share sheet — not an error.
+      }
+      return;
+    }
+    await navigator.clipboard.writeText(shareData.url);
+    setShareStatus("copied");
+    setTimeout(() => setShareStatus("idle"), 2000);
+  };
+
   return (
     <main className="min-h-screen bg-zinc-50 pb-24">
       {/* 1. Hero Image - Kept here for clean page structure */}
@@ -67,15 +86,16 @@ export default function ProductDetailPage({
           >
             <ChevronLeft size={20} />
           </Link>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
+            {shareStatus === "copied" && (
+              <span className="text-xs font-bold bg-white/80 backdrop-blur-sm rounded-lg px-2 py-1">
+                Link copied
+              </span>
+            )}
             <button
-              aria-label="Add to favorites"
-              className="p-2 bg-white/80 backdrop-blur-sm rounded-lg"
-            >
-              <Heart size={20} />
-            </button>
-            <button
+              type="button"
               aria-label="Share"
+              onClick={handleShare}
               className="p-2 bg-white/80 backdrop-blur-sm rounded-lg"
             >
               <Share2 size={20} />

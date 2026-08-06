@@ -5,7 +5,7 @@ import { useStore } from "@/lib/store";
 import { displayName } from "@/lib/merchants";
 
 import { Lucide } from "@repo/ui";
-const { ShoppingCart, Search, Menu } = Lucide;
+const { ShoppingCart } = Lucide;
 
 export default function StoreNavbar({ subdomain }: { subdomain: string }) {
   // Use Zustand to get the total cart quantity dynamically
@@ -23,28 +23,17 @@ export default function StoreNavbar({ subdomain }: { subdomain: string }) {
           {displayName(subdomain).toUpperCase()}
         </Link>
 
-        {/* Desktop Navigation Links */}
-        <div className="hidden md:flex gap-8 font-bold text-sm text-zinc-600">
-          <Link href="/store" className="hover:text-blue-600">
+        {/* Navigation Links — just "Store" for now: this app has a single
+            product listing (the home page), no separate collections/about
+            content exists to link to yet. */}
+        <div className="flex gap-8 font-bold text-sm text-zinc-600">
+          <Link href="/" className="hover:text-blue-600">
             Store
-          </Link>
-          <Link href="/collections" className="hover:text-blue-600">
-            Collections
-          </Link>
-          <Link href="/about" className="hover:text-blue-600">
-            Our Story
           </Link>
         </div>
 
         {/* Right Actions */}
         <div className="flex items-center gap-4">
-          <button
-            aria-label="Search"
-            className="p-2 text-zinc-600 hover:bg-zinc-100 rounded-full"
-          >
-            <Search size={20} />
-          </button>
-
           <Link
             href="/cart"
             aria-label={`Cart, ${cartCount} item${cartCount === 1 ? "" : "s"}`}
@@ -57,13 +46,6 @@ export default function StoreNavbar({ subdomain }: { subdomain: string }) {
               </span>
             )}
           </Link>
-
-          <button
-            aria-label="Open menu"
-            className="md:hidden p-2 text-zinc-600 hover:bg-zinc-100 rounded-full"
-          >
-            <Menu size={20} />
-          </button>
         </div>
       </div>
     </nav>

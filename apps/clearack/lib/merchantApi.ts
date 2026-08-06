@@ -3,7 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 import {
   deactivateAgent as deactivateAgentRequest,
   getMpesaSettings,
+  getOrder,
   listAgents,
+  listMerchantOrders,
   reactivateAgent as reactivateAgentRequest,
   registerAgent as registerAgentRequest,
   submitMpesaSettings as submitMpesaSettingsRequest,
@@ -12,6 +14,7 @@ import {
 } from "@repo/api-client";
 import type { MerchantMpesaSettings, MpesaSettingsInput } from "@repo/types";
 import { clearackApi } from "./api";
+import { getMerchantId } from "./auth";
 
 export function useMpesaSettings() {
   return useQuery({
@@ -46,4 +49,21 @@ export function deactivateAgent(agentId: number): Promise<void> {
 
 export function reactivateAgent(agentId: number): Promise<void> {
   return reactivateAgentRequest(clearackApi, agentId);
+}
+
+export function useOrders() {
+  const merchantId = getMerchantId();
+  return useQuery({
+    queryKey: ["merchant-orders", merchantId],
+    queryFn: () => listMerchantOrders(clearackApi, merchantId as number),
+    enabled: merchantId !== null,
+  });
+}
+
+export function useOrder(orderId: number | null) {
+  return useQuery({
+    queryKey: ["merchant-order", orderId],
+    queryFn: () => getOrder(clearackApi, orderId as number),
+    enabled: orderId !== null,
+  });
 }

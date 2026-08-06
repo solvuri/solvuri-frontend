@@ -52,3 +52,4 @@ export * from "./registration";
 export * from "./mpesaSettings";
 export * from "./payments";
 export * from "./catalog";
+export * from "./orders";

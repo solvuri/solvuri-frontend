@@ -50,6 +50,9 @@ export default function RegisterHeader({ subdomain }: { subdomain: string }) {
         <Link href="/customers" className="text-sm text-muted hover:text-text">
           Customers
         </Link>
+        <Link href="/products" className="text-sm text-muted hover:text-text">
+          Products
+        </Link>
         {user?.appRole === "Merchant" && (
           <Link href="/reports" className="text-sm text-muted hover:text-text">
             Reports

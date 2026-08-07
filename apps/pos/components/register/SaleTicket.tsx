@@ -7,11 +7,13 @@ import { Button, Lucide } from "@repo/ui";
 import type { PosDiscountInput } from "@repo/types";
 import {
   applyCartDiscount,
+  overridePrice,
   removeCartDiscount,
   removeCartItem,
   updateCartItemQty,
   useCart,
 } from "@/lib/posApi";
+import { useCurrentUser } from "@/lib/auth";
 import { useRegister } from "@/lib/store";
 
 const { Plus, Minus, X } = Lucide;
@@ -20,6 +22,7 @@ export default function SaleTicket({ merchantId }: { merchantId: number }) {
   const cartId = useRegister((state) => state.cartId);
   const { data: cart } = useCart(merchantId, cartId);
   const queryClient = useQueryClient();
+  const user = useCurrentUser();
 
   const [pendingItemId, setPendingItemId] = useState<number | null>(null);
   const [discountValue, setDiscountValue] = useState("");
@@ -27,6 +30,11 @@ export default function SaleTicket({ merchantId }: { merchantId: number }) {
     useState<PosDiscountInput["discountType"]>("Percentage");
   const [discountSubmitting, setDiscountSubmitting] = useState(false);
   const [error, setError] = useState("");
+
+  const [overrideItemId, setOverrideItemId] = useState<number | null>(null);
+  const [overridePriceValue, setOverridePriceValue] = useState("");
+  const [overrideReason, setOverrideReason] = useState("");
+  const [overrideSubmitting, setOverrideSubmitting] = useState(false);
 
   const setCart = (updated: typeof cart) => {
     if (cartId !== null) {
@@ -87,6 +95,35 @@ export default function SaleTicket({ merchantId }: { merchantId: number }) {
     }
   };
 
+  const startOverride = (itemId: number, currentPrice: number) => {
+    setOverrideItemId(itemId);
+    setOverridePriceValue(String(currentPrice));
+    setOverrideReason("");
+    setError("");
+  };
+
+  const handleApplyOverride = async () => {
+    if (overrideItemId === null || !overridePriceValue) return;
+    setError("");
+    setOverrideSubmitting(true);
+    try {
+      const updated = await overridePrice(
+        merchantId,
+        overrideItemId,
+        Number(overridePriceValue),
+        overrideReason || undefined,
+      );
+      setCart(updated);
+      setOverrideItemId(null);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Couldn't override that price.",
+      );
+    } finally {
+      setOverrideSubmitting(false);
+    }
+  };
+
   const handleRemoveDiscount = async () => {
     if (cartId === null) return;
     setError("");
@@ -118,54 +155,95 @@ export default function SaleTicket({ merchantId }: { merchantId: number }) {
       ) : (
         <div className="flex-1 space-y-3 overflow-y-auto">
           {items.map((item) => (
-            <div
-              key={item.id}
-              className="flex items-center justify-between gap-2 border-b border-input-bg pb-3"
-            >
-              <div className="min-w-0">
-                <p className="text-sm text-text truncate">
-                  {item.productName}
-                </p>
-                <p className="text-xs text-muted">
-                  KES {item.unitPrice.toLocaleString()}
-                </p>
+            <div key={item.id} className="border-b border-input-bg pb-3">
+              <div className="flex items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="text-sm text-text truncate">
+                    {item.productName}
+                  </p>
+                  <p className="text-xs text-muted">
+                    KES {item.unitPrice.toLocaleString()}
+                    {user?.appRole === "Merchant" && (
+                      <button
+                        type="button"
+                        onClick={() => startOverride(item.id, item.unitPrice)}
+                        className="ml-2 text-accent underline"
+                      >
+                        Override
+                      </button>
+                    )}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    type="button"
+                    aria-label={`Decrease quantity of ${item.productName}`}
+                    disabled={pendingItemId === item.id}
+                    onClick={() =>
+                      item.quantity > 1
+                        ? handleQtyChange(item.id, item.quantity - 1)
+                        : handleRemove(item.id)
+                    }
+                    className="p-1 rounded bg-inputBg text-text cursor-pointer disabled:opacity-50"
+                  >
+                    <Minus size={12} />
+                  </button>
+                  <span className="text-sm text-text w-4 text-center">
+                    {item.quantity}
+                  </span>
+                  <button
+                    type="button"
+                    aria-label={`Increase quantity of ${item.productName}`}
+                    disabled={pendingItemId === item.id}
+                    onClick={() => handleQtyChange(item.id, item.quantity + 1)}
+                    className="p-1 rounded bg-inputBg text-text cursor-pointer disabled:opacity-50"
+                  >
+                    <Plus size={12} />
+                  </button>
+                  <button
+                    type="button"
+                    aria-label={`Remove ${item.productName} from sale`}
+                    disabled={pendingItemId === item.id}
+                    onClick={() => handleRemove(item.id)}
+                    className="p-1 rounded text-muted hover:text-text cursor-pointer disabled:opacity-50"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
               </div>
-              <div className="flex items-center gap-2 shrink-0">
-                <button
-                  type="button"
-                  aria-label={`Decrease quantity of ${item.productName}`}
-                  disabled={pendingItemId === item.id}
-                  onClick={() =>
-                    item.quantity > 1
-                      ? handleQtyChange(item.id, item.quantity - 1)
-                      : handleRemove(item.id)
-                  }
-                  className="p-1 rounded bg-inputBg text-text cursor-pointer disabled:opacity-50"
-                >
-                  <Minus size={12} />
-                </button>
-                <span className="text-sm text-text w-4 text-center">
-                  {item.quantity}
-                </span>
-                <button
-                  type="button"
-                  aria-label={`Increase quantity of ${item.productName}`}
-                  disabled={pendingItemId === item.id}
-                  onClick={() => handleQtyChange(item.id, item.quantity + 1)}
-                  className="p-1 rounded bg-inputBg text-text cursor-pointer disabled:opacity-50"
-                >
-                  <Plus size={12} />
-                </button>
-                <button
-                  type="button"
-                  aria-label={`Remove ${item.productName} from sale`}
-                  disabled={pendingItemId === item.id}
-                  onClick={() => handleRemove(item.id)}
-                  className="p-1 rounded text-muted hover:text-text cursor-pointer disabled:opacity-50"
-                >
-                  <X size={14} />
-                </button>
-              </div>
+
+              {overrideItemId === item.id && (
+                <div className="flex items-center gap-2 mt-2">
+                  <input
+                    type="number"
+                    value={overridePriceValue}
+                    onChange={(e) => setOverridePriceValue(e.target.value)}
+                    className="bg-inputBg text-text rounded px-2 py-1 text-xs w-20"
+                  />
+                  <input
+                    type="text"
+                    value={overrideReason}
+                    onChange={(e) => setOverrideReason(e.target.value)}
+                    placeholder="Reason"
+                    className="bg-inputBg text-text rounded px-2 py-1 text-xs flex-1"
+                  />
+                  <button
+                    type="button"
+                    disabled={overrideSubmitting || !overridePriceValue}
+                    onClick={handleApplyOverride}
+                    className="text-accent text-xs font-bold disabled:opacity-50"
+                  >
+                    Apply
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setOverrideItemId(null)}
+                    className="text-muted text-xs"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              )}
             </div>
           ))}
         </div>

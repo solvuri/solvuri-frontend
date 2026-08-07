@@ -1,13 +1,16 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Button, Lucide } from "@repo/ui";
-import { useReceipt } from "@/lib/posApi";
+import { emailReceipt, smsReceipt, useReceipt } from "@/lib/posApi";
 import { getMerchantId } from "@/lib/auth";
 
 const { CheckCircle2 } = Lucide;
+
+const FIELD_CLASS =
+  "flex-1 bg-inputBg border border-primary/10 rounded-lg p-2 text-sm text-text";
 
 function ReceiptContent() {
   const searchParams = useSearchParams();
@@ -15,6 +18,46 @@ function ReceiptContent() {
   const merchantId = getMerchantId();
   const saleId = orderId ? Number(orderId) : null;
   const { data: receipt, isLoading, error } = useReceipt(merchantId, saleId);
+
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [sendError, setSendError] = useState("");
+  const [sendStatus, setSendStatus] = useState("");
+  const [sending, setSending] = useState<"email" | "sms" | null>(null);
+
+  const handleEmail = async () => {
+    if (!merchantId || !saleId || !email) return;
+    setSendError("");
+    setSendStatus("");
+    setSending("email");
+    try {
+      await emailReceipt(merchantId, saleId, email);
+      setSendStatus("Receipt emailed.");
+    } catch (err) {
+      setSendError(
+        err instanceof Error ? err.message : "Couldn't email the receipt.",
+      );
+    } finally {
+      setSending(null);
+    }
+  };
+
+  const handleSms = async () => {
+    if (!merchantId || !saleId || !phone) return;
+    setSendError("");
+    setSendStatus("");
+    setSending("sms");
+    try {
+      await smsReceipt(merchantId, saleId, phone);
+      setSendStatus("Receipt texted.");
+    } catch (err) {
+      setSendError(
+        err instanceof Error ? err.message : "Couldn't text the receipt.",
+      );
+    } finally {
+      setSending(null);
+    }
+  };
 
   if (!saleId) {
     return (
@@ -78,6 +121,48 @@ function ReceiptContent() {
             </div>
           ))}
         </div>
+      </div>
+
+      <div className="bg-surface rounded-2xl border border-primary/10 p-6 mb-6 space-y-3">
+        <h3 className="text-sm font-bold text-text">Send Receipt</h3>
+        <div className="flex gap-2">
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email address"
+            className={FIELD_CLASS}
+          />
+          <button
+            type="button"
+            disabled={sending === "email" || !email}
+            onClick={handleEmail}
+            className="px-4 py-2 rounded-lg text-sm font-medium bg-inputBg text-text disabled:opacity-50"
+          >
+            {sending === "email" ? "Sending..." : "Email"}
+          </button>
+        </div>
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="Phone (2547...)"
+            className={FIELD_CLASS}
+          />
+          <button
+            type="button"
+            disabled={sending === "sms" || !phone}
+            onClick={handleSms}
+            className="px-4 py-2 rounded-lg text-sm font-medium bg-inputBg text-text disabled:opacity-50"
+          >
+            {sending === "sms" ? "Sending..." : "Text"}
+          </button>
+        </div>
+        {sendStatus && (
+          <p className="text-sm text-emerald-400">{sendStatus}</p>
+        )}
+        {sendError && <p className="text-sm text-rose-400">{sendError}</p>}
       </div>
 
       <div className="flex gap-3">

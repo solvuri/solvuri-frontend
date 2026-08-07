@@ -1,9 +1,18 @@
 // apps/pos/lib/posApi.ts
 import { useQuery } from "@tanstack/react-query";
+import {
+  createCategory as createCategoryRequest,
+  createProduct as createProductRequest,
+  deleteProduct as deleteProductRequest,
+  updateProduct as updateProductRequest,
+} from "@repo/api-client";
 import type {
   AwardLoyaltyInput,
   BulkPriceUpdateItem,
   BulkPriceUpdateResult,
+  ClearackCategory,
+  CreateClearackCategoryInput,
+  CreateClearackProductInput,
   CreatePosCustomerInput,
   ExchangeSaleInput,
   ExchangeSaleResult,
@@ -31,6 +40,7 @@ import type {
   PosTopCustomer,
   PosTopProduct,
   RefundSaleInput,
+  UpdateClearackProductInput,
   UpdatePosCustomerInput,
   VoidSaleInput,
 } from "@repo/types";
@@ -1003,4 +1013,55 @@ export function usePriceHistory(merchantId: number | null) {
     queryFn: () => fetchPriceHistory(merchantId as number),
     enabled: merchantId !== null,
   });
+}
+
+// --- Product & category management (Merchant and MerchantAgent alike) ---
+//
+// POS has no product-management endpoints of its own — it reuses the same
+// /api/clearack/products and /api/clearack/categories endpoints apps/clearack's
+// merchant portal uses, since both apps sell against the same Product table
+// (see fetchCatalogProducts above). categoryId is required on create, so the
+// merchant/agent needs at least one category — createPosCategory below lets
+// them make one inline rather than needing apps/clearack open in another tab.
+
+export function fetchCategories(
+  merchantId: number,
+): Promise<ClearackCategory[]> {
+  return posApi
+    .get<ClearackCategory[]>(`/api/clearack/categories/merchant/${merchantId}`)
+    .then((res) => res.data);
+}
+
+export function useCategories(merchantId: number | null) {
+  return useQuery({
+    queryKey: ["pos-categories", merchantId],
+    queryFn: () => fetchCategories(merchantId as number),
+    enabled: merchantId !== null,
+  });
+}
+
+export function createPosProduct(
+  merchantId: number,
+  input: CreateClearackProductInput,
+) {
+  return createProductRequest(posApi, merchantId, input);
+}
+
+export function updatePosProduct(
+  merchantId: number,
+  productId: number,
+  input: UpdateClearackProductInput,
+) {
+  return updateProductRequest(posApi, productId, merchantId, input);
+}
+
+export function deletePosProduct(merchantId: number, productId: number) {
+  return deleteProductRequest(posApi, productId, merchantId);
+}
+
+export function createPosCategory(
+  merchantId: number,
+  input: CreateClearackCategoryInput,
+) {
+  return createCategoryRequest(posApi, merchantId, input);
 }

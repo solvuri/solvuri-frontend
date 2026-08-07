@@ -12,6 +12,7 @@ const {
   CreditCard,
   LayoutGrid,
   Users,
+  FileText,
   Settings,
   LogOut,
 } = Lucide;
@@ -20,6 +21,11 @@ const navItems = [
   { icon: LayoutDashboard, label: "Global Stats", href: "/dashboard" },
   { icon: Building2, label: "Merchants", href: "/dashboard/merchants" },
   { icon: Users, label: "Users", href: "/dashboard/users" },
+  {
+    icon: FileText,
+    label: "Tenant Requests",
+    href: "/dashboard/tenant-requests",
+  },
   { icon: LayoutGrid, label: "Catalog", href: "/dashboard/catalog" },
   { icon: Store, label: "Clearack Stores", href: "/dashboard/clearack" },
   { icon: CreditCard, label: "POS Locations", href: "/dashboard/pos" },

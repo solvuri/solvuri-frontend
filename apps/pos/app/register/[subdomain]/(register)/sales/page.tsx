@@ -27,8 +27,11 @@ export default function SalesHistoryPage() {
       {error && (
         <p className="text-sm text-rose-400">Couldn&apos;t load sales.</p>
       )}
+      {sales && sales.length === 0 && (
+        <p className="text-muted text-sm">No sales yet.</p>
+      )}
 
-      {sales && (
+      {sales && sales.length > 0 && (
         <div className="bg-surface rounded-2xl border border-primary/10 overflow-hidden">
           <table className="w-full text-sm">
             <thead>

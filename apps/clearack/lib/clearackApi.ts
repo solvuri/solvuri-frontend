@@ -150,12 +150,18 @@ export function useMerchantProducts(merchantId: number | null) {
 }
 
 // GET /api/clearack/products/domain/{domain} — anonymous
+// GET /api/clearack/products/domain/{domain}
 export function fetchProductsByDomain(
   domain: string,
 ): Promise<ClearackProduct[]> {
   return clearackApi
-    .get<ClearackProduct[]>(`/api/clearack/products/domain/${domain}`)
-    .then((res) => res.data);
+    .get<{ data: ClearackProduct[] } | ClearackProduct[]>(
+      `/api/clearack/products/domain/${domain}`,
+    )
+    .then((res) => {
+      // Handles both { data: [...] } wrapped responses and raw array responses
+      return Array.isArray(res.data) ? res.data : (res.data.data ?? []);
+    });
 }
 
 export function useProductsByDomain(domain: string | null) {

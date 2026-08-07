@@ -97,8 +97,7 @@ export default function StorefrontPage({
   const { subdomain } = use(params);
   const merchantId = resolveMerchantId(subdomain);
 
-  // Construct the full domain expected by the backend
-  // const fullDomain = `${subdomain}.clearrack.xyz`;
+  // Construct full domain or fallback to host dynamically
   const fullDomain =
     typeof window !== "undefined"
       ? window.location.host
@@ -106,16 +105,6 @@ export default function StorefrontPage({
 
   const { data: products, isLoading, error } = useProductsByDomain(fullDomain);
   const { data: categories } = useMerchantCategories(merchantId);
-
-  if (merchantId === null) {
-    return (
-      <main className="min-h-screen bg-white flex items-center justify-center p-6">
-        <p className="text-zinc-500 text-sm">
-          Store not found. Check the URL and try again.
-        </p>
-      </main>
-    );
-  }
 
   const categoryName = (categoryId?: number) =>
     categories?.find((c) => c.id === categoryId)?.categoryName ?? "General";
@@ -145,7 +134,9 @@ export default function StorefrontPage({
           </p>
         )}
         {products && products.length === 0 && (
-          <p className="text-sm text-zinc-500">No products yet.</p>
+          <p className="text-sm text-zinc-500">
+            No products found for this store.
+          </p>
         )}
 
         {products && products.length > 0 && (

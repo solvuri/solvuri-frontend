@@ -26,6 +26,9 @@ export default function MerchantPortalLayout({
             Merchant Portal{user?.username ? ` — ${user.username}` : ""}
           </h1>
           <nav className="flex items-center gap-6 text-sm font-bold text-zinc-500">
+            <Link href="/merchant/products" className="hover:text-zinc-900">
+              Products
+            </Link>
             <Link href="/merchant/orders" className="hover:text-zinc-900">
               Orders
             </Link>

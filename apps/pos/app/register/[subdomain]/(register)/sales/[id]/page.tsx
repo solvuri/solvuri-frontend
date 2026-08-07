@@ -3,7 +3,15 @@
 import { use, useState } from "react";
 import Link from "next/link";
 import { Lucide } from "@repo/ui";
-import { exchangeSale, refundSale, useCatalogProducts, useSale, voidSale } from "@/lib/posApi";
+import {
+  emailReceipt,
+  exchangeSale,
+  refundSale,
+  smsReceipt,
+  useCatalogProducts,
+  useSale,
+  voidSale,
+} from "@/lib/posApi";
 import { getMerchantId, useCurrentUser } from "@/lib/auth";
 import type { ExchangeNewItemInput, RefundLineInput } from "@repo/types";
 
@@ -28,6 +36,12 @@ export default function SaleDetailPage({
 
   const [mode, setMode] = useState<ActionMode>(null);
   const [actionError, setActionError] = useState("");
+
+  const [receiptEmail, setReceiptEmail] = useState("");
+  const [receiptPhone, setReceiptPhone] = useState("");
+  const [sendError, setSendError] = useState("");
+  const [sendStatus, setSendStatus] = useState("");
+  const [sending, setSending] = useState<"email" | "sms" | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [resultNote, setResultNote] = useState("");
 
@@ -71,6 +85,40 @@ export default function SaleDetailPage({
     setExchangeNewItems([]);
     setNewItemProductId("");
     setNewItemQuantity("");
+  };
+
+  const handleEmailReceipt = async () => {
+    if (!merchantId || !receiptEmail) return;
+    setSendError("");
+    setSendStatus("");
+    setSending("email");
+    try {
+      await emailReceipt(merchantId, saleId, receiptEmail);
+      setSendStatus("Receipt emailed.");
+    } catch (err) {
+      setSendError(
+        err instanceof Error ? err.message : "Couldn't email the receipt.",
+      );
+    } finally {
+      setSending(null);
+    }
+  };
+
+  const handleSmsReceipt = async () => {
+    if (!merchantId || !receiptPhone) return;
+    setSendError("");
+    setSendStatus("");
+    setSending("sms");
+    try {
+      await smsReceipt(merchantId, saleId, receiptPhone);
+      setSendStatus("Receipt texted.");
+    } catch (err) {
+      setSendError(
+        err instanceof Error ? err.message : "Couldn't text the receipt.",
+      );
+    } finally {
+      setSending(null);
+    }
   };
 
   const buildRefundLines = (
@@ -232,6 +280,46 @@ export default function SaleDetailPage({
             </span>
           </div>
         ))}
+      </section>
+
+      <section className="bg-surface p-6 rounded-2xl border border-primary/10 mb-4 space-y-3">
+        <h3 className="text-sm font-bold text-text">Resend Receipt</h3>
+        <div className="flex gap-2">
+          <input
+            type="email"
+            value={receiptEmail}
+            onChange={(e) => setReceiptEmail(e.target.value)}
+            placeholder="Email address"
+            className={`flex-1 ${FIELD_CLASS}`}
+          />
+          <button
+            type="button"
+            disabled={sending === "email" || !receiptEmail}
+            onClick={handleEmailReceipt}
+            className="px-4 py-2 rounded-lg text-sm font-medium bg-inputBg text-text disabled:opacity-50"
+          >
+            {sending === "email" ? "Sending..." : "Email"}
+          </button>
+        </div>
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={receiptPhone}
+            onChange={(e) => setReceiptPhone(e.target.value)}
+            placeholder="Phone (2547...)"
+            className={`flex-1 ${FIELD_CLASS}`}
+          />
+          <button
+            type="button"
+            disabled={sending === "sms" || !receiptPhone}
+            onClick={handleSmsReceipt}
+            className="px-4 py-2 rounded-lg text-sm font-medium bg-inputBg text-text disabled:opacity-50"
+          >
+            {sending === "sms" ? "Sending..." : "Text"}
+          </button>
+        </div>
+        {sendStatus && <p className="text-sm text-emerald-400">{sendStatus}</p>}
+        {sendError && <p className="text-sm text-rose-400">{sendError}</p>}
       </section>
 
       {resultNote && (

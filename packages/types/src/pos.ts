@@ -235,6 +235,90 @@ export interface PosInventoryMovement {
   createdAt: string;
 }
 
+// Customer + loyalty shapes. The API doc gives request bodies for every
+// endpoint here but no response examples at all — this shape is inferred
+// from the create request's fields (merchantId/name/email/phone) plus the
+// id/createdAt convention every other entity in this API follows, and
+// loyaltyPoints since that's the whole point of the loyalty endpoint. Not
+// confirmed via a live probe; adjust if a real response disagrees.
+export interface PosCustomer {
+  id: number;
+  merchantId: number;
+  name: string;
+  email: string | null;
+  phone: string | null;
+  loyaltyPoints: number;
+  createdAt: string;
+}
+
+export interface CreatePosCustomerInput {
+  name: string;
+  email?: string;
+  phone?: string;
+}
+
+export interface UpdatePosCustomerInput {
+  name?: string;
+  email?: string;
+  phone?: string;
+}
+
+export interface AwardLoyaltyInput {
+  points: number;
+  reason?: string;
+}
+
+export interface PriceOverrideInput {
+  cartItemId: number;
+  overridePrice: number;
+  reason?: string;
+}
+
+export interface BulkPriceUpdateItem {
+  productId: number;
+  newPrice: number;
+}
+
+export interface BulkPriceUpdateResult {
+  updatedCount: number;
+}
+
+// GET /api/pos/pricing/history — "Audit log of every price change (override
+// or bulk)" per the API doc, which gives no response example at all for
+// this endpoint. Shape inferred from the two request DTOs above plus this
+// API's own id/createdAt convention — not confirmed via a live probe.
+export interface PosPriceHistoryEntry {
+  id: number;
+  productId: number;
+  productName: string;
+  oldPrice: number;
+  newPrice: number;
+  reason: string | null;
+  createdAt: string;
+}
+
+// Formal stock-count (cycle count) shapes — confirmed against the API
+// doc's own scan-response example, the only response example given for
+// this whole sub-section. start/complete/history/detail all return this
+// same PosStockCountSession shape by inference from that one example, not
+// individually confirmed via a live probe.
+export interface PosStockCountItem {
+  productId: number;
+  productName: string;
+  systemQuantity: number;
+  countedQuantity: number;
+  variance: number;
+}
+
+export interface PosStockCountSession {
+  id: number;
+  startedAt: string;
+  completedAt: string | null;
+  status: string;
+  notes: string | null;
+  items: PosStockCountItem[];
+}
+
 export interface PosStockBatch {
   id: number;
   productId: number;

@@ -1,15 +1,21 @@
 // apps/pos/lib/posApi.ts
 import { useQuery } from "@tanstack/react-query";
 import type {
+  AwardLoyaltyInput,
+  BulkPriceUpdateItem,
+  BulkPriceUpdateResult,
+  CreatePosCustomerInput,
   ExchangeSaleInput,
   ExchangeSaleResult,
   PosCart,
   PosCashierReport,
+  PosCustomer,
   PosDiscountInput,
   PosInventoryItem,
   PosInventoryMovement,
   PosPaymentInput,
   PosPaymentMethodReport,
+  PosPriceHistoryEntry,
   PosProduct,
   PosProfitReport,
   PosReceipt,
@@ -20,10 +26,12 @@ import type {
   PosSalesReport,
   PosSaleSummary,
   PosStockBatch,
+  PosStockCountSession,
   PosTaxReport,
   PosTopCustomer,
   PosTopProduct,
   RefundSaleInput,
+  UpdatePosCustomerInput,
   VoidSaleInput,
 } from "@repo/types";
 import { posApi } from "./api";
@@ -100,6 +108,31 @@ export function useReceipt(merchantId: number | null, saleId: number | null) {
     queryFn: () => fetchReceipt(merchantId as number, saleId as number),
     enabled: merchantId !== null && saleId !== null,
   });
+}
+
+// POST /api/pos/sales/{saleId}/receipt/email — no documented response
+// example; typed as void, matching the envelope's data:null convention for
+// other action-only endpoints in this API (e.g. agent deactivate/reactivate).
+export function emailReceipt(
+  merchantId: number,
+  saleId: number,
+  email: string,
+): Promise<void> {
+  return posApi
+    .post(`/api/pos/sales/${saleId}/receipt/email`, { merchantId, email })
+    .then(() => undefined);
+}
+
+// POST /api/pos/sales/{saleId}/receipt/sms — same undocumented-response
+// caveat as emailReceipt above.
+export function smsReceipt(
+  merchantId: number,
+  saleId: number,
+  phone: string,
+): Promise<void> {
+  return posApi
+    .post(`/api/pos/sales/${saleId}/receipt/sms`, { merchantId, phone })
+    .then(() => undefined);
 }
 
 // POST /api/pos/sales/{saleId}/void — Merchant owner only. Fully reverses
@@ -706,6 +739,97 @@ export function useStockBatches(merchantId: number | null) {
   });
 }
 
+// --- Formal Stock-Count (cycle count) ---
+//
+// Distinct from stock-batches above — this is periodically auditing what's
+// already on the shelf against what the system thinks is there, not
+// receiving new stock. Only one "InProgress" session per merchant at a
+// time (enforced server-side); there's no dedicated "current session"
+// endpoint, so callers find the in-progress one (if any) by filtering
+// useStockCountHistory's results themselves.
+
+export function startStockCount(
+  merchantId: number,
+  notes?: string,
+): Promise<PosStockCountSession> {
+  return posApi
+    .post<PosStockCountSession>("/api/pos/stock-count/start", {
+      merchantId,
+      ...(notes && { notes }),
+    })
+    .then((res) => res.data);
+}
+
+export function scanStockCountItem(
+  merchantId: number,
+  sessionId: number,
+  productId: number,
+  countedQuantity: number,
+): Promise<PosStockCountSession> {
+  return posApi
+    .post<PosStockCountSession>(`/api/pos/stock-count/${sessionId}/scan`, {
+      merchantId,
+      productId,
+      countedQuantity,
+    })
+    .then((res) => res.data);
+}
+
+// Finalizes the session — any variance overwrites Product.StockQuantity and
+// logs an adjustment. No documented response example; typed as returning
+// the completed session by inference from the scan endpoint's own shape.
+export function completeStockCount(
+  merchantId: number,
+  sessionId: number,
+): Promise<PosStockCountSession> {
+  return posApi
+    .post<PosStockCountSession>(`/api/pos/stock-count/${sessionId}/complete`, {
+      merchantId,
+    })
+    .then((res) => res.data);
+}
+
+export function fetchStockCountHistory(
+  merchantId: number,
+): Promise<PosStockCountSession[]> {
+  return posApi
+    .get<PosStockCountSession[]>("/api/pos/stock-count/history", {
+      params: { merchantId },
+    })
+    .then((res) => res.data);
+}
+
+export function useStockCountHistory(merchantId: number | null) {
+  return useQuery({
+    queryKey: ["pos-stock-count-history", merchantId],
+    queryFn: () => fetchStockCountHistory(merchantId as number),
+    enabled: merchantId !== null,
+  });
+}
+
+export function fetchStockCountSession(
+  merchantId: number,
+  sessionId: number,
+): Promise<PosStockCountSession> {
+  return posApi
+    .get<PosStockCountSession>(`/api/pos/stock-count/${sessionId}`, {
+      params: { merchantId },
+    })
+    .then((res) => res.data);
+}
+
+export function useStockCountSession(
+  merchantId: number | null,
+  sessionId: number | null,
+) {
+  return useQuery({
+    queryKey: ["pos-stock-count-session", merchantId, sessionId],
+    queryFn: () =>
+      fetchStockCountSession(merchantId as number, sessionId as number),
+    enabled: merchantId !== null && sessionId !== null,
+  });
+}
+
 export function receiveStockBatch(
   merchantId: number,
   code: string,
@@ -717,4 +841,166 @@ export function receiveStockBatch(
       quantity,
     })
     .then((res) => res.data);
+}
+
+// --- Customers + Loyalty ---
+//
+// No response example is documented for any endpoint below (see PosCustomer's
+// comment in @repo/types) — typed by inference from the request DTOs and this
+// API's own id/createdAt convention.
+
+export function fetchCustomers(merchantId: number): Promise<PosCustomer[]> {
+  return posApi
+    .get<PosCustomer[]>("/api/pos/customers", { params: { merchantId } })
+    .then((res) => res.data);
+}
+
+export function useCustomers(merchantId: number | null) {
+  return useQuery({
+    queryKey: ["pos-customers", merchantId],
+    queryFn: () => fetchCustomers(merchantId as number),
+    enabled: merchantId !== null,
+  });
+}
+
+export function createCustomer(
+  merchantId: number,
+  input: CreatePosCustomerInput,
+): Promise<PosCustomer> {
+  return posApi
+    .post<PosCustomer>("/api/pos/customers", { merchantId, ...input })
+    .then((res) => res.data);
+}
+
+export function fetchCustomer(
+  merchantId: number,
+  customerId: number,
+): Promise<PosCustomer> {
+  return posApi
+    .get<PosCustomer>(`/api/pos/customers/${customerId}`, {
+      params: { merchantId },
+    })
+    .then((res) => res.data);
+}
+
+export function useCustomer(
+  merchantId: number | null,
+  customerId: number | null,
+) {
+  return useQuery({
+    queryKey: ["pos-customer", merchantId, customerId],
+    queryFn: () => fetchCustomer(merchantId as number, customerId as number),
+    enabled: merchantId !== null && customerId !== null,
+  });
+}
+
+export function updateCustomer(
+  merchantId: number,
+  customerId: number,
+  input: UpdatePosCustomerInput,
+): Promise<PosCustomer> {
+  return posApi
+    .put<PosCustomer>(`/api/pos/customers/${customerId}`, {
+      merchantId,
+      ...input,
+    })
+    .then((res) => res.data);
+}
+
+// GET /api/pos/customers/{id}/sales — matched server-side by phone number
+// string against Order.CustomerPhone (no real foreign key), so this only
+// finds sales rung up with the same phone number as this customer record.
+export function fetchCustomerSales(
+  merchantId: number,
+  customerId: number,
+): Promise<PosSaleSummary[]> {
+  return posApi
+    .get<PosSaleSummary[]>(`/api/pos/customers/${customerId}/sales`, {
+      params: { merchantId },
+    })
+    .then((res) => res.data);
+}
+
+export function useCustomerSales(
+  merchantId: number | null,
+  customerId: number | null,
+) {
+  return useQuery({
+    queryKey: ["pos-customer-sales", merchantId, customerId],
+    queryFn: () =>
+      fetchCustomerSales(merchantId as number, customerId as number),
+    enabled: merchantId !== null && customerId !== null,
+  });
+}
+
+// POST /api/pos/customers/{id}/loyalty — positive points to award, negative
+// to redeem.
+export function awardLoyalty(
+  merchantId: number,
+  customerId: number,
+  input: AwardLoyaltyInput,
+): Promise<PosCustomer> {
+  return posApi
+    .post<PosCustomer>(`/api/pos/customers/${customerId}/loyalty`, {
+      merchantId,
+      ...input,
+    })
+    .then((res) => res.data);
+}
+
+// --- Pricing (Merchant owner only, or Solvuri admin) ---
+
+// POST /api/pos/pricing/override — one-off price override on an item
+// already in an open cart. No documented response example — typed as
+// returning the updated cart, matching every other cart-mutation endpoint
+// in this API (create/add/update/remove item, apply/remove discount all
+// return the full cart).
+export function overridePrice(
+  merchantId: number,
+  cartItemId: number,
+  newPrice: number,
+  reason?: string,
+): Promise<PosCart> {
+  return posApi
+    .post<PosCart>("/api/pos/pricing/override", {
+      merchantId,
+      cartItemId,
+      overridePrice: newPrice,
+      ...(reason && { reason }),
+    })
+    .then((res) => res.data);
+}
+
+// POST /api/pos/pricing/bulk-update — update Product.Price for many
+// products at once. Response IS documented: { updatedCount }.
+export function bulkUpdatePrices(
+  merchantId: number,
+  updates: BulkPriceUpdateItem[],
+): Promise<BulkPriceUpdateResult> {
+  return posApi
+    .post<BulkPriceUpdateResult>("/api/pos/pricing/bulk-update", {
+      merchantId,
+      updates,
+    })
+    .then((res) => res.data);
+}
+
+// GET /api/pos/pricing/history — audit log of every price change. No
+// documented response example (see PosPriceHistoryEntry's comment).
+export function fetchPriceHistory(
+  merchantId: number,
+): Promise<PosPriceHistoryEntry[]> {
+  return posApi
+    .get<PosPriceHistoryEntry[]>("/api/pos/pricing/history", {
+      params: { merchantId },
+    })
+    .then((res) => res.data);
+}
+
+export function usePriceHistory(merchantId: number | null) {
+  return useQuery({
+    queryKey: ["pos-price-history", merchantId],
+    queryFn: () => fetchPriceHistory(merchantId as number),
+    enabled: merchantId !== null,
+  });
 }

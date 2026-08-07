@@ -8,15 +8,63 @@ export interface ClearackCategory {
   description?: string;
 }
 
+// costPrice/isFeatured only appear in the merchant-owned response (the
+// create/update examples in §3.1) — the anonymous public catalog endpoint
+// (GET /products/merchant/{id}) omits both, hence optional here rather
+// than a separate near-duplicate type.
 export interface ClearackProduct {
   id: number;
   productName: string;
   description?: string;
   price: number;
+  costPrice?: number;
   stockQuantity: number;
   mainImageUrl: string | null;
   isVisible: boolean;
+  isFeatured?: boolean;
   categoryId?: number;
+}
+
+export interface CreateClearackProductInput {
+  productName: string;
+  description?: string;
+  price: number;
+  costPrice?: number;
+  stockQuantity: number;
+  categoryId: number;
+}
+
+export interface UpdateClearackProductInput {
+  productName?: string;
+  description?: string;
+  price?: number;
+  costPrice?: number;
+  categoryId?: number;
+  isVisible?: boolean;
+  isFeatured?: boolean;
+}
+
+// POST /api/clearack/products/{id}/adjust-stock — the request DTO
+// (AdjustStockDto) is confirmed via the OpenAPI appendix; no response
+// example is documented anywhere for this endpoint.
+export interface AdjustClearackStockInput {
+  quantity: number;
+  transactionType?: string;
+  notes?: string;
+}
+
+// GET /api/clearack/products/inventory — "includes hidden items, cost
+// price, units sold, revenue" per the doc's own prose; no response example
+// given. Shape inferred as ClearackProduct plus the two figures the prose
+// calls out — not confirmed via a live probe.
+export interface ClearackInventoryItem extends ClearackProduct {
+  unitsSold: number;
+  revenue: number;
+}
+
+export interface CreateClearackCategoryInput {
+  categoryName: string;
+  description?: string;
 }
 
 export interface DeliveryTown {

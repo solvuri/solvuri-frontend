@@ -41,9 +41,23 @@ export default function RegisterHeader({ subdomain }: { subdomain: string }) {
         <Link href="/inventory" className="text-sm text-muted hover:text-text">
           Inventory
         </Link>
+        <Link
+          href="/stock-count"
+          className="text-sm text-muted hover:text-text"
+        >
+          Stock Count
+        </Link>
+        <Link href="/customers" className="text-sm text-muted hover:text-text">
+          Customers
+        </Link>
         {user?.appRole === "Merchant" && (
           <Link href="/reports" className="text-sm text-muted hover:text-text">
             Reports
+          </Link>
+        )}
+        {user?.appRole === "Merchant" && (
+          <Link href="/pricing" className="text-sm text-muted hover:text-text">
+            Pricing
           </Link>
         )}
         <button
